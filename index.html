@@ -353,21 +353,190 @@
 
 <!-- واجهة المشرف الأكاديمي -->
 <div id="screenAcadDashboard" class="screen">
-  <div class="header"><button class="back-btn" onclick="logoutAcad()">خروج</button><h1>لوحة متابعة الحجوزات</h1><p>المشرف الأكاديمي — رفحاء</p></div>
+  <div class="header"><button class="back-btn" onclick="logoutAcad()">خروج</button><h1>بوابة المشرف الأكاديمي</h1><p>الكلية التطبيقية — فرع رفحاء</p></div>
   <div class="main">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:11px;color:var(--muted)" id="acadLastUpdate">جاري التحميل...</div>
-      <button class="btn-primary" style="width:auto;min-height:auto;padding:8px 16px;font-size:13px" onclick="loadDashboard()">⟳ تحديث</button>
+    <!-- النماذج -->
+    <div class="card" style="margin-bottom:14px">
+      <h2 style="font-size:16px;margin-bottom:14px">النماذج الإلكترونية</h2>
+      <div class="services-grid">
+        <div class="service-card" onclick="showScreen('screenForm5')">
+          <div class="svc-icon" style="background:#eff6ff;font-size:20px">📋</div>
+          <div><div class="svc-title">نموذج (5) — تقييم لجنة المناقشة</div><div class="svc-desc">تقرير + مناقشة + عرض تقديمي</div></div>
+        </div>
+        <div class="service-card" onclick="showScreen('screenForm7')">
+          <div class="svc-icon" style="background:#eff6ff;font-size:20px">👁</div>
+          <div><div class="svc-title">نموذج (7) — متابعة التدريب الميداني</div><div class="svc-desc">تقييم أداء الطالب خلال التدريب</div></div>
+        </div>
+        <div class="service-card" onclick="showScreen('screenForm8')">
+          <div class="svc-icon" style="background:#eff6ff;font-size:20px">✅</div>
+          <div><div class="svc-title">نموذج (8) — التقييم النهائي</div><div class="svc-desc">استمارة التقييم النهائي للتدريب</div></div>
+        </div>
+      </div>
     </div>
-    <div class="stats-grid" id="acadStatsGrid"><div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div></div>
-    <div class="filters-dash">
-      <select id="dashFilterStatus" onchange="renderDashEntities()"><option value="">كل الجهات</option><option value="full">الممتلئة</option><option value="available">المتاحة</option></select>
-      <select id="dashFilterGender" onchange="renderDashEntities()"><option value="">الجنسين</option><option value="male">طلاب</option><option value="female">طالبات</option></select>
+    <!-- لوحة الحجوزات -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h2 style="font-size:16px;margin-bottom:0">لوحة متابعة الحجوزات</h2>
+        <button class="btn-primary" style="width:auto;min-height:auto;padding:8px 16px;font-size:13px" onclick="loadDashboard()">⟳ تحديث</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px" id="acadLastUpdate">جاري التحميل...</div>
+      <div class="stats-grid" id="acadStatsGrid"><div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div></div>
+      <div class="filters-dash">
+        <select id="dashFilterStatus" onchange="renderDashEntities()"><option value="">كل الجهات</option><option value="full">الممتلئة</option><option value="available">المتاحة</option></select>
+        <select id="dashFilterGender" onchange="renderDashEntities()"><option value="">الجنسين</option><option value="male">طلاب</option><option value="female">طالبات</option></select>
+      </div>
+      <div class="section-title-dash">الجهات التدريبية</div>
+      <div id="acadEntityList"></div>
+      <div class="section-title-dash" style="margin-top:20px">توزيع التخصصات</div>
+      <div id="acadMajorsList" style="background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:20px"></div>
     </div>
-    <div class="section-title-dash">الجهات التدريبية</div>
-    <div id="acadEntityList"></div>
-    <div class="section-title-dash" style="margin-top:20px">توزيع التخصصات</div>
-    <div id="acadMajorsList" style="background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:20px"></div>
+  </div>
+</div>
+
+<!-- نموذج 5 — تقييم لجنة المناقشة -->
+<div id="screenForm5" class="screen">
+  <div class="header"><button class="back-btn" onclick="showScreen('screenAcadDashboard')">‹ رجوع</button><h1>تقييم لجنة المناقشة</h1><p>نموذج رقم (5)</p></div>
+  <div class="main">
+    <div class="card">
+      <div class="field-input required"><label>اسم الطالب</label><input id="f5Name" type="text" placeholder="الاسم الكامل"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field-input required"><label>الرقم الجامعي</label><input id="f5Id" type="text" placeholder="الرقم"></div>
+        <div class="field-input required"><label>التخصص</label><input id="f5Major" type="text" placeholder="التخصص"></div>
+      </div>
+      <div class="field-input required"><label>جهة التدريب</label><input id="f5Org" type="text" placeholder="اسم الجهة"></div>
+      <div class="field-input required"><label>رمز ورقم المقرر</label><input id="f5Course" type="text" placeholder="رمز المقرر"></div>
+    </div>
+
+    <!-- تقييم التقرير -->
+    <div class="card">
+      <div class="section-title-dash">أولاً: تقييم تقرير التدريب (10 درجات)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+          <tr style="background:#eff6ff"><th style="padding:8px;border:1px solid var(--line);text-align:right">المعيار</th><th style="padding:8px;border:1px solid var(--line);text-align:center;width:60px">الدرجة الكاملة</th><th style="padding:8px;border:1px solid var(--line);text-align:center;width:80px">الدرجة المتحصل عليها</th></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">مدى وضوح محتوى التقرير ومستواه العلمي</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5r1" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">الترتيب المنطقي لأجزاء التقرير</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5r2" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">شمولية التقرير لكافة جوانب التدريب</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5r3" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">مستوى اللغة المستخدمة</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5r4" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">إخراج التقرير</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5r5" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#ecfdf5"><td style="padding:8px;border:1px solid var(--line);font-weight:700">المجموع</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">10</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700;color:var(--g3)" id="f5rTotal">0</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- تقييم المناقشة -->
+    <div class="card">
+      <div class="section-title-dash">ثانياً: تقييم مناقشة الطالب (10 درجات)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+          <tr style="background:#eff6ff"><th style="padding:8px;border:1px solid var(--line);text-align:right">المعيار</th><th style="padding:8px;border:1px solid var(--line);text-align:center;width:60px">الدرجة الكاملة</th><th style="padding:8px;border:1px solid var(--line);text-align:center;width:80px">الدرجة المتحصل عليها</th></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">العرض الجيد للتقرير على اللجنة (وضوح الكلام، تنظيم الأفكار، الثقة بالنفس)</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5d1" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">القدرة على التوظيف الفعال للمعرفة المكتسبة أثناء التدريب الميداني للإجابة على الاستفسارات</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5d2" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">اكتساب المهارات من خلال عرض التجارب وتحليل وتفسير البيانات للأجهزة</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5d3" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">المستوى المعرفي المكتسب من التدريب</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5d4" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">التقييم العام للطالب</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5d5" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#ecfdf5"><td style="padding:8px;border:1px solid var(--line);font-weight:700">المجموع</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">10</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700;color:var(--g3)" id="f5dTotal">0</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- تقييم العرض التقديمي -->
+    <div class="card">
+      <div class="section-title-dash">ثالثاً: تقييم العرض التقديمي (10 درجات)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+          <tr style="background:#eff6ff"><th style="padding:8px;border:1px solid var(--line);text-align:right">المعيار</th><th style="padding:8px;border:1px solid var(--line);text-align:center;width:60px">الدرجة الكاملة</th><th style="padding:8px;border:1px solid var(--line);text-align:center;width:80px">الدرجة المتحصل عليها</th></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">مدى وضوح محتوى العرض التقديمي ومستواه العلمي</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5p1" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">الترتيب المنطقي لأجزاء العرض التقديمي</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5p2" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">شمولية العرض التقديمي لكافة جوانب التدريب</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5p3" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">مستوى اللغة المستخدمة في العرض التقديمي</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5p4" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">إخراج العرض التقديمي</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">2</td><td style="padding:8px;border:1px solid var(--line)"><input type="number" id="f5p5" min="0" max="2" placeholder="0-2" style="width:100%;border:1px solid #d1d5db;border-radius:8px;padding:6px;text-align:center;font-size:14px"></td></tr>
+          <tr style="background:#ecfdf5"><td style="padding:8px;border:1px solid var(--line);font-weight:700">المجموع</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700">10</td><td style="padding:8px;border:1px solid var(--line);text-align:center;font-weight:700;color:var(--g3)" id="f5pTotal">0</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- المجموع الكلي -->
+    <div class="card" style="background:#ecfdf5;border:2px solid #bbf7d0">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:16px;font-weight:700;color:var(--g3)">المجموع الكلي للمشرف الأكاديمي</div>
+        <div style="font-size:28px;font-weight:700;color:var(--g3)" id="f5GrandTotal">0 / 30</div>
+      </div>
+    </div>
+
+    <div class="field-input" style="margin-top:4px"><label>اسم عضو لجنة التقييم</label><input id="f5Evaluator" type="text" placeholder="الاسم"></div>
+    <button class="btn-primary" id="f5SubmitBtn" onclick="submitForm5()">إرسال التقييم</button>
+    <div class="msg" id="f5Msg"></div>
+  </div>
+</div>
+
+<!-- نموذج 7 — متابعة المشرف الأكاديمي -->
+<div id="screenForm7" class="screen">
+  <div class="header"><button class="back-btn" onclick="showScreen('screenAcadDashboard')">‹ رجوع</button><h1>متابعة التدريب الميداني</h1><p>نموذج رقم (7)</p></div>
+  <div class="main">
+    <div class="card">
+      <div class="field-input required"><label>اسم الطالب</label><input id="f7Name" type="text" placeholder="الاسم الكامل"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field-input required"><label>الرقم الجامعي</label><input id="f7Id" type="text" placeholder="الرقم"></div>
+        <div class="field-input required"><label>التخصص</label><input id="f7Major" type="text" placeholder="التخصص"></div>
+      </div>
+      <div class="field-input required"><label>جهة التدريب</label><input id="f7Org" type="text" placeholder="اسم الجهة"></div>
+      <div class="field-input required"><label>اسم المشرف الأكاديمي للمقرر</label><input id="f7Supervisor" type="text" placeholder="الاسم"></div>
+    </div>
+    <div class="card">
+      <div class="section-title-dash">معايير التقييم لأداء الطالب (5 = ممتاز، 1 = ضعيف)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+          <tr style="background:#eff6ff"><th style="padding:8px;border:1px solid var(--line);text-align:right">المعيار</th><th style="padding:8px;border:1px solid var(--line);text-align:center">5</th><th style="padding:8px;border:1px solid var(--line);text-align:center">4</th><th style="padding:8px;border:1px solid var(--line);text-align:center">3</th><th style="padding:8px;border:1px solid var(--line);text-align:center">2</th><th style="padding:8px;border:1px solid var(--line);text-align:center">1</th></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">مستوى المهارات العلمية التي اكتسبها الطالب</td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s1" value="5" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s1" value="4" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s1" value="3" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s1" value="2" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s1" value="1" style="accent-color:var(--g4)"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">مستوى الخبرة العملية التي اكتسبها الطالب</td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s2" value="5" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s2" value="4" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s2" value="3" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s2" value="2" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s2" value="1" style="accent-color:var(--g4)"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">مدى مناسبة برنامج التدريب للتخصص</td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s3" value="5" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s3" value="4" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s3" value="3" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s3" value="2" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s3" value="1" style="accent-color:var(--g4)"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">نوعية التقنية المستخدمة في موقع التدريب</td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s4" value="5" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s4" value="4" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s4" value="3" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s4" value="2" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s4" value="1" style="accent-color:var(--g4)"></td></tr>
+          <tr><td style="padding:8px;border:1px solid var(--line)">مستوى التواصل بين الطالب والمشرف خلال فترة التدريب</td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s5" value="5" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s5" value="4" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s5" value="3" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s5" value="2" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s5" value="1" style="accent-color:var(--g4)"></td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid var(--line)">التقييم العام لأداء الطالب</td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s6" value="5" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s6" value="4" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s6" value="3" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s6" value="2" style="accent-color:var(--g4)"></td><td style="padding:8px;border:1px solid var(--line);text-align:center"><input type="radio" name="f7s6" value="1" style="accent-color:var(--g4)"></td></tr>
+        </table>
+      </div>
+    </div>
+    <button class="btn-primary" id="f7SubmitBtn" onclick="submitForm7()">إرسال النموذج</button>
+    <div class="msg" id="f7Msg"></div>
+  </div>
+</div>
+
+<!-- نموذج 8 — التقييم النهائي -->
+<div id="screenForm8" class="screen">
+  <div class="header"><button class="back-btn" onclick="showScreen('screenAcadDashboard')">‹ رجوع</button><h1>استمارة التقييم النهائي</h1><p>نموذج رقم (8)</p></div>
+  <div class="main">
+    <div class="card">
+      <div class="field-input required"><label>اسم الطالب</label><input id="f8Name" type="text" placeholder="الاسم الكامل"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field-input required"><label>الرقم الجامعي</label><input id="f8Id" type="text" placeholder="الرقم"></div>
+        <div class="field-input required"><label>التخصص</label><input id="f8Major" type="text" placeholder="التخصص"></div>
+      </div>
+      <div class="field-input required"><label>جهة التدريب</label><input id="f8Org" type="text" placeholder="اسم الجهة"></div>
+      <div class="field-input required"><label>رمز ورقم المقرر</label><input id="f8Course" type="text" placeholder="رمز المقرر"></div>
+      <div class="field-input required"><label>الفصل الدراسي</label><input id="f8Semester" type="text" placeholder="مثال: الصيفي 1447هـ"></div>
+      <div class="field-input required"><label>المشرف على المقرر</label><input id="f8Supervisor" type="text" placeholder="اسم المشرف"></div>
+    </div>
+    <div class="card">
+      <div class="section-title-dash">توزيع الدرجات (المجموع الكلي 100)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <div class="field-input"><label>تقييم المشرف الأكاديمي (30)</label><input type="number" id="f8s1" min="0" max="30" placeholder="0-30" style="border:1px solid #d1d5db;border-radius:10px;padding:10px;font-size:14px;width:100%"></div>
+        <div class="field-input"><label>تقييم لجنة المناقشة والعرض (20)</label><input type="number" id="f8s2" min="0" max="20" placeholder="0-20" style="border:1px solid #d1d5db;border-radius:10px;padding:10px;font-size:14px;width:100%"></div>
+        <div class="field-input"><label>تقييم التقرير - لجنة التحكيم (10)</label><input type="number" id="f8s3" min="0" max="10" placeholder="0-10" style="border:1px solid #d1d5db;border-radius:10px;padding:10px;font-size:14px;width:100%"></div>
+        <div class="field-input"><label>تقييم جهة التدريب (40)</label><input type="number" id="f8s4" min="0" max="40" placeholder="0-40" style="border:1px solid #d1d5db;border-radius:10px;padding:10px;font-size:14px;width:100%"></div>
+      </div>
+      <div style="background:#ecfdf5;border:2px solid #bbf7d0;border-radius:14px;padding:14px;text-align:center;margin-top:10px">
+        <div style="font-size:13px;color:var(--g3);font-weight:700">المجموع الكلي</div>
+        <div style="font-size:32px;font-weight:700;color:var(--g3)" id="f8Total">0 / 100</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="field-input"><label>المشرف الأكاديمي للتدريب</label><input id="f8AcadName" type="text" placeholder="الاسم"></div>
+        <div class="field-input"><label>رئيس القسم</label><input id="f8HeadName" type="text" placeholder="الاسم"></div>
+      </div>
+    </div>
+    <button class="btn-primary" id="f8SubmitBtn" onclick="submitForm8()">إرسال التقييم النهائي</button>
+    <div class="msg" id="f8Msg"></div>
   </div>
 </div>
 
@@ -419,6 +588,68 @@ function loadFieldBookings(){var entity=document.getElementById('fieldEntitySear
 function loginAcad(){var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(ACAD_PWD.includes(pwd)){document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
 function logoutAcad(){showScreen('screenHome')}
 
+// حساب مجاميع نموذج 5
+function calcForm5(){
+  var rIds=['f5r1','f5r2','f5r3','f5r4','f5r5'];
+  var dIds=['f5d1','f5d2','f5d3','f5d4','f5d5'];
+  var pIds=['f5p1','f5p2','f5p3','f5p4','f5p5'];
+  function sum(ids){return ids.reduce(function(t,id){return t+(parseInt(document.getElementById(id).value)||0)},0)}
+  var r=sum(rIds),d=sum(dIds),p=sum(pIds);
+  document.getElementById('f5rTotal').textContent=r;
+  document.getElementById('f5dTotal').textContent=d;
+  document.getElementById('f5pTotal').textContent=p;
+  document.getElementById('f5GrandTotal').textContent=(r+d+p)+' / 30';
+}
+
+// حساب مجموع نموذج 8
+function calcForm8(){
+  var s1=parseInt(document.getElementById('f8s1').value)||0;
+  var s2=parseInt(document.getElementById('f8s2').value)||0;
+  var s3=parseInt(document.getElementById('f8s3').value)||0;
+  var s4=parseInt(document.getElementById('f8s4').value)||0;
+  document.getElementById('f8Total').textContent=(s1+s2+s3+s4)+' / 100';
+}
+
+function submitForm5(){
+  var msg=document.getElementById('f5Msg'),btn=document.getElementById('f5SubmitBtn');
+  var name=document.getElementById('f5Name').value.trim();
+  var sid=document.getElementById('f5Id').value.trim();
+  if(!name||!sid){msg.innerHTML='<div class="msg-error">يرجى تعبئة بيانات الطالب.</div>';return}
+  function getVal(id){return parseInt(document.getElementById(id).value)||0}
+  var rTotal=getVal('f5r1')+getVal('f5r2')+getVal('f5r3')+getVal('f5r4')+getVal('f5r5');
+  var dTotal=getVal('f5d1')+getVal('f5d2')+getVal('f5d3')+getVal('f5d4')+getVal('f5d5');
+  var pTotal=getVal('f5p1')+getVal('f5p2')+getVal('f5p3')+getVal('f5p4')+getVal('f5p5');
+  var obj={student_name:name,student_id:sid,major:document.getElementById('f5Major').value.trim(),training_org:document.getElementById('f5Org').value.trim(),course:document.getElementById('f5Course').value.trim(),evaluator:document.getElementById('f5Evaluator').value.trim(),report_score:rTotal,discussion_score:dTotal,presentation_score:pTotal,total:rTotal+dTotal+pTotal};
+  btn.disabled=true;btn.textContent='جاري الإرسال...';
+  callAPI('submitForm5',[obj],function(res){btn.disabled=false;btn.textContent='إرسال التقييم';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>'});
+}
+
+function submitForm7(){
+  var msg=document.getElementById('f7Msg'),btn=document.getElementById('f7SubmitBtn');
+  var name=document.getElementById('f7Name').value.trim();
+  var sid=document.getElementById('f7Id').value.trim();
+  if(!name||!sid){msg.innerHTML='<div class="msg-error">يرجى تعبئة بيانات الطالب.</div>';return}
+  function getRadio(n){var el=document.querySelector('input[name="'+n+'"]:checked');return el?parseInt(el.value):0}
+  var scores=[getRadio('f7s1'),getRadio('f7s2'),getRadio('f7s3'),getRadio('f7s4'),getRadio('f7s5'),getRadio('f7s6')];
+  var obj={student_name:name,student_id:sid,major:document.getElementById('f7Major').value.trim(),training_org:document.getElementById('f7Org').value.trim(),supervisor:document.getElementById('f7Supervisor').value.trim(),score_skills:scores[0],score_practical:scores[1],score_program:scores[2],score_tech:scores[3],score_communication:scores[4],score_general:scores[5],total:scores.reduce(function(a,b){return a+b},0)};
+  btn.disabled=true;btn.textContent='جاري الإرسال...';
+  callAPI('submitForm7',[obj],function(res){btn.disabled=false;btn.textContent='إرسال النموذج';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>'});
+}
+
+function submitForm8(){
+  var msg=document.getElementById('f8Msg'),btn=document.getElementById('f8SubmitBtn');
+  var name=document.getElementById('f8Name').value.trim();
+  var sid=document.getElementById('f8Id').value.trim();
+  if(!name||!sid){msg.innerHTML='<div class="msg-error">يرجى تعبئة بيانات الطالب.</div>';return}
+  var s1=parseInt(document.getElementById('f8s1').value)||0;
+  var s2=parseInt(document.getElementById('f8s2').value)||0;
+  var s3=parseInt(document.getElementById('f8s3').value)||0;
+  var s4=parseInt(document.getElementById('f8s4').value)||0;
+  var obj={student_name:name,student_id:sid,major:document.getElementById('f8Major').value.trim(),training_org:document.getElementById('f8Org').value.trim(),course:document.getElementById('f8Course').value.trim(),semester:document.getElementById('f8Semester').value.trim(),supervisor:document.getElementById('f8Supervisor').value.trim(),score_academic:s1,score_committee:s2,score_report:s3,score_field:s4,total:s1+s2+s3+s4,acad_name:document.getElementById('f8AcadName').value.trim(),head_name:document.getElementById('f8HeadName').value.trim()};
+  btn.disabled=true;btn.textContent='جاري الإرسال...';
+  callAPI('submitForm8',[obj],function(res){btn.disabled=false;btn.textContent='إرسال التقييم النهائي';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>'});
+}
+
 function loadDashboard(){var grid=document.getElementById('acadStatsGrid');grid.innerHTML='<div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div>';document.getElementById('acadEntityList').innerHTML='';document.getElementById('acadMajorsList').innerHTML='';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){grid.innerHTML='<div class="msg-error" style="grid-column:1/-1">خطأ في تحميل البيانات.</div>';return}dashData=data;var s=data.summary;grid.innerHTML=sc('إجمالي الحجوزات',s.totalBookings,'من '+s.totalEntities+' جهة')+sc('الجهات الممتلئة',s.fullEntities,'من '+s.totalEntities)+sc('طلاب',s.male,'ف1: '+s.maleP1+' | ف2: '+s.maleP2)+sc('طالبات',s.female,'ف1: '+s.femaleP1+' | ف2: '+s.femaleP2);renderDashEntities();renderDashMajors();document.getElementById('acadLastUpdate').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-SA')})}
 
 function sc(label,num,sub){return'<div class="stat-card"><div class="stat-num">'+num+'</div><div class="stat-label">'+label+'</div><div class="stat-sub">'+sub+'</div></div>'}
@@ -431,6 +662,13 @@ function pb(p,cc,label){if(!p||p.total===0)return'';var pct=Math.min(Math.round(
 function renderDashMajors(){if(!dashData)return;var box=document.getElementById('acadMajorsList');if(!dashData.majors.length){box.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted)">لا توجد بيانات</div>';return}box.innerHTML=dashData.majors.map(function(m){return'<div class="major-row-dash"><span style="font-weight:700;color:var(--text);font-size:13px">'+m.major+'</span><div style="display:flex;gap:10px;font-size:12px"><span class="cnt-m">طلاب: '+m.male+'</span><span class="cnt-f">طالبات: '+m.female+'</span><span style="color:var(--text);font-weight:700">'+m.total+'</span></div></div>'}).join('')}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
+
+// حساب تلقائي لمجاميع النماذج
+document.addEventListener('input',function(e){
+  var id=e.target.id||'';
+  if(id.startsWith('f5'))calcForm5();
+  if(id.startsWith('f8'))calcForm8();
+});
 </script>
 </body>
 </html>
