@@ -1,28 +1,20 @@
 {
-  "name": "وحدة التدريب والشراكات - رفحاء",
-  "short_name": "تدريب رفحاء",
-  "description": "الخدمات الإلكترونية لوحدة التدريب والشراكات - الكلية التطبيقية فرع رفحاء",
-  "start_url": "./index.html",
+  "name": "وحدة التدريب والشراكات",
+  "short_name": "التدريب التطبيقي",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#14532d",
   "theme_color": "#14532d",
-  "orientation": "portrait",
-  "lang": "ar",
-  "dir": "rtl",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "https://drive.google.com/thumbnail?id=1a0o2g2Fys8cAluVScrNormwMTIxQt1Jd&sz=w192",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "https://drive.google.com/thumbnail?id=1a0o2g2Fys8cAluVScrNormwMTIxQt1Jd&sz=w512",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ],
-  "screenshots": [],
-  "categories": ["education", "productivity"]
+  ]
 }
