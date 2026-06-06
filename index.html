@@ -422,31 +422,29 @@ function loadRafhaOptions() {
   selectedRafhaOption = null;
   bar.style.display = 'none';
   document.getElementById('rafhaSelectedBox').style.display = 'none';
+
+  // تحقق من قبول خارج المنطقة أولاً
+  if (currentStudent.has_outside_approval) {
+    document.getElementById('rafhaSubmitBtn').style.display = 'none';
+    tickets.innerHTML = '<div style="background:#fff7ed;border:1px solid #fcd34d;border-radius:16px;padding:20px;text-align:center;line-height:2.2">' +
+      '<div style="font-size:22px;margin-bottom:8px">🎉</div>' +
+      '<div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px">تم قبولك في جهة التدريب</div>' +
+      '<div style="font-size:14px;color:#374151"><strong>الجهة:</strong> ' + currentStudent.entity + '</div>' +
+      '<div style="font-size:14px;color:#374151"><strong>تاريخ البداية:</strong> ' + currentStudent.start_date + '</div>' +
+      '<div style="font-size:14px;color:#374151"><strong>تاريخ الانتهاء:</strong> ' + currentStudent.end_date + '</div>' +
+      '<div style="margin-top:12px;font-size:12px;color:#6b7280">تدريبك خارج المنطقة — لا تحتاج لاختيار جهة داخل رفحاء</div>' +
+      '</div>';
+    return;
+  }
+
   document.getElementById('rafhaSubmitBtn').style.display = 'block';
   tickets.innerHTML = '<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري البحث...</p></div>';
 
   callAPI('getRafhaOptions', [currentStudent.student_number, currentStudent.national_number], function(data) {
-
-    // تحقق من وجود قبول خارج المنطقة
-    if (currentStudent.has_outside_approval) {
-      document.getElementById('rafhaSubmitBtn').style.display = 'none';
-      tickets.innerHTML = '<div style="background:#fff7ed;border:1px solid #fcd34d;border-radius:16px;padding:20px;text-align:center;line-height:2.2">' +
-        '<div style="font-size:22px;margin-bottom:8px">🎉</div>' +
-        '<div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px">تم قبولك في جهة التدريب</div>' +
-        '<div style="font-size:14px;color:#374151"><strong>الجهة:</strong> ' + currentStudent.entity + '</div>' +
-        '<div style="font-size:14px;color:#374151"><strong>تاريخ البداية:</strong> ' + currentStudent.start_date + '</div>' +
-        '<div style="font-size:14px;color:#374151"><strong>تاريخ الانتهاء:</strong> ' + currentStudent.end_date + '</div>' +
-        '<div style="margin-top:12px;font-size:12px;color:#6b7280">تدريبك خارج المنطقة — لا تحتاج لاختيار جهة داخل رفحاء</div>' +
-        '</div>';
-      return;
-    }
-
     if (!data || data.length === 0) {
       tickets.innerHTML = '<div class="msg-error">لا توجد جهات متاحة لتخصصك حالياً.</div>';
       return;
     }
-
-    // باقي كود عرض الجهات...
     tickets.innerHTML = '';
     var grouped = {};
     data.forEach(function(o) {
