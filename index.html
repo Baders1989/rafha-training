@@ -415,8 +415,60 @@ function toggleOtherCity(){var v=document.getElementById('insideCity').value;doc
 
 function submitPreferences(){if(!currentStudent)return;var nameEn=document.getElementById('nameEn').value.trim(),mobile=document.getElementById('prefMobile').value.trim(),choice=document.getElementById('summerChoice').value,locType=document.getElementById('locationType').value,msg=document.getElementById('prefMsg'),btn=document.getElementById('prefSubmitBtn'),city='',region='';if(choice==='YES'){if(locType==='inside'){region='الحدود الشمالية';var c=document.getElementById('insideCity').value;city=c==='OTHER'?document.getElementById('insideOtherCity').value.trim():c}else if(locType==='outside'){city=document.getElementById('outsideCity').value.trim();region='خارج الحدود الشمالية'}}if(!nameEn||!mobile||!choice){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع البيانات.</div>';return}btn.disabled=true;btn.textContent='جاري الإرسال...';callAPI('submitTrainingPreferences',[{student_number:currentStudent.student_number,national_number:currentStudent.national_number,name_en:nameEn,mobile:mobile,summer_choice:choice,training_location_type:locType,region:region,city:city}],function(res){btn.disabled=false;btn.textContent='إرسال';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>';if(res.ok&&res.certificate_url)msg.innerHTML+='<a href="'+res.certificate_url+'" target="_blank" style="display:block;margin-top:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:white;text-decoration:none;font-weight:700;text-align:center;font-size:15px">طباعة الإفادة</a>'})}
 
-function loadRafhaOptions(){if(!currentStudent)return;var tickets=document.getElementById('rafhaTickets'),bar=document.getElementById('rafhaStatsBar');selectedRafhaOption=null;bar.style.display='none';document.getElementById('rafhaSelectedBox').style.display='none';tickets.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري البحث...</p></div>';callAPI('getRafhaOptions',[currentStudent.student_number,currentStudent.national_number],function(data){if(!data||data.length===0){tickets.innerHTML='<div class="msg-error">لا توجد جهات متاحة لتخصصك حالياً.</div>';return}tickets.innerHTML='';var grouped={};data.forEach(function(o){if(!grouped[o.entity])grouped[o.entity]={};grouped[o.entity][o.period_code]=o});var entities=Object.keys(grouped);bar.style.display='block';bar.textContent='الجهات المتاحة: '+entities.length+' جهة';entities.forEach(function(entity){var p1=grouped[entity]['FIELD_FIRST'],p2=grouped[entity]['PLATFORM_FIRST'],sec=document.createElement('div');sec.className='entity-section';sec.innerHTML='<div class="entity-label">'+entity+'</div><div class="periods-row">'+mkPeriodCard(p1,'الفترة الأولى')+mkPeriodCard(p2,'الفترة الثانية')+'</div>';var cols=sec.querySelectorAll('.period-option');if(p1&&Number(p1.seats)>0)cols[0].onclick=function(){selectRafha(cols[0],p1)};if(p2&&Number(p2.seats)>0)cols[1].onclick=function(){selectRafha(cols[1],p2)};tickets.appendChild(sec)})})}
+function loadRafhaOptions() {
+  if (!currentStudent) return;
+  var tickets = document.getElementById('rafhaTickets');
+  var bar = document.getElementById('rafhaStatsBar');
+  selectedRafhaOption = null;
+  bar.style.display = 'none';
+  document.getElementById('rafhaSelectedBox').style.display = 'none';
+  document.getElementById('rafhaSubmitBtn').style.display = 'block';
+  tickets.innerHTML = '<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري البحث...</p></div>';
 
+  callAPI('getRafhaOptions', [currentStudent.student_number, currentStudent.national_number], function(data) {
+
+    // تحقق من وجود قبول خارج المنطقة
+    if (currentStudent.has_outside_approval) {
+      document.getElementById('rafhaSubmitBtn').style.display = 'none';
+      tickets.innerHTML = '<div style="background:#fff7ed;border:1px solid #fcd34d;border-radius:16px;padding:20px;text-align:center;line-height:2.2">' +
+        '<div style="font-size:22px;margin-bottom:8px">🎉</div>' +
+        '<div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px">تم قبولك في جهة التدريب</div>' +
+        '<div style="font-size:14px;color:#374151"><strong>الجهة:</strong> ' + currentStudent.entity + '</div>' +
+        '<div style="font-size:14px;color:#374151"><strong>تاريخ البداية:</strong> ' + currentStudent.start_date + '</div>' +
+        '<div style="font-size:14px;color:#374151"><strong>تاريخ الانتهاء:</strong> ' + currentStudent.end_date + '</div>' +
+        '<div style="margin-top:12px;font-size:12px;color:#6b7280">تدريبك خارج المنطقة — لا تحتاج لاختيار جهة داخل رفحاء</div>' +
+        '</div>';
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      tickets.innerHTML = '<div class="msg-error">لا توجد جهات متاحة لتخصصك حالياً.</div>';
+      return;
+    }
+
+    // باقي كود عرض الجهات...
+    tickets.innerHTML = '';
+    var grouped = {};
+    data.forEach(function(o) {
+      if (!grouped[o.entity]) grouped[o.entity] = {};
+      grouped[o.entity][o.period_code] = o;
+    });
+    var entities = Object.keys(grouped);
+    bar.style.display = 'block';
+    bar.textContent = 'الجهات المتاحة: ' + entities.length + ' جهة';
+    entities.forEach(function(entity) {
+      var p1 = grouped[entity]['FIELD_FIRST'];
+      var p2 = grouped[entity]['PLATFORM_FIRST'];
+      var sec = document.createElement('div');
+      sec.className = 'entity-section';
+      sec.innerHTML = '<div class="entity-label">' + entity + '</div><div class="periods-row">' + mkPeriodCard(p1, 'الفترة الأولى') + mkPeriodCard(p2, 'الفترة الثانية') + '</div>';
+      var cols = sec.querySelectorAll('.period-option');
+      if (p1 && Number(p1.seats) > 0) cols[0].onclick = function() { selectRafha(cols[0], p1); };
+      if (p2 && Number(p2.seats) > 0) cols[1].onclick = function() { selectRafha(cols[1], p2); };
+      tickets.appendChild(sec);
+    });
+  });
+}
 function mkPeriodCard(p,label){var d=!p||Number(p.seats)<=0,t=!p?'غير متاح':(Number(p.seats)<=0?'اكتملت المقاعد':'متاح: '+p.seats+' مقعد');return'<div class="period-option'+(d?' disabled':'')+'"><div class="period-mini-title">'+label+'</div><div style="font-size:12px;font-weight:700;color:#111827;margin-bottom:6px">'+(p?p.entity:'')+'</div><span class="seat-badge'+(d?' full':'')+'">'+t+'</span></div>'}
 
 function selectRafha(el,option){document.querySelectorAll('.period-option').forEach(function(t){t.classList.remove('active')});el.classList.add('active');selectedRafhaOption=option;var box=document.getElementById('rafhaSelectedBox');box.style.display='block';box.innerHTML='✅ تم الاختيار: '+option.entity+'<br>'+option.period;box.scrollIntoView({behavior:'smooth',block:'center'})}
