@@ -425,12 +425,12 @@ function loadRafhaOptions() {
 
   // ✅ تحقق من حالة الحجز أولاً
   var now = new Date();
-  var start = new Date('2026-06-09T14:05:00+03:00');
-  var end   = new Date('2026-06-09T14:08:00+03:00');
+  var start = new Date('2026-06-09T14:08:00+03:00');
+  var end   = new Date('2026-06-09T14:10:00+03:00');
 
   if (now < start) {
     document.getElementById('rafhaSubmitBtn').style.display = 'none';
-    tickets.innerHTML = '<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div><div style="font-size:14px;color:#374151">يفتح في يوم الثلاثاء الموافق: <strong>09/06/2026</strong> الساعة <strong>14:09 م</strong></div></div>';
+    tickets.innerHTML = '<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div><div style="font-size:14px;color:#374151">يفتح في يوم الثلاثاء الموافق: <strong>09/06/2026</strong> الساعة <strong>14:11 م</strong></div></div>';
     return;
   }
 
