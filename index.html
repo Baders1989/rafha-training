@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="تدريب رفحاء">
   <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1a0o2g2Fys8cAluVScrNormwMTIxQt1Jd&sz=w192">
-  <title>وحدة التدريب والشراكات</title>
+  <title>وحدة التدريب</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     :root{--g1:#0f3d2e;--g2:#14532d;--g3:#166534;--g4:#15803d;--bg:#f0f5f1;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
@@ -425,12 +425,12 @@ function loadRafhaOptions() {
 
   // ✅ تحقق من حالة الحجز أولاً
   var now = new Date();
-  var start = new Date('2026-06-15T07:47:00+03:00');
-  var end   = new Date('2026-06-15T07:49:00+03:00');
+  var start = new Date('2026-06-15T09:30:00+03:00');
+  var end   = new Date('2026-06-15T09:32:00+03:00');
 
   if (now < start) {
     document.getElementById('rafhaSubmitBtn').style.display = 'none';
-    tickets.innerHTML = '<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div><div style="font-size:14px;color:#374151">يفتح في يوم الثلاثاء الموافق: <strong>15/06/2026</strong> الساعة <strong>07:47 ص</strong></div></div>';
+    tickets.innerHTML = '<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div><div style="font-size:14px;color:#374151">يفتح في يوم الثلاثاء الموافق: <strong>15/06/2026</strong> الساعة <strong>09:30 ص</strong></div></div>';
     return;
   }
 
