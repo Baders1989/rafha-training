@@ -145,6 +145,31 @@
     .hidden{display:none!important}
     @media(min-width:600px){.main{padding:24px 20px}.card{padding:26px 22px}.card h2{font-size:22px}.stats-grid{grid-template-columns:repeat(4,1fr)}}
     @media(max-width:380px){.period-headers{grid-template-columns:1fr}.periods-row{grid-template-columns:1fr}.gender-grid{grid-template-columns:1fr}}
+    /* ===== بطاقة التدريب ===== */
+    #ticketOverlay{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+    #ticketOverlay.show{display:flex;animation:fadeIn .2s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .ticket-sheet{background:#fff;border-radius:28px 28px 0 0;padding:20px 18px calc(24px + var(--safe-bottom));width:100%;max-width:500px;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1)}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .ticket-handle{width:40px;height:4px;background:#e5e7eb;border-radius:99px;margin:0 auto 18px}
+    .ticket-header{text-align:center;margin-bottom:16px}
+    .ticket-emoji{font-size:38px;margin-bottom:6px}
+    .ticket-header h3{font-size:17px;font-weight:800;color:var(--g1);margin-bottom:4px}
+    .ticket-header p{font-size:12px;color:var(--muted)}
+    .ticket-body{background:linear-gradient(135deg,var(--g1),var(--g3));border-radius:20px;padding:18px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden}
+    .ticket-body::before{content:"";position:absolute;top:-40px;left:-40px;width:120px;height:120px;background:rgba(255,255,255,.06);border-radius:50%}
+    .ticket-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;position:relative;z-index:1}
+    .ticket-row:last-child{margin-bottom:0}
+    .ticket-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+    .ticket-label{font-size:10px;opacity:.7;font-weight:600;margin-bottom:2px}
+    .ticket-value{font-size:14px;font-weight:700;line-height:1.5}
+    .ticket-divider{border:none;border-top:1px dashed rgba(255,255,255,.25);margin:12px 0}
+    .ticket-periods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .ticket-period-box{background:rgba(255,255,255,.12);border-radius:12px;padding:10px;text-align:center}
+    .ticket-period-title{font-size:11px;font-weight:800;opacity:.85;margin-bottom:4px}
+    .ticket-period-dates{font-size:10px;opacity:.75;line-height:1.8}
+    .ticket-no-booking{text-align:center;padding:20px;color:rgba(255,255,255,.8);font-size:13px;line-height:2}
+    .ticket-close-btn{width:100%;min-height:48px;border:1.5px solid var(--line);background:#f9fafb;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text)}
   </style>
 </head>
 <body>
@@ -220,6 +245,10 @@
         <div class="service-card" onclick="showScreen('screenCertificate')">
           <div class="svc-icon" style="background:#eff6ff">📄</div>
           <div style="flex:1"><div class="svc-title">إفادة التدريب التطبيقي</div><div class="svc-desc">إصدار خطاب الإفادة للتدريب خارج المنطقة</div></div>
+        </div>
+        <div class="service-card" onclick="showTrainingTicket()">
+          <div class="svc-icon" style="background:#fdf4ff">🎫</div>
+          <div style="flex:1"><div class="svc-title">بطاقة تدريبي</div><div class="svc-desc">عرض تفاصيل جهة التدريب والفترة والمقرر</div></div>
         </div>
       </div>
     </div>
@@ -515,6 +544,94 @@ function pb(p,cc,label){if(!p||p.total===0)return'';var pct=Math.min(Math.round(
 function renderDashMajors(){if(!dashData)return;var box=document.getElementById('acadMajorsList');if(!dashData.majors.length){box.innerHTML='<div style="padding:16px;text-align:center;color:var(--muted)">لا توجد بيانات</div>';return}box.innerHTML=dashData.majors.map(function(m){return'<div class="major-row-dash"><span style="font-weight:700;color:var(--text);font-size:13px">'+m.major+'</span><div style="display:flex;gap:10px;font-size:12px"><span class="cnt-m">طلاب: '+m.male+'</span><span class="cnt-f">طالبات: '+m.female+'</span><span style="color:var(--text);font-weight:700">'+m.total+'</span></div></div>'}).join('')}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
+
+// ===== بطاقة التدريب =====
+function showTrainingTicket() {
+  var overlay = document.getElementById('ticketOverlay');
+  overlay.classList.add('show');
+  document.getElementById('ticketContent').innerHTML = '<div class="loader-wrap" style="padding:20px 0"><div class="loader" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div></div>';
+
+  callAPI('verifyRafhaStudent', [currentStudent.student_number, currentStudent.national_number], function(res) {
+    var content = document.getElementById('ticketContent');
+    if (!res || !res.ok) {
+      // الطالب ليس لديه حجز بعد
+      content.innerHTML =
+        '<div class="ticket-no-booking">' +
+        '<div style="font-size:32px;margin-bottom:10px">📭</div>' +
+        '<div style="font-weight:800;font-size:15px;margin-bottom:6px">لا يوجد حجز مسجل</div>' +
+        '<div>يمكنك الحجز من خدمة "اختيار جهة التدريب"</div>' +
+        '</div>';
+      return;
+    }
+
+    if (res.already_booked) {
+      var entity = res.entity || '';
+      var period = res.period || '';
+      var periodCode = period === 'الفترة الأولى' ? 'FIELD_FIRST' : 'PLATFORM_FIRST';
+      var isFirst = periodCode === 'FIELD_FIRST';
+
+      content.innerHTML =
+        '<div class="ticket-row">' +
+          '<span class="ticket-icon">👤</span>' +
+          '<div class="ticket-info"><div class="ticket-label">اسم الطالب</div><div class="ticket-value">' + currentStudent.name + '</div></div>' +
+        '</div>' +
+        '<div class="ticket-row">' +
+          '<span class="ticket-icon">🎓</span>' +
+          '<div class="ticket-info"><div class="ticket-label">التخصص</div><div class="ticket-value">' + (currentStudent.major || '') + '</div></div>' +
+        '</div>' +
+        '<div class="ticket-row">' +
+          '<span class="ticket-icon">📚</span>' +
+          '<div class="ticket-info"><div class="ticket-label">المقرر</div><div class="ticket-value">' + (currentStudent.course || '—') + '</div></div>' +
+        '</div>' +
+        '<hr class="ticket-divider">' +
+        '<div class="ticket-row">' +
+          '<span class="ticket-icon">🏢</span>' +
+          '<div class="ticket-info"><div class="ticket-label">جهة التدريب</div><div class="ticket-value">' + entity + '</div></div>' +
+        '</div>' +
+        '<div class="ticket-row">' +
+          '<span class="ticket-icon">🗓️</span>' +
+          '<div class="ticket-info"><div class="ticket-label">الفترة</div><div class="ticket-value">' + period + '</div></div>' +
+        '</div>' +
+        '<div class="ticket-periods">' +
+          '<div class="ticket-period-box">' +
+            '<div class="ticket-period-title">⚡ الميداني</div>' +
+            '<div class="ticket-period-dates">' + (isFirst ? '28/06/2026' : '26/07/2026') + '<br>→ ' + (isFirst ? '23/07/2026' : '20/08/2026') + '</div>' +
+          '</div>' +
+          '<div class="ticket-period-box">' +
+            '<div class="ticket-period-title">💻 المنصات</div>' +
+            '<div class="ticket-period-dates">' + (isFirst ? '26/07/2026' : '28/06/2026') + '<br>→ ' + (isFirst ? '20/08/2026' : '23/07/2026') + '</div>' +
+          '</div>' +
+        '</div>';
+    } else {
+      content.innerHTML =
+        '<div class="ticket-no-booking">' +
+        '<div style="font-size:32px;margin-bottom:10px">📭</div>' +
+        '<div style="font-weight:800;font-size:15px;margin-bottom:6px">لا يوجد حجز مسجل بعد</div>' +
+        '<div>يمكنك الحجز من خدمة "اختيار جهة التدريب"</div>' +
+        '</div>';
+    }
+  });
+}
+
+function closeTicket(e) {
+  if (!e || e.target === document.getElementById('ticketOverlay')) {
+    document.getElementById('ticketOverlay').classList.remove('show');
+  }
+}
 </script>
+<!-- بطاقة التدريب -->
+<div id="ticketOverlay" onclick="closeTicket(event)">
+  <div class="ticket-sheet" id="ticketSheet">
+    <div class="ticket-handle"></div>
+    <div class="ticket-header">
+      <div class="ticket-emoji">🎫</div>
+      <h3>بطاقة التدريب الصيفي</h3>
+      <p>الفصل الصيفي 1447هـ — الكلية التطبيقية</p>
+    </div>
+    <div class="ticket-body" id="ticketContent"></div>
+    <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
+  </div>
+</div>
+
 </body>
 </html>
