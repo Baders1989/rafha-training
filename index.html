@@ -585,16 +585,13 @@ function showTrainingTicket() {
 
   callAPI('checkStudentPledge', [currentStudent.student_number], function(res) {
     if (res && res.signed) {
-      // وقّع مسبقاً - تحقق هل طالبة وهل أدخلت بيانات ولي الأمر
-      var isFemale = currentStudent.gender === 'female' ||
-                     String(currentStudent.gender||'') === 'طالبة';
+      var isFemale = res.gender === 'female';
       if (isFemale && !res.guardian_done) {
         showGuardianView();
       } else {
         showCardView();
       }
     } else {
-      // لم يوقّع بعد - اعرض التعهد
       document.getElementById('pledgeConfirmBtn').textContent = 'أوافق وأعرض بطاقتي';
       document.getElementById('pledgeConfirmBtn').disabled = true;
     }
@@ -615,21 +612,19 @@ function confirmPledge() {
   btn.disabled = true;
   btn.textContent = 'جاري الحفظ...';
 
-  // لو طالبة، نحفظ التعهد أولاً ثم نعرض نموذج ولي الأمر
-  // لو طالب، نحفظ ونعرض البطاقة مباشرة
-  var isFemale = currentStudent.gender === 'female' ||
-                 String(currentStudent.gender||'').includes('female') ||
-                 String(currentStudent.gender||'') === 'طالبة';
-
   callAPI('submitStudentPledge', [currentStudent.student_number, currentStudent.national_number, '', '', ''], function(res) {
     if (res && res.ok) {
-      if (isFemale) {
-        showGuardianView();
-        btn.disabled = false;
-        btn.textContent = 'أوافق وأعرض بطاقتي';
-      } else {
-        showCardView();
-      }
+      // تحقق من الجنس عبر checkStudentPledge
+      callAPI('checkStudentPledge', [currentStudent.student_number], function(check) {
+        var isFemale = check && check.gender === 'female';
+        if (isFemale) {
+          showGuardianView();
+          btn.disabled = false;
+          btn.textContent = 'أوافق وأعرض بطاقتي';
+        } else {
+          showCardView();
+        }
+      });
     } else {
       btn.disabled = false;
       btn.textContent = 'أوافق وأعرض بطاقتي';
