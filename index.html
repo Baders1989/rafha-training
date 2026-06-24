@@ -562,18 +562,26 @@ var ticketData = null;
 function showTrainingTicket() {
   var overlay = document.getElementById('ticketOverlay');
   overlay.classList.add('show');
+  document.getElementById('pledgeView').style.display = 'block';
+  document.getElementById('cardView').style.display = 'none';
+  document.getElementById('pledgeCheck').checked = false;
+  document.getElementById('pledgeConfirmBtn').disabled = true;
+  document.getElementById('pledgeCheckRow').classList.remove('checked');
 
-  // تحقق هل وقّع على التعهد من قبل
-  var pledgeDone = localStorage.getItem('pledge_' + currentStudent.student_number);
-  if (pledgeDone === '1') {
-    showCardView();
-  } else {
-    document.getElementById('pledgeView').style.display = 'block';
-    document.getElementById('cardView').style.display = 'none';
-    document.getElementById('pledgeCheck').checked = false;
-    document.getElementById('pledgeConfirmBtn').disabled = true;
-    document.getElementById('pledgeCheckRow').classList.remove('checked');
-  }
+  // تحقق من الباك إند هل وقّع مسبقاً
+  document.getElementById('pledgeConfirmBtn').textContent = 'جاري التحقق...';
+  document.getElementById('pledgeConfirmBtn').disabled = true;
+
+  callAPI('checkStudentPledge', [currentStudent.student_number], function(res) {
+    if (res && res.signed) {
+      // وقّع مسبقاً - انتقل للبطاقة مباشرة
+      showCardView();
+    } else {
+      // لم يوقّع بعد - اعرض التعهد
+      document.getElementById('pledgeConfirmBtn').textContent = 'أوافق وأعرض بطاقتي';
+      document.getElementById('pledgeConfirmBtn').disabled = true;
+    }
+  });
 }
 
 function togglePledgeCheck() {
@@ -584,8 +592,18 @@ function togglePledgeCheck() {
 }
 
 function confirmPledge() {
-  localStorage.setItem('pledge_' + currentStudent.student_number, '1');
-  showCardView();
+  var btn = document.getElementById('pledgeConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = 'جاري الحفظ...';
+
+  callAPI('submitStudentPledge', [currentStudent.student_number, currentStudent.national_number], function(res) {
+    if (res && res.ok) {
+      showCardView();
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'أوافق وأعرض بطاقتي';
+    }
+  });
 }
 
 function showCardView() {
