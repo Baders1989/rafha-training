@@ -164,6 +164,17 @@
     .pledge-check-label{font-size:13px;font-weight:700;color:#374151;line-height:1.7}
     .pledge-confirm-btn{width:100%;min-height:52px;border:none;background:linear-gradient(135deg,var(--g4),var(--g3));color:#fff;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(21,128,61,.2);margin-bottom:10px}
     .pledge-confirm-btn:disabled{background:#9ca3af;box-shadow:none;cursor:not-allowed}
+    /* ===== ولي الأمر ===== */
+    .guardian-form-title{font-size:15px;font-weight:800;color:var(--g1);text-align:center;margin-bottom:4px}
+    .guardian-form-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;line-height:1.8}
+    .guardian-field{margin-bottom:12px}
+    .guardian-field label{display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px}
+    .guardian-field input{width:100%;min-height:48px;padding:12px;border:1.5px solid #d1d5db;border-radius:12px;font-size:15px;outline:none;background:#fff}
+    .guardian-field input:focus{border-color:var(--g4);box-shadow:0 0 0 3px rgba(21,128,61,.1)}
+    .guardian-approval-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .approval-btn{min-height:48px;border:1.5px solid #d1d5db;background:#fff;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:.15s}
+    .approval-btn.selected-yes{background:#ecfdf5;border-color:var(--g3);color:var(--g3)}
+    .approval-btn.selected-no{background:#fef2f2;border-color:#dc2626;color:#dc2626}
     .ticket-emoji{font-size:38px;margin-bottom:6px}
     .ticket-header h3{font-size:17px;font-weight:800;color:var(--g1);margin-bottom:4px}
     .ticket-header p{font-size:12px;color:var(--muted)}
@@ -574,8 +585,14 @@ function showTrainingTicket() {
 
   callAPI('checkStudentPledge', [currentStudent.student_number], function(res) {
     if (res && res.signed) {
-      // وقّع مسبقاً - انتقل للبطاقة مباشرة
-      showCardView();
+      // وقّع مسبقاً - تحقق هل طالبة وهل أدخلت بيانات ولي الأمر
+      var isFemale = currentStudent.gender === 'female' ||
+                     String(currentStudent.gender||'') === 'طالبة';
+      if (isFemale && !res.guardian_done) {
+        showGuardianView();
+      } else {
+        showCardView();
+      }
     } else {
       // لم يوقّع بعد - اعرض التعهد
       document.getElementById('pledgeConfirmBtn').textContent = 'أوافق وأعرض بطاقتي';
@@ -591,17 +608,76 @@ function togglePledgeCheck() {
   document.getElementById('pledgeCheckRow').classList.toggle('checked', cb.checked);
 }
 
+var guardianApprovalSelected = '';
+
 function confirmPledge() {
   var btn = document.getElementById('pledgeConfirmBtn');
   btn.disabled = true;
   btn.textContent = 'جاري الحفظ...';
 
-  callAPI('submitStudentPledge', [currentStudent.student_number, currentStudent.national_number], function(res) {
+  // لو طالبة، نحفظ التعهد أولاً ثم نعرض نموذج ولي الأمر
+  // لو طالب، نحفظ ونعرض البطاقة مباشرة
+  var isFemale = currentStudent.gender === 'female' ||
+                 String(currentStudent.gender||'').includes('female') ||
+                 String(currentStudent.gender||'') === 'طالبة';
+
+  callAPI('submitStudentPledge', [currentStudent.student_number, currentStudent.national_number, '', '', ''], function(res) {
+    if (res && res.ok) {
+      if (isFemale) {
+        showGuardianView();
+        btn.disabled = false;
+        btn.textContent = 'أوافق وأعرض بطاقتي';
+      } else {
+        showCardView();
+      }
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'أوافق وأعرض بطاقتي';
+    }
+  });
+}
+
+function showGuardianView() {
+  document.getElementById('pledgeView').style.display = 'none';
+  document.getElementById('guardianView').style.display = 'block';
+  document.getElementById('cardView').style.display = 'none';
+  guardianApprovalSelected = '';
+  document.getElementById('guardianName').value = '';
+  document.getElementById('guardianMobile').value = '';
+  document.getElementById('approvalYes').className = 'approval-btn';
+  document.getElementById('approvalNo').className = 'approval-btn';
+  document.getElementById('guardianConfirmBtn').disabled = true;
+}
+
+function selectApproval(val) {
+  guardianApprovalSelected = val;
+  document.getElementById('approvalYes').className = 'approval-btn' + (val === 'yes' ? ' selected-yes' : '');
+  document.getElementById('approvalNo').className  = 'approval-btn' + (val === 'no'  ? ' selected-no'  : '');
+  validateGuardianForm();
+}
+
+function validateGuardianForm() {
+  var name   = document.getElementById('guardianName').value.trim();
+  var mobile = document.getElementById('guardianMobile').value.trim();
+  var ok = name && mobile.match(/^05\d{8}$/) && guardianApprovalSelected;
+  document.getElementById('guardianConfirmBtn').disabled = !ok;
+}
+
+function confirmGuardian() {
+  var btn = document.getElementById('guardianConfirmBtn');
+  var name     = document.getElementById('guardianName').value.trim();
+  var mobile   = document.getElementById('guardianMobile').value.trim();
+  var approval = guardianApprovalSelected === 'yes' ? 'موافق' : 'غير موافق';
+
+  btn.disabled = true;
+  btn.textContent = 'جاري الحفظ...';
+
+  callAPI('submitStudentPledge', [currentStudent.student_number, currentStudent.national_number, name, mobile, approval], function(res) {
     if (res && res.ok) {
       showCardView();
     } else {
       btn.disabled = false;
-      btn.textContent = 'أوافق وأعرض بطاقتي';
+      btn.textContent = 'حفظ وعرض البطاقة';
     }
   });
 }
@@ -679,6 +755,30 @@ function closeTicket(e) {
         <span class="pledge-check-label">أتعهد بالالتزام بجميع البنود الواردة أعلاه وأوافق على شروط التدريب الميداني.</span>
       </label>
       <button class="pledge-confirm-btn" id="pledgeConfirmBtn" disabled onclick="confirmPledge()">أوافق وأعرض بطاقتي</button>
+      <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
+    </div>
+
+    <!-- نموذج ولي الأمر (للطالبات فقط) -->
+    <div id="guardianView" style="display:none">
+      <div class="ticket-handle"></div>
+      <div class="guardian-form-title">موافقة ولي الأمر على التدريب الميداني</div>
+      <div class="guardian-form-sub">نموذج رقم (2) — خاص بالطالبات</div>
+      <div class="guardian-field">
+        <label>اسم ولي الأمر *</label>
+        <input type="text" id="guardianName" placeholder="أدخل اسم ولي الأمر" oninput="validateGuardianForm()">
+      </div>
+      <div class="guardian-field">
+        <label>رقم الجوال *</label>
+        <input type="text" id="guardianMobile" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" oninput="validateGuardianForm()">
+      </div>
+      <div class="guardian-field">
+        <label>موافقة ولي الأمر *</label>
+        <div class="guardian-approval-row">
+          <button class="approval-btn" id="approvalYes" onclick="selectApproval('yes')">✅ أوافق على التدريب</button>
+          <button class="approval-btn" id="approvalNo" onclick="selectApproval('no')">❌ لا أوافق</button>
+        </div>
+      </div>
+      <button class="pledge-confirm-btn" id="guardianConfirmBtn" disabled onclick="confirmGuardian()">حفظ وعرض البطاقة</button>
       <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
     </div>
 
