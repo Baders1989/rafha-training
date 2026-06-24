@@ -651,7 +651,9 @@ function selectApproval(val) {
 function validateGuardianForm() {
   var name   = document.getElementById('guardianName').value.trim();
   var mobile = document.getElementById('guardianMobile').value.trim();
-  var ok = name && mobile.match(/^05\d{8}$/) && guardianApprovalSelected;
+  // تحقق من الاسم الثلاثي (3 كلمات على الأقل)
+  var nameWords = name.split(/\s+/).filter(function(w){ return w.length > 0; });
+  var ok = nameWords.length >= 3 && mobile.match(/^05\d{8}$/) && guardianApprovalSelected;
   document.getElementById('guardianConfirmBtn').disabled = !ok;
 }
 
@@ -659,6 +661,15 @@ function confirmGuardian() {
   var btn = document.getElementById('guardianConfirmBtn');
   var name     = document.getElementById('guardianName').value.trim();
   var mobile   = document.getElementById('guardianMobile').value.trim();
+
+  // تحقق نهائي من الاسم الثلاثي
+  var nameWords = name.split(/\s+/).filter(function(w){ return w.length > 0; });
+  if (nameWords.length < 3) {
+    document.getElementById('guardianNameError').style.display = 'block';
+    return;
+  }
+  document.getElementById('guardianNameError').style.display = 'none';
+
   var approval = guardianApprovalSelected === 'yes' ? 'موافق' : 'غير موافق';
 
   btn.disabled = true;
@@ -757,8 +768,9 @@ function closeTicket(e) {
       <div class="guardian-form-title">موافقة ولي الأمر على التدريب الميداني</div>
       <div class="guardian-form-sub">نموذج رقم (2) — خاص بالطالبات</div>
       <div class="guardian-field">
-        <label>اسم ولي الأمر *</label>
-        <input type="text" id="guardianName" placeholder="أدخل اسم ولي الأمر" oninput="validateGuardianForm()">
+        <label>اسم ولي الأمر (ثلاثي) *</label>
+        <input type="text" id="guardianName" placeholder="الاسم الأول والثاني والثالث" oninput="validateGuardianForm()">
+        <div id="guardianNameError" style="display:none;color:#dc2626;font-size:12px;margin-top:5px;font-weight:600">⚠️ يرجى إدخال الاسم الثلاثي كاملاً (3 كلمات على الأقل)</div>
       </div>
       <div class="guardian-field">
         <label>رقم الجوال *</label>
