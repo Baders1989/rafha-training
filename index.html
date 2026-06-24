@@ -568,7 +568,6 @@ function showTrainingTicket() {
     }
 
     ticketData = res;
-    document.getElementById('ticketPdfBtn').style.display = 'block';
 
     var isFirst = res.period === 'الفترة الأولى';
     var fieldDates = res.field_dates    || (isFirst ? '28/06/2026 → 23/07/2026' : '26/07/2026 → 20/08/2026');
@@ -576,103 +575,37 @@ function showTrainingTicket() {
 
     content.innerHTML =
       '<div class="ticket-row">' +
-        '<span class="ticket-icon">👤</span>' +
         '<div class="ticket-info"><div class="ticket-label">اسم الطالب</div><div class="ticket-value">' + res.name + '</div></div>' +
       '</div>' +
       '<div class="ticket-row">' +
-        '<span class="ticket-icon">🎓</span>' +
         '<div class="ticket-info"><div class="ticket-label">التخصص</div><div class="ticket-value">' + res.major + '</div></div>' +
       '</div>' +
       '<div class="ticket-row">' +
-        '<span class="ticket-icon">📚</span>' +
         '<div class="ticket-info"><div class="ticket-label">المقرر</div><div class="ticket-value">' + (res.course || '—') + '</div></div>' +
       '</div>' +
       '<hr class="ticket-divider">' +
       '<div class="ticket-row">' +
-        '<span class="ticket-icon">🏢</span>' +
         '<div class="ticket-info"><div class="ticket-label">جهة التدريب</div><div class="ticket-value">' + res.entity + '</div></div>' +
       '</div>' +
-      (res.contact_name ? (
+      (res.contact_name ?
         '<div class="ticket-row">' +
-          '<span class="ticket-icon">👔</span>' +
           '<div class="ticket-info"><div class="ticket-label">مسؤول الجهة</div><div class="ticket-value">' + res.contact_name + '</div></div>' +
         '</div>'
-      ) : '') +
+      : '') +
       '<div class="ticket-row">' +
-        '<span class="ticket-icon">🗓️</span>' +
         '<div class="ticket-info"><div class="ticket-label">الفترة</div><div class="ticket-value">' + res.period + '</div></div>' +
       '</div>' +
       '<div class="ticket-periods">' +
         '<div class="ticket-period-box">' +
-          '<div class="ticket-period-title">⚡ الميداني</div>' +
+          '<div class="ticket-period-title">الميداني</div>' +
           '<div class="ticket-period-dates">' + fieldDates.replace(' → ', '<br>→ ') + '</div>' +
         '</div>' +
         '<div class="ticket-period-box">' +
-          '<div class="ticket-period-title">💻 المنصات</div>' +
+          '<div class="ticket-period-title">المنصات</div>' +
           '<div class="ticket-period-dates">' + platDates.replace(' → ', '<br>→ ') + '</div>' +
         '</div>' +
       '</div>';
   });
-}
-
-function downloadTicketPdf() {
-  if (!ticketData) return;
-  var d = ticketData;
-  var isFirst = d.period === 'الفترة الأولى';
-  var fieldDates = d.field_dates    || (isFirst ? '28/06/2026 → 23/07/2026' : '26/07/2026 → 20/08/2026');
-  var platDates  = d.platform_dates || (isFirst ? '26/07/2026 → 20/08/2026' : '28/06/2026 → 23/07/2026');
-
-  var html = '<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">' +
-    '<style>' +
-    '@media print{body{margin:0}@page{margin:10mm}}' +
-    'body{font-family:Arial,sans-serif;margin:0;padding:16px;background:#fff;direction:rtl;color:#111827}' +
-    '.ticket{max-width:480px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden}' +
-    '.t-header{background:#14532d;color:#fff;padding:20px;text-align:center}' +
-    '.t-header h1{margin:0 0 4px;font-size:18px;font-weight:800}' +
-    '.t-header p{margin:0;font-size:12px;opacity:.85}' +
-    '.t-body{padding:18px}' +
-    '.t-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f3f4f6}' +
-    '.t-row:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}' +
-    '.t-label{font-size:10px;color:#6b7280;font-weight:600;margin-bottom:2px}' +
-    '.t-value{font-size:13px;font-weight:700;color:#111827;line-height:1.5}' +
-    '.t-divider{border:none;border-top:1px dashed #d1d5db;margin:14px 0}' +
-    '.t-periods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}' +
-    '.t-period{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px;text-align:center}' +
-    '.t-period-title{font-size:11px;font-weight:800;color:#166534;margin-bottom:4px}' +
-    '.t-period-dates{font-size:10px;color:#374151;line-height:1.8}' +
-    '.t-footer{background:#f9fafb;padding:12px;text-align:center;border-top:1px solid #e5e7eb}' +
-    '.t-footer p{margin:0;font-size:11px;color:#6b7280;line-height:1.9}' +
-    '.t-footer strong{color:#14532d}' +
-    '</style></head><body>' +
-    '<div class="ticket">' +
-    '<div class="t-header"><h1>بطاقة التدريب الصيفي</h1><p>الفصل الصيفي 1447هـ — الكلية التطبيقية — فرع رفحاء</p></div>' +
-    '<div class="t-body">' +
-    '<div class="t-row"><div><div class="t-label">اسم الطالب</div><div class="t-value">' + d.name + '</div></div></div>' +
-    '<div class="t-row"><div><div class="t-label">التخصص</div><div class="t-value">' + d.major + '</div></div></div>' +
-    '<div class="t-row"><div><div class="t-label">المقرر</div><div class="t-value">' + (d.course || '—') + '</div></div></div>' +
-    '<hr class="t-divider">' +
-    '<div class="t-row"><div><div class="t-label">جهة التدريب</div><div class="t-value">' + d.entity + '</div></div></div>' +
-    (d.contact_name ? '<div class="t-row"><div><div class="t-label">مسؤول الجهة</div><div class="t-value">' + d.contact_name + '</div></div></div>' : '') +
-    '<div class="t-row"><div><div class="t-label">الفترة</div><div class="t-value">' + d.period + '</div></div></div>' +
-    '<div class="t-periods">' +
-      '<div class="t-period"><div class="t-period-title">الميداني</div><div class="t-period-dates">' + fieldDates.replace(' → ', '<br>→ ') + '</div></div>' +
-      '<div class="t-period"><div class="t-period-title">المنصات</div><div class="t-period-dates">' + platDates.replace(' → ', '<br>→ ') + '</div></div>' +
-    '</div>' +
-    '</div>' +
-    '<div class="t-footer"><p><strong>وحدة التدريب والشراكات</strong><br>الكلية التطبيقية برفحاء — جامعة الحدود الشمالية</p></div>' +
-    '</div>' +
-    '<script>window.onload=function(){window.print()}<\/script>' +
-    '</body></html>';
-
-  // فتح نافذة طباعة مع كتابة المحتوى مباشرة
-  var win = window.open('', '_blank', 'width=600,height=800');
-  if (!win) {
-    alert('يرجى السماح للمتصفح بفتح النوافذ المنبثقة ثم حاول مرة أخرى.');
-    return;
-  }
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
 }
 
 function closeTicket(e) {
@@ -691,7 +624,6 @@ function closeTicket(e) {
       <p>الفصل الصيفي 1447هـ — الكلية التطبيقية</p>
     </div>
     <div class="ticket-body" id="ticketContent"></div>
-    <button id="ticketPdfBtn" onclick="downloadTicketPdf()" style="display:none;width:100%;min-height:48px;border:none;background:linear-gradient(135deg,var(--g4),var(--g3));color:#fff;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:10px">⬇️ تحميل PDF</button>
     <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
   </div>
 </div>
