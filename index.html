@@ -573,13 +573,12 @@ var ticketData = null;
 function showTrainingTicket() {
   var overlay = document.getElementById('ticketOverlay');
   overlay.classList.add('show');
+  // إظهار شاشة التحقق المؤقت
   document.getElementById('pledgeView').style.display = 'block';
+  document.getElementById('guardianView').style.display = 'none';
   document.getElementById('cardView').style.display = 'none';
   document.getElementById('pledgeCheck').checked = false;
-  document.getElementById('pledgeConfirmBtn').disabled = true;
   document.getElementById('pledgeCheckRow').classList.remove('checked');
-
-  // تحقق من الباك إند هل وقّع مسبقاً
   document.getElementById('pledgeConfirmBtn').textContent = 'جاري التحقق...';
   document.getElementById('pledgeConfirmBtn').disabled = true;
 
@@ -587,11 +586,14 @@ function showTrainingTicket() {
     if (res && res.signed) {
       var isFemale = res.gender === 'female';
       if (isFemale && !res.guardian_done) {
+        // وقّعت التعهد لكن ما أكملت ولي الأمر - انتقل لنموذج ولي الأمر مباشرة
         showGuardianView();
       } else {
+        // وقّع وأكمل كل الخطوات - عرض البطاقة
         showCardView();
       }
     } else {
+      // لم يوقّع بعد - اعرض التعهد
       document.getElementById('pledgeConfirmBtn').textContent = 'أوافق وأعرض بطاقتي';
       document.getElementById('pledgeConfirmBtn').disabled = true;
     }
