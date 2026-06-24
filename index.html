@@ -153,6 +153,17 @@
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
     .ticket-handle{width:40px;height:4px;background:#e5e7eb;border-radius:99px;margin:0 auto 18px}
     .ticket-header{text-align:center;margin-bottom:16px}
+    /* ===== نموذج التعهد ===== */
+    .pledge-box{background:#fffbeb;border:1px solid #fcd34d;border-radius:16px;padding:14px;margin-bottom:14px;max-height:280px;overflow-y:auto}
+    .pledge-title{font-size:14px;font-weight:800;color:#92400e;text-align:center;margin-bottom:10px}
+    .pledge-items{font-size:12px;color:#374151;line-height:2.2;padding-right:4px}
+    .pledge-items li{margin-bottom:2px}
+    .pledge-check-row{display:flex;align-items:flex-start;gap:10px;padding:12px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:12px;margin-bottom:12px;cursor:pointer}
+    .pledge-check-row.checked{background:#ecfdf5;border-color:#bbf7d0}
+    .pledge-check-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--g3);flex-shrink:0;margin-top:2px;cursor:pointer}
+    .pledge-check-label{font-size:13px;font-weight:700;color:#374151;line-height:1.7}
+    .pledge-confirm-btn{width:100%;min-height:52px;border:none;background:linear-gradient(135deg,var(--g4),var(--g3));color:#fff;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(21,128,61,.2);margin-bottom:10px}
+    .pledge-confirm-btn:disabled{background:#9ca3af;box-shadow:none;cursor:not-allowed}
     .ticket-emoji{font-size:38px;margin-bottom:6px}
     .ticket-header h3{font-size:17px;font-weight:800;color:var(--g1);margin-bottom:4px}
     .ticket-header p{font-size:12px;color:var(--muted)}
@@ -551,13 +562,41 @@ var ticketData = null;
 function showTrainingTicket() {
   var overlay = document.getElementById('ticketOverlay');
   overlay.classList.add('show');
+
+  // تحقق هل وقّع على التعهد من قبل
+  var pledgeDone = localStorage.getItem('pledge_' + currentStudent.student_number);
+  if (pledgeDone === '1') {
+    showCardView();
+  } else {
+    document.getElementById('pledgeView').style.display = 'block';
+    document.getElementById('cardView').style.display = 'none';
+    document.getElementById('pledgeCheck').checked = false;
+    document.getElementById('pledgeConfirmBtn').disabled = true;
+    document.getElementById('pledgeCheckRow').classList.remove('checked');
+  }
+}
+
+function togglePledgeCheck() {
+  var cb = document.getElementById('pledgeCheck');
+  cb.checked = !cb.checked;
+  document.getElementById('pledgeConfirmBtn').disabled = !cb.checked;
+  document.getElementById('pledgeCheckRow').classList.toggle('checked', cb.checked);
+}
+
+function confirmPledge() {
+  localStorage.setItem('pledge_' + currentStudent.student_number, '1');
+  showCardView();
+}
+
+function showCardView() {
+  document.getElementById('pledgeView').style.display = 'none';
+  document.getElementById('cardView').style.display = 'block';
   document.getElementById('ticketContent').innerHTML = '<div class="loader-wrap" style="padding:20px 0"><div class="loader" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div></div>';
 
   callAPI('getStudentBooking', [currentStudent.student_number, currentStudent.national_number], function(res) {
     var content = document.getElementById('ticketContent');
     if (!res || !res.ok) {
       ticketData = null;
-      document.getElementById('ticketPdfBtn').style.display = 'none';
       content.innerHTML =
         '<div class="ticket-no-booking">' +
         '<div style="font-size:32px;margin-bottom:10px">📭</div>' +
@@ -568,42 +607,21 @@ function showTrainingTicket() {
     }
 
     ticketData = res;
-
     var isFirst = res.period === 'الفترة الأولى';
     var fieldDates = res.field_dates    || (isFirst ? '28/06/2026 → 23/07/2026' : '26/07/2026 → 20/08/2026');
     var platDates  = res.platform_dates || (isFirst ? '26/07/2026 → 20/08/2026' : '28/06/2026 → 23/07/2026');
 
     content.innerHTML =
-      '<div class="ticket-row">' +
-        '<div class="ticket-info"><div class="ticket-label">اسم الطالب</div><div class="ticket-value">' + res.name + '</div></div>' +
-      '</div>' +
-      '<div class="ticket-row">' +
-        '<div class="ticket-info"><div class="ticket-label">التخصص</div><div class="ticket-value">' + res.major + '</div></div>' +
-      '</div>' +
-      '<div class="ticket-row">' +
-        '<div class="ticket-info"><div class="ticket-label">المقرر</div><div class="ticket-value">' + (res.course || '—') + '</div></div>' +
-      '</div>' +
+      '<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">اسم الطالب</div><div class="ticket-value">' + res.name + '</div></div></div>' +
+      '<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">التخصص</div><div class="ticket-value">' + res.major + '</div></div></div>' +
+      '<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">المقرر</div><div class="ticket-value">' + (res.course || '—') + '</div></div></div>' +
       '<hr class="ticket-divider">' +
-      '<div class="ticket-row">' +
-        '<div class="ticket-info"><div class="ticket-label">جهة التدريب</div><div class="ticket-value">' + res.entity + '</div></div>' +
-      '</div>' +
-      (res.contact_name ?
-        '<div class="ticket-row">' +
-          '<div class="ticket-info"><div class="ticket-label">مسؤول الجهة</div><div class="ticket-value">' + res.contact_name + '</div></div>' +
-        '</div>'
-      : '') +
-      '<div class="ticket-row">' +
-        '<div class="ticket-info"><div class="ticket-label">الفترة</div><div class="ticket-value">' + res.period + '</div></div>' +
-      '</div>' +
+      '<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">جهة التدريب</div><div class="ticket-value">' + res.entity + '</div></div></div>' +
+      (res.contact_name ? '<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">مسؤول الجهة</div><div class="ticket-value">' + res.contact_name + '</div></div></div>' : '') +
+      '<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">الفترة</div><div class="ticket-value">' + res.period + '</div></div></div>' +
       '<div class="ticket-periods">' +
-        '<div class="ticket-period-box">' +
-          '<div class="ticket-period-title">الميداني</div>' +
-          '<div class="ticket-period-dates">' + fieldDates.replace(' → ', '<br>→ ') + '</div>' +
-        '</div>' +
-        '<div class="ticket-period-box">' +
-          '<div class="ticket-period-title">المنصات</div>' +
-          '<div class="ticket-period-dates">' + platDates.replace(' → ', '<br>→ ') + '</div>' +
-        '</div>' +
+        '<div class="ticket-period-box"><div class="ticket-period-title">الميداني</div><div class="ticket-period-dates">' + fieldDates.replace(' → ', '<br>→ ') + '</div></div>' +
+        '<div class="ticket-period-box"><div class="ticket-period-title">المنصات</div><div class="ticket-period-dates">' + platDates.replace(' → ', '<br>→ ') + '</div></div>' +
       '</div>';
   });
 }
@@ -618,12 +636,44 @@ function closeTicket(e) {
 <div id="ticketOverlay" onclick="closeTicket(event)">
   <div class="ticket-sheet" id="ticketSheet">
     <div class="ticket-handle"></div>
-    <div class="ticket-header">
-      <h3>بطاقة التدريب الصيفي</h3>
-      <p>الفصل الصيفي 1447هـ — الكلية التطبيقية</p>
+
+    <!-- نموذج التعهد -->
+    <div id="pledgeView">
+      <div class="ticket-header">
+        <h3 style="color:var(--g1)">تعهد الطالب على التدريب الميداني</h3>
+        <p>يرجى قراءة التعهد والموافقة عليه للمتابعة</p>
+      </div>
+      <div class="pledge-box">
+        <div class="pledge-title">نموذج رقم (3) — تعهد الطالب على التدريب الميداني</div>
+        <ul class="pledge-items">
+          <li>عدم تغيير جهة التدريب الميداني بعد الحصول على الموافقة بشكل رسمي.</li>
+          <li>الالتزام بحضور فترة التدريب الميداني كاملة وفق المواعيد المحددة لمقرر التدريب الميداني مع العلم بأن تكرار الغياب قد يؤدي إلى الحرمان من المقرر.</li>
+          <li>الالتزام بالمظهر والسلوك اللائقين خلال تواجدي في مقر الجهة التدريبية.</li>
+          <li>تمثيل جامعة الحدود الشمالية بشكل لائق ومشرف.</li>
+          <li>الالتزام بأداء واجباتي على أكمل وجه، وأن استجيب لتوجيهات المشرف الميداني على تدريبي.</li>
+          <li>الالتزام بالزي الرسمي.</li>
+          <li>عدم إساءة استخدام الجوال في موقع التدريب الميداني.</li>
+          <li>الحفاظ على سرية المعلومات التي تستوجب هذا الإجراء.</li>
+        </ul>
+      </div>
+      <label class="pledge-check-row" id="pledgeCheckRow" onclick="togglePledgeCheck()">
+        <input type="checkbox" id="pledgeCheck">
+        <span class="pledge-check-label">أتعهد بالالتزام بجميع البنود الواردة أعلاه وأوافق على شروط التدريب الميداني.</span>
+      </label>
+      <button class="pledge-confirm-btn" id="pledgeConfirmBtn" disabled onclick="confirmPledge()">أوافق وأعرض بطاقتي</button>
+      <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
     </div>
-    <div class="ticket-body" id="ticketContent"></div>
-    <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
+
+    <!-- البطاقة -->
+    <div id="cardView" style="display:none">
+      <div class="ticket-header">
+        <h3>بطاقة التدريب الصيفي</h3>
+        <p>الفصل الصيفي 1447هـ — الكلية التطبيقية</p>
+      </div>
+      <div class="ticket-body" id="ticketContent"></div>
+      <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
+    </div>
+
   </div>
 </div>
 
