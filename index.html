@@ -614,17 +614,14 @@ function confirmPledge() {
 
   callAPI('submitStudentPledge', [currentStudent.student_number, currentStudent.national_number, '', '', ''], function(res) {
     if (res && res.ok) {
-      // تحقق من الجنس عبر checkStudentPledge
-      callAPI('checkStudentPledge', [currentStudent.student_number], function(check) {
-        var isFemale = check && check.gender === 'female';
-        if (isFemale) {
-          showGuardianView();
-          btn.disabled = false;
-          btn.textContent = 'أوافق وأعرض بطاقتي';
-        } else {
-          showCardView();
-        }
-      });
+      var isFemale = res.gender === 'female';
+      if (isFemale) {
+        showGuardianView();
+        btn.disabled = false;
+        btn.textContent = 'أوافق وأعرض بطاقتي';
+      } else {
+        showCardView();
+      }
     } else {
       btn.disabled = false;
       btn.textContent = 'أوافق وأعرض بطاقتي';
