@@ -563,19 +563,12 @@ function loadFieldBookings(){var entity=document.getElementById('fieldEntitySear
 function loginAcad(){var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(ACAD_PWD.includes(pwd)){currentAcadPassword=pwd;document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
 function logoutAcad(){currentAcadPassword='';showScreen('screenHome')}
 function openAttendance(){
-  const user = {
+  sessionStorage.setItem('attendanceUser', JSON.stringify({
     name: 'مشرف أكاديمي',
     role: 'academic',
     password: currentAcadPassword
-  };
-  const win = window.open(
-    'https://script.google.com/macros/s/AKfycbxFwibeIoBOcIdxJul1L7l8fVCK86gZlQcnUVRUsoz0gXAgVsRyPGy-hJ0i_kjIfQWM/exec?mode=attendance',
-    '_blank'
-  );
-  // أرسل البيانات بعد تحميل الصفحة
-  setTimeout(function() {
-    win.postMessage({ attendanceUser: user }, '*');
-  }, 3000);
+  }));
+  window.location.href = '/attendance.html';
 }
 function loadDashboard(){var grid=document.getElementById('acadStatsGrid');grid.innerHTML='<div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div>';document.getElementById('acadEntityList').innerHTML='';document.getElementById('acadMajorsList').innerHTML='';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){grid.innerHTML='<div class="msg-error" style="grid-column:1/-1">خطأ في تحميل البيانات.</div>';return}dashData=data;var s=data.summary;grid.innerHTML=sc('إجمالي الحجوزات',s.totalBookings,'من '+s.totalEntities+' جهة')+sc('الجهات الممتلئة',s.fullEntities,'من '+s.totalEntities)+sc('طلاب',s.male,'ف1: '+s.maleP1+' | ف2: '+s.maleP2)+sc('طالبات',s.female,'ف1: '+s.femaleP1+' | ف2: '+s.femaleP2);renderDashEntities();renderDashMajors();document.getElementById('acadLastUpdate').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-SA')})}
 
