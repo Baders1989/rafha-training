@@ -418,6 +418,14 @@
   </div>
   <span style="font-size:20px;color:var(--g4)">‹</span>
 </div>
+    <div class="service-card" style="margin-bottom:16px;cursor:pointer" onclick="openAttendance()">
+  <div class="svc-icon" style="background:#ecfdf5">📋</div>
+  <div style="flex:1">
+    <div class="svc-title">سجل الحضور الأسبوعي</div>
+    <div class="svc-desc">تسجيل ومتابعة حضور الطلاب في جهات التدريب</div>
+  </div>
+  <span style="font-size:20px;color:var(--g4)">‹</span>
+</div>
     <div class="stats-grid" id="acadStatsGrid"><div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div></div>
     <div class="filters-dash">
       <select id="dashFilterStatus" onchange="renderDashEntities()"><option value="">كل الجهات</option><option value="full">الممتلئة</option><option value="available">المتاحة</option></select>
@@ -453,6 +461,7 @@ const FIELD_PWD=['FM-Rafha-2847','FM-Rafha-5913','FM-Rafha-3726','FM-Rafha-8451'
 const ACAD_PWD=['AC-Rafha-7341','AC-Rafha-2895','AC-Rafha-5463','AC-Rafha-8127','AC-Rafha-3759','AC-Rafha-6084','AC-Rafha-1936'];
 const MAJORS=['نظم المعلومات الإدارية','الموارد البشرية','اللغة الإنجليزية','إدارة سلاسل الإمداد','تقنية الهندسة الكيميائية','التجارة الإلكترونية','المحاسبة والضرائب','تقنية المعلومات','البرمجة وعلوم الحاسب','تكنولوجيا حماية البيئة','الطاقة المتجددة'];
 let currentStudent=null,selectedRafhaOption=null,dashData=null;
+  var currentAcadPassword='';
 
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
@@ -561,6 +570,7 @@ function loadFieldBookings(){var entity=document.getElementById('fieldEntitySear
 
 function loginAcad(){var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(ACAD_PWD.includes(pwd)){currentAcadPassword=pwd;document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
 function logoutAcad(){currentAcadPassword='';showScreen('screenHome')}
+function openAttendance(){sessionStorage.setItem('attendanceUser',JSON.stringify({name:'مشرف أكاديمي',role:'academic',password:currentAcadPassword}));window.location.href='?mode=attendance';}
 function openAttendance(){
   sessionStorage.setItem('attendanceUser',JSON.stringify({
     name:'مشرف أكاديمي',
