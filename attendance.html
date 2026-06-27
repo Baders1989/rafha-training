@@ -316,7 +316,6 @@ function refreshWeekTabs() {
 // تحميل البيانات من Apps Script
 // ══════════════════════════════════════
 function loadData() {
-  console.log('password:', currentUser.password);
   document.getElementById('tableWrap').innerHTML =
     '<div class="loading"><div class="spinner"></div>جارٍ تحميل البيانات...</div>';
 
@@ -334,8 +333,7 @@ function loadData() {
       buildEntitySelect();
     })
     .catch(err => {
-      document.getElementById('tableWrap').innerHTML =
-        `<div class="empty">⚠️ ${err.message}</div>`;
+      document.getElementById('tableWrap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial;direction:rtl;background:#f0f5f1"><div style="text-align:center;padding:40px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1)"><div style="font-size:48px;margin-bottom:16px">🔒</div><div style="font-size:18px;font-weight:700;color:#14532d;margin-bottom:8px">يرجى الدخول من المنصة الرئيسية</div><div style="font-size:14px;color:#6b7280;margin-bottom:20px">للوصول لسجل الحضور يجب الدخول عبر حساب المشرف الأكاديمي</div><a href="https://ac-rafha-nbu.com" style="display:inline-block;padding:12px 24px;background:#14532d;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">العودة للمنصة</a></div></div>';
     });
 }
 
@@ -574,21 +572,33 @@ function showToast(msg, type='') {
 window.addEventListener('DOMContentLoaded', () => {
   const userData = sessionStorage.getItem('attendanceUser');
   if (!userData) {
-    document.body.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial;direction:rtl;background:#f0f5f1">
-        <div style="text-align:center;padding:40px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1)">
-          <div style="font-size:48px;margin-bottom:16px">🔒</div>
-          <div style="font-size:18px;font-weight:700;color:#14532d;margin-bottom:8px">يرجى الدخول من المنصة الرئيسية</div>
-          <div style="font-size:14px;color:#6b7280;margin-bottom:20px">للوصول لسجل الحضور يجب الدخول عبر حساب المشرف الأكاديمي</div>
-          <a href="https://ac-rafha-nbu.com" style="display:inline-block;padding:12px 24px;background:#14532d;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">العودة للمنصة</a>
-        </div>
-      </div>`;
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial;direction:rtl;background:#f0f5f1"><div style="text-align:center;padding:40px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1)"><div style="font-size:48px;margin-bottom:16px">&#x1F512;</div><div style="font-size:18px;font-weight:700;color:#14532d;margin-bottom:8px">&#x064A;&#x0631;&#x062C;&#x0649; &#x0627;&#x0644;&#x062F;&#x062E;&#x0648;&#x0644; &#x0645;&#x0646; &#x0627;&#x0644;&#x0645;&#x0646;&#x0635;&#x0629; &#x0627;&#x0644;&#x0631;&#x0626;&#x064A;&#x0633;&#x064A;&#x0629;</div><div style="font-size:14px;color:#6b7280;margin-bottom:20px">&#x0644;&#x0644;&#x0648;&#x0635;&#x0648;&#x0644; &#x0644;&#x0633;&#x062C;&#x0644; &#x0627;&#x0644;&#x062D;&#x0636;&#x0648;&#x0631; &#x064A;&#x062C;&#x0628; &#x0627;&#x0644;&#x062F;&#x062E;&#x0648;&#x0644; &#x0639;&#x0628;&#x0631; &#x062D;&#x0633;&#x0627;&#x0628; &#x0627;&#x0644;&#x0645;&#x0634;&#x0631;&#x0641; &#x0627;&#x0644;&#x0623;&#x0643;&#x0627;&#x062F;&#x064A;&#x0645;&#x064A;</div><a href="https://ac-rafha-nbu.com" style="display:inline-block;padding:12px 24px;background:#14532d;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">&#x0627;&#x0644;&#x0639;&#x0648;&#x062F;&#x0629; &#x0644;&#x0644;&#x0645;&#x0646;&#x0635;&#x0629;</a></div></div>';
     return;
   }
   const user = JSON.parse(userData);
   initAttendancePage(user);
 });
 
+  // بيانات وهمية
+  myEntities  = ['مستشفى رفحاء العام', 'المركز الصحي بالمركز', 'بلدية العويقيلة'];
+  allStudents = {
+    'مستشفى رفحاء العام': [
+      { id:'202601849', name:'فهد حمد بن محمد الشمري',         major:'تقنية المعلومات',      teacher:'بدر سعد الشمري' },
+      { id:'202601958', name:'عبدالعزيز سلطان طعيسان الشمري', major:'الموارد البشرية',      teacher:'نواء علي الشمري' },
+      { id:'202601962', name:'صالح عقيل حبيب الشمري',          major:'إدارة الأعمال',        teacher:'بدر سعد الشمري' },
+      { id:'202602146', name:'ماجد فهد بن خليف الشمري',        major:'البرمجة وعلوم الحاسب', teacher:'مها عياد حمد العنزي' },
+    ],
+    'المركز الصحي بالمركز': [
+      { id:'202602288', name:'عبدالرحمن مدالله بن مفضي العنزي', major:'تقنية المعلومات', teacher:'بدر سعد الشمري' },
+      { id:'202602537', name:'بدر رجاء عاذر الشمري',            major:'الموارد البشرية', teacher:'سهل رغيلان الشمري' },
+    ],
+    'بلدية العويقيلة': [
+      { id:'202604958', name:'عبدالعزيز سعد احمد الشمري', major:'إدارة الأعمال', teacher:'بدر سعد الشمري' },
+    ],
+  };
+
+  buildEntitySelect();
+});
 </script>
 </body>
 </html>
