@@ -570,13 +570,13 @@ function loadFieldBookings(){var entity=document.getElementById('fieldEntitySear
 function loginAcad(){var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(ACAD_PWD.includes(pwd)){currentAcadPassword=pwd;document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
 function logoutAcad(){currentAcadPassword='';showScreen('screenHome')}
 function openAttendance(){
-  const data = btoa(JSON.stringify({
+  const data = btoa(encodeURIComponent(JSON.stringify({
     name: 'مشرف أكاديمي',
     role: 'academic',
     password: currentAcadPassword
-  }));
+  })));
   window.open(
-    'https://script.google.com/macros/s/AKfycbxFwibeIoBOcIdxJul1L7l8fVCK86gZlQcnUVRUsoz0gXAgVsRyPGy-hJ0i_kjIfQWM/exec?mode=attendance&u=' + data,
+    'https://script.google.com/macros/s/AKfycbxFwibeIoBOcIdxJul1L7l8fVCK86gZlQcnUVRUsoz0gXAgVsRyPGy-hJ0i_kjIfQWM/exec?mode=attendance#u=' + data,
     '_blank'
   );
 }
