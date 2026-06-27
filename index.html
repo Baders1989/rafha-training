@@ -348,7 +348,7 @@
   <div class="main">
     <div class="card">
       <h2>تسجيل الدخول</h2><p class="subtitle">أدخل كلمة المرور الخاصة بك</p>
-      <div class="field-input required"><label>كلمة المرور</label><input id="fieldPassword" type="password" placeholder="أدخل كلمة المرور" autocomplete="off"></div>
+      <div class="field-input required"><label>رقم الهوية الوطنية</label><input id="fieldPassword" type="password" placeholder="أدخل كلمة المرور" autocomplete="off"></div>
       <button class="btn-primary" onclick="loginField()">دخول</button>
       <div class="msg" id="fieldLoginMsg"></div>
     </div>
@@ -560,8 +560,23 @@ function submitCapacity(){var entity=document.getElementById('fcEntity').value.t
 
 function loadFieldBookings(){var entity=document.getElementById('fieldEntitySearch').value.trim(),msg=document.getElementById('fieldBookingsMsg'),list=document.getElementById('fieldBookingsList');if(!entity){msg.innerHTML='<div class="msg-error">يرجى إدخال اسم الجهة.</div>';return}msg.innerHTML='';list.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){list.innerHTML='<div class="msg-error">حدث خطأ.</div>';return}var e=data.entities.find(function(x){return x.entity.includes(entity)||entity.includes(x.entity)});if(!e){list.innerHTML='<div class="msg-error">لم يتم العثور على الجهة.</div>';return}list.innerHTML='<div style="background:#f9fafb;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:2"><strong style="color:var(--g3)">الجهة:</strong> '+e.entity+'<br><strong style="color:#1d4ed8">طلاب:</strong> ف1: '+e.male.p1.booked+'/'+e.male.p1.total+' | ف2: '+e.male.p2.booked+'/'+e.male.p2.total+'<br><strong style="color:#9d174d">طالبات:</strong> ف1: '+e.female.p1.booked+'/'+e.female.p1.total+' | ف2: '+e.female.p2.booked+'/'+e.female.p2.total+'</div>'})}
 
-function loginAcad(){var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(ACAD_PWD.includes(pwd)){currentAcadPassword=pwd;document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
-function logoutAcad(){currentAcadPassword='';showScreen('screenHome')}
+function loginAcad(){
+  var pwd=document.getElementById('acadPassword').value.trim();
+  var msg=document.getElementById('acadLoginMsg');
+  if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال رقم الهوية.</div>';return}
+  msg.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';
+  callAPI('verifyAcadSupervisor',[pwd],function(res){
+    if(res.ok){
+      currentAcadPassword=res.password;
+      document.getElementById('acadPassword').value='';
+      msg.innerHTML='';
+      showScreen('screenAcadDashboard');
+    } else {
+      msg.innerHTML='<div class="msg-error">رقم الهوية غير صحيح.</div>';
+    }
+  });
+}
+  function logoutAcad(){currentAcadPassword='';showScreen('screenHome')}
 function openAttendance(){
   sessionStorage.setItem('attendanceUser', JSON.stringify({
     name: 'مشرف أكاديمي',
