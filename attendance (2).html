@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سجل الحضور — التدريب الصيفي 1447هـ</title>
+<style>
+:root {
+  --green-dark:  #14532d;
+  --green-mid:   #166534;
+  --green-light: #dcfce7;
+  --green-accent:#22c55e;
+  --amber:       #f59e0b;
+  --red:         #ef4444;
+  --gray-50:     #f9fafb;
+  --gray-100:    #f3f4f6;
+  --gray-200:    #e5e7eb;
+  --gray-400:    #9ca3af;
+  --gray-600:    #4b5563;
+  --gray-800:    #1f2937;
+  --white:       #ffffff;
+  --radius:      10px;
+  --shadow:      0 2px 12px rgba(0,0,0,.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+
+/* Header */
+.header { background: var(--green-dark); color: var(--white); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.header-title { font-size: 1.05rem; font-weight: 700; }
+.header-sub   { font-size: .75rem; opacity: .75; margin-top: 2px; }
+.user-badge   { background: rgba(255,255,255,.15); border-radius: 20px; padding: 6px 14px; font-size: .82rem; display: flex; align-items: center; gap: 8px; }
+
+.container { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
+
+/* Controls bar */
+.controls-bar {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.ctrl-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 180px; }
+.ctrl-group label { font-size: .78rem; font-weight: 700; color: var(--green-dark); }
+.ctrl-select {
+  border: 2px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: .88rem;
+  font-family: inherit;
+  color: var(--gray-800);
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.ctrl-select:focus { outline: none; border-color: var(--green-accent); }
+
+/* Week tabs */
+.week-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.week-tab {
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 2px solid var(--gray-200);
+  background: var(--white);
+  cursor: pointer;
+  font-size: .78rem;
+  font-family: inherit;
+  color: var(--gray-600);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.week-tab:hover  { border-color: var(--green-accent); color: var(--green-dark); }
+.week-tab.active { background: var(--green-dark); color: var(--white); border-color: var(--green-dark); font-weight: 700; }
+.week-tab.saved  { border-color: var(--green-accent); color: var(--green-mid); }
+.week-tab.saved::after { content: ' ✓'; }
+
+/* Stats */
+.stats-bar { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+.stat-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; text-align: center; }
+.stat-num   { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.stat-label { font-size: .72rem; color: var(--gray-400); margin-top: 4px; }
+.stat-card.s-total  .stat-num { color: var(--green-dark); }
+.stat-card.s-absent .stat-num { color: var(--amber); }
+.stat-card.s-full   .stat-num { color: var(--red); }
+
+/* Table */
+.table-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 16px; }
+.table-head { background: var(--green-dark); color: var(--white); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+.table-head h3 { font-size: .9rem; font-weight: 700; }
+.table-head small { font-size: .75rem; opacity: .75; }
+
+table { width: 100%; border-collapse: collapse; }
+thead th { background: var(--gray-100); padding: 9px 12px; font-size: .77rem; font-weight: 700; color: var(--gray-600); text-align: right; border-bottom: 2px solid var(--gray-200); }
+tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .15s; }
+tbody tr:hover { background: var(--gray-50); }
+tbody td { padding: 10px 12px; font-size: .83rem; vertical-align: middle; }
+.s-name { font-weight: 600; }
+.s-id   { font-size: .72rem; color: var(--gray-400); }
+.major-badge { display: inline-block; background: var(--green-light); color: var(--green-dark); border-radius: 10px; padding: 2px 8px; font-size: .7rem; font-weight: 600; }
+
+/* Attendance buttons */
+.att-wrap { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.att-btn {
+  padding: 5px 11px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-size: .76rem;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all .18s;
+}
+.att-btn.present   { background: var(--green-light); color: var(--green-dark); border-color: #86efac; }
+.att-btn.some      { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+.att-btn.all       { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+.att-btn.active-p  { background: var(--green-accent); color: var(--white); border-color: var(--green-accent); }
+.att-btn.active-s  { background: var(--amber); color: var(--white); border-color: var(--amber); }
+.att-btn.active-a  { background: var(--red); color: var(--white); border-color: var(--red); }
+
+.days-inp {
+  width: 48px; border: 2px solid var(--amber); border-radius: 6px;
+  padding: 4px 6px; font-size: .8rem; font-family: inherit; text-align: center;
+  display: none;
+}
+.days-inp.show { display: block; }
+
+/* Read-only badges */
+.ro-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 12px; font-size: .76rem; font-weight: 700; }
+.ro-badge.p { background: var(--green-light); color: var(--green-dark); }
+.ro-badge.s { background: #fef3c7; color: #92400e; }
+.ro-badge.a { background: #fee2e2; color: #991b1b; }
+
+/* Submit bar */
+.submit-bar { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.submit-info { font-size: .83rem; color: var(--gray-600); }
+.submit-info strong { color: var(--green-dark); }
+.btn-save { background: var(--green-dark); color: var(--white); border: none; border-radius: 8px; padding: 10px 26px; font-size: .88rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background .2s; }
+.btn-save:hover    { background: var(--green-mid); }
+.btn-save:disabled { background: var(--gray-400); cursor: not-allowed; }
+
+/* Toast */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--gray-800); color: var(--white); padding: 11px 22px; border-radius: 22px; font-size: .86rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.25); transition: transform .3s; z-index: 999; white-space: nowrap; }
+.toast.show    { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--green-dark); }
+.toast.error   { background: var(--red); }
+
+/* Loading / empty */
+.loading, .empty { text-align: center; padding: 50px 20px; color: var(--gray-400); font-size: .9rem; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--gray-200); border-top-color: var(--green-dark); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* View-only banner */
+.ro-banner { background: #fffbeb; border: 1.5px solid var(--amber); border-radius: var(--radius); padding: 10px 16px; margin-bottom: 14px; font-size: .83rem; color: #92400e; }
+
+@media(max-width:600px) {
+  .controls-bar { flex-direction: column; }
+  .stats-bar    { grid-template-columns: repeat(3,1fr); }
+  .week-tab     { padding: 5px 9px; font-size: .72rem; }
+  thead th, tbody td { padding: 7px 8px; font-size: .75rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">سجل الحضور — التدريب الصيفي 1447هـ</div>
+    <div class="header-sub" id="hSub">جارٍ التحميل...</div>
+  </div>
+  <div class="user-badge">👤 <span id="hUser">...</span></div>
+</div>
+
+<div class="container">
+
+  <div class="ro-banner" id="roBanner" style="display:none">
+    ⚠️ وضع المشاهدة فقط — يمكنك متابعة حضور طلابك دون تعديل
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-bar">
+    <div class="ctrl-group" id="entityGroup">
+      <label>الجهة التدريبية</label>
+      <select class="ctrl-select" id="entitySelect" onchange="onEntityChange()">
+        <option value="">— اختر الجهة —</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>الأسبوع</label>
+      <div class="week-tabs" id="weekTabs"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-card s-total" ><div class="stat-num" id="stTotal">—</div><div class="stat-label">إجمالي الطلاب</div></div>
+    <div class="stat-card s-absent"><div class="stat-num" id="stAbsent">—</div><div class="stat-label">غائب (جزئي)</div></div>
+    <div class="stat-card s-full"  ><div class="stat-num" id="stFull">—</div><div class="stat-label">لم يحضر</div></div>
+  </div>
+
+  <!-- Table -->
+  <div id="tableWrap">
+    <div class="empty">اختر الجهة والأسبوع لعرض قائمة الطلاب</div>
+  </div>
+
+  <!-- Submit bar -->
+  <div class="submit-bar" id="submitBar" style="display:none">
+    <div class="submit-info">
+      الجهة: <strong id="sbEntity">—</strong> &nbsp;|&nbsp;
+      الأسبوع: <strong id="sbWeek">—</strong> &nbsp;|&nbsp;
+      الطلاب: <strong id="sbCount">0</strong>
+    </div>
+    <button class="btn-save" id="btnSave" onclick="saveAttendance()">حفظ التحضير ✓</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxFwibeIoBOcIdxJul1L7l8fVCK86gZlQcnUVRUsoz0gXAgVsRyPGy-hJ0i_kjIfQWM/exec';
+
+const WEEKS = [
+  { n:1, label:'أسبوع 1', from:'28 يونيو',  to:'4 يوليو',   start:'2026-06-28', end:'2026-07-04'  },
+  { n:2, label:'أسبوع 2', from:'5 يوليو',   to:'11 يوليو',  start:'2026-07-05', end:'2026-07-11'  },
+  { n:3, label:'أسبوع 3', from:'12 يوليو',  to:'18 يوليو',  start:'2026-07-12', end:'2026-07-18'  },
+  { n:4, label:'أسبوع 4', from:'19 يوليو',  to:'25 يوليو',  start:'2026-07-19', end:'2026-07-25'  },
+  { n:5, label:'أسبوع 5', from:'26 يوليو',  to:'1 أغسطس',  start:'2026-07-26', end:'2026-08-01'  },
+  { n:6, label:'أسبوع 6', from:'2 أغسطس',  to:'8 أغسطس',   start:'2026-08-02', end:'2026-08-08'  },
+  { n:7, label:'أسبوع 7', from:'9 أغسطس',  to:'15 أغسطس',  start:'2026-08-09', end:'2026-08-15'  },
+  { n:8, label:'أسبوع 8', from:'16 أغسطس', to:'20 أغسطس',  start:'2026-08-16', end:'2026-08-20'  },
+];
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let currentUser  = null;
+let isViewOnly   = false;
+let myEntities   = [];          // جهات المشرف
+let allStudents  = {};          // { entityName: [students] }
+let currentEntity= '';
+let currentWeek  = 1;
+let attendance   = {};          // { studentId: {status,days,notes} }
+let savedWeeks   = {};          // { entityName: Set(weeks) }
+
+// ══════════════════════════════════════
+// INIT — يُستدعى من portal.html
+// ══════════════════════════════════════
+function initAttendancePage(user) {
+  currentUser = user;
+  isViewOnly  = (user.role === 'academic_view'); // مشرف أكاديمي قراءة فقط
+
+  document.getElementById('hUser').textContent = user.name;
+  document.getElementById('hSub').textContent  = isViewOnly
+    ? 'متابعة حضور الطلاب' : 'تسجيل الحضور الأسبوعي';
+
+  if (isViewOnly) {
+    document.getElementById('roBanner').style.display  = 'block';
+    document.getElementById('submitBar').style.display = 'none';
+  }
+
+  buildWeekTabs();
+  loadData();
+}
+
+// ══════════════════════════════════════
+// أسابيع
+// ══════════════════════════════════════
+function buildWeekTabs() {
+  const today = new Date().toISOString().split('T')[0];
+  WEEKS.forEach(w => { if (today >= w.start) currentWeek = w.n; });
+
+  const wrap = document.getElementById('weekTabs');
+  wrap.innerHTML = '';
+  WEEKS.forEach(w => {
+    const b = document.createElement('button');
+    b.className    = 'week-tab' + (w.n === currentWeek ? ' active' : '');
+    b.dataset.week = w.n;
+    b.title        = w.from + ' — ' + w.to;
+    b.textContent  = w.label;
+    b.onclick      = () => selectWeek(w.n);
+    wrap.appendChild(b);
+  });
+}
+
+function selectWeek(n) {
+  currentWeek = n;
+  document.querySelectorAll('.week-tab').forEach(b =>
+    b.classList.toggle('active', +b.dataset.week === n));
+  if (currentEntity) loadWeekAttendance();
+  updateSubmitBar();
+}
+
+function markWeekSaved(entity, week) {
+  if (!savedWeeks[entity]) savedWeeks[entity] = new Set();
+  savedWeeks[entity].add(week);
+  refreshWeekTabs();
+}
+
+function refreshWeekTabs() {
+  const saved = savedWeeks[currentEntity] || new Set();
+  document.querySelectorAll('.week-tab').forEach(b => {
+    const n = +b.dataset.week;
+    b.classList.toggle('saved', saved.has(n) && n !== currentWeek);
+  });
+}
+
+// ══════════════════════════════════════
+// تحميل البيانات من Apps Script
+// ══════════════════════════════════════
+function loadData() {
+  document.getElementById('tableWrap').innerHTML =
+    '<div class="loading"><div class="spinner"></div>جارٍ تحميل البيانات...</div>';
+
+  fetch(`${SCRIPT_URL}?action=getAttendanceData&password=${encodeURIComponent(currentUser.password)}&role=${currentUser.role}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.status !== 'ok') throw new Error(d.message);
+      myEntities  = d.entities  || [];
+      allStudents = d.students  || {};
+      savedWeeks  = {};
+      (d.savedWeeks || []).forEach(({entity, week}) => {
+        if (!savedWeeks[entity]) savedWeeks[entity] = new Set();
+        savedWeeks[entity].add(week);
+      });
+      buildEntitySelect();
+    })
+    .catch(err => {
+      document.getElementById('tableWrap').innerHTML =
+        `<div class="empty">⚠️ ${err.message}</div>`;
+    });
+}
+
+function buildEntitySelect() {
+  const sel = document.getElementById('entitySelect');
+  sel.innerHTML = '<option value="">— اختر الجهة —</option>';
+  myEntities.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value       = e;
+    opt.textContent = e;
+    sel.appendChild(opt);
+  });
+  // إذا جهة واحدة فقط اختارها تلقائياً
+  if (myEntities.length === 1) {
+    sel.value = myEntities[0];
+    onEntityChange();
+  } else {
+    document.getElementById('tableWrap').innerHTML =
+      '<div class="empty">اختر الجهة لعرض قائمة الطلاب</div>';
+  }
+}
+
+function onEntityChange() {
+  currentEntity = document.getElementById('entitySelect').value;
+  if (!currentEntity) return;
+  attendance = {};
+  loadWeekAttendance();
+  updateSubmitBar();
+  refreshWeekTabs();
+}
+
+// ══════════════════════════════════════
+// تحميل تحضير أسبوع
+// ══════════════════════════════════════
+function loadWeekAttendance() {
+  const students = allStudents[currentEntity] || [];
+  if (!students.length) {
+    document.getElementById('tableWrap').innerHTML =
+      '<div class="empty">لا يوجد طلاب في هذه الجهة</div>';
+    updateStats([], {});
+    return;
+  }
+
+  fetch(`${SCRIPT_URL}?action=getWeekAttendance&password=${encodeURIComponent(currentUser.password)}&entity=${encodeURIComponent(currentEntity)}&week=${currentWeek}`)
+    .then(r => r.json())
+    .then(d => {
+      attendance = {};
+      if (d.status === 'ok') {
+        (d.records || []).forEach(r => {
+          attendance[r.studentId] = { status: r.status, days: r.days||0, notes: r.notes||'' };
+        });
+      }
+      renderTable(students);
+    })
+    .catch(() => renderTable(students));
+}
+
+// ══════════════════════════════════════
+// رسم الجدول
+// ══════════════════════════════════════
+function renderTable(students) {
+  const w = WEEKS[currentWeek - 1];
+  let html = `
+  <div class="table-card">
+    <div class="table-head">
+      <h3>${currentEntity}</h3>
+      <small>${w.label} &nbsp;|&nbsp; ${w.from} — ${w.to}</small>
+    </div>
+    <table>
+      <thead><tr>
+        <th>#</th>
+        <th>الطالب</th>
+        <th>التخصص</th>
+        <th>المشرف الأكاديمي</th>
+        <th>الحضور</th>
+        ${!isViewOnly ? '<th>ملاحظة</th>' : ''}
+      </tr></thead>
+      <tbody>`;
+
+  students.forEach((s, i) => {
+    const att    = attendance[s.id] || { status:'present', days:0, notes:'' };
+    const status = att.status || 'present';
+
+    if (isViewOnly) {
+      const badge = {
+        present: '<span class="ro-badge p">✓ حاضر</span>',
+        some:    `<span class="ro-badge s">⚠ غاب ${att.days} أيام</span>`,
+        all:     '<span class="ro-badge a">✕ لم يحضر</span>',
+      }[status] || '<span class="ro-badge p">✓ حاضر</span>';
+
+      html += `<tr>
+        <td>${i+1}</td>
+        <td><div class="s-name">${s.name}</div><div class="s-id">${s.id}</div></td>
+        <td><span class="major-badge">${s.major||'—'}</span></td>
+        <td style="font-size:.78rem;color:var(--gray-600)">${s.teacher||'—'}</td>
+        <td>${badge}</td>
+      </tr>`;
+    } else {
+      html += `<tr id="r-${s.id}">
+        <td>${i+1}</td>
+        <td><div class="s-name">${s.name}</div><div class="s-id">${s.id}</div></td>
+        <td><span class="major-badge">${s.major||'—'}</span></td>
+        <td style="font-size:.78rem;color:var(--gray-600)">${s.teacher||'—'}</td>
+        <td>
+          <div class="att-wrap">
+            <button class="att-btn present ${status==='present'?'active-p':''}"
+              onclick="setStatus('${s.id}','present')">حاضر</button>
+            <button class="att-btn some ${status==='some'?'active-s':''}"
+              onclick="setStatus('${s.id}','some')">غاب بعض الأيام</button>
+            <button class="att-btn all ${status==='all'?'active-a':''}"
+              onclick="setStatus('${s.id}','all')">لم يحضر</button>
+            <input type="number" min="1" max="5" class="days-inp ${status==='some'?'show':''}"
+              id="d-${s.id}" value="${att.days||1}"
+              onchange="setDays('${s.id}',this.value)" placeholder="أيام">
+          </div>
+        </td>
+        <td>
+          <textarea class="notes-inp" id="n-${s.id}" rows="1"
+            style="width:100%;border:1.5px solid var(--gray-200);border-radius:6px;padding:4px 8px;font-size:.78rem;font-family:inherit;resize:none"
+            placeholder="ملاحظة..."
+            onchange="setNotes('${s.id}',this.value)">${att.notes||''}</textarea>
+        </td>
+      </tr>`;
+    }
+  });
+
+  html += '</tbody></table></div>';
+  document.getElementById('tableWrap').innerHTML = html;
+  updateStats(students, attendance);
+}
+
+// ══════════════════════════════════════
+// إجراءات
+// ══════════════════════════════════════
+function setStatus(id, status) {
+  if (!attendance[id]) attendance[id] = { status:'present', days:0, notes:'' };
+  attendance[id].status = status;
+  const row = document.getElementById('r-' + id);
+  if (!row) return;
+  row.querySelector('.att-btn.present').className = `att-btn present ${status==='present'?'active-p':''}`;
+  row.querySelector('.att-btn.some').className    = `att-btn some ${status==='some'?'active-s':''}`;
+  row.querySelector('.att-btn.all').className     = `att-btn all ${status==='all'?'active-a':''}`;
+  const di = document.getElementById('d-' + id);
+  if (di) di.classList.toggle('show', status === 'some');
+  updateStats(allStudents[currentEntity]||[], attendance);
+}
+function setDays(id, v)  { if (attendance[id]) attendance[id].days  = parseInt(v)||1; }
+function setNotes(id, v) { if (attendance[id]) attendance[id].notes = v; }
+
+function updateStats(students, att) {
+  let absent = 0, full = 0;
+  students.forEach(s => {
+    const a = att[s.id];
+    if (a && a.status === 'some') absent++;
+    if (a && a.status === 'all') { absent++; full++; }
+  });
+  document.getElementById('stTotal').textContent  = students.length;
+  document.getElementById('stAbsent').textContent = absent;
+  document.getElementById('stFull').textContent   = full;
+}
+
+function updateSubmitBar() {
+  if (isViewOnly) return;
+  const students = allStudents[currentEntity] || [];
+  const w = WEEKS[currentWeek - 1];
+  document.getElementById('submitBar').style.display = currentEntity ? 'flex' : 'none';
+  document.getElementById('sbEntity').textContent = currentEntity || '—';
+  document.getElementById('sbWeek').textContent   = w ? w.label + ' (' + w.from + ' — ' + w.to + ')' : '—';
+  document.getElementById('sbCount').textContent  = students.length;
+}
+
+// ══════════════════════════════════════
+// حفظ التحضير
+// ══════════════════════════════════════
+function saveAttendance() {
+  const btn = document.getElementById('btnSave');
+  btn.disabled    = true;
+  btn.textContent = 'جارٍ الحفظ...';
+
+  const students = allStudents[currentEntity] || [];
+  const w        = WEEKS[currentWeek - 1];
+
+  const records = students.map(s => {
+    const att = attendance[s.id] || { status:'present', days:0, notes:'' };
+    return {
+      studentId:   s.id,
+      studentName: s.name,
+      entity:      currentEntity,
+      teacher:     s.teacher,
+      major:       s.major,
+      week:        currentWeek,
+      weekLabel:   w.label,
+      weekFrom:    w.from,
+      weekTo:      w.to,
+      status:      att.status || 'present',
+      days:        att.days   || 0,
+      notes:       att.notes  || '',
+    };
+  });
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action:   'saveAttendance',
+      password: currentUser.password,
+      role:     currentUser.role,
+      entity:   currentEntity,
+      week:     currentWeek,
+      records,
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.status !== 'ok') throw new Error(d.message || 'خطأ في الحفظ');
+    showToast('تم حفظ التحضير بنجاح ✓', 'success');
+    markWeekSaved(currentEntity, currentWeek);
+  })
+  .catch(err => showToast('⚠️ ' + err.message, 'error'))
+  .finally(() => { btn.disabled = false; btn.textContent = 'حفظ التحضير ✓'; });
+}
+
+// ══════════════════════════════════════
+// Toast
+// ══════════════════════════════════════
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ══════════════════════════════════════
+// Demo (بدون portal.html)
+// ══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const userData = sessionStorage.getItem('attendanceUser');
+  if (!userData) {
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial;direction:rtl;background:#f0f5f1">
+        <div style="text-align:center;padding:40px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1)">
+          <div style="font-size:48px;margin-bottom:16px">🔒</div>
+          <div style="font-size:18px;font-weight:700;color:#14532d;margin-bottom:8px">يرجى الدخول من المنصة الرئيسية</div>
+          <div style="font-size:14px;color:#6b7280;margin-bottom:20px">للوصول لسجل الحضور يجب الدخول عبر حساب المشرف الأكاديمي</div>
+          <a href="https://ac-rafha-nbu.com" style="display:inline-block;padding:12px 24px;background:#14532d;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">العودة للمنصة</a>
+        </div>
+      </div>`;
+    return;
+  }
+  const user = JSON.parse(userData);
+  initAttendancePage(user);
+});
+
+  // بيانات وهمية
+  myEntities  = ['مستشفى رفحاء العام', 'المركز الصحي بالمركز', 'بلدية العويقيلة'];
+  allStudents = {
+    'مستشفى رفحاء العام': [
+      { id:'202601849', name:'فهد حمد بن محمد الشمري',         major:'تقنية المعلومات',      teacher:'بدر سعد الشمري' },
+      { id:'202601958', name:'عبدالعزيز سلطان طعيسان الشمري', major:'الموارد البشرية',      teacher:'نواء علي الشمري' },
+      { id:'202601962', name:'صالح عقيل حبيب الشمري',          major:'إدارة الأعمال',        teacher:'بدر سعد الشمري' },
+      { id:'202602146', name:'ماجد فهد بن خليف الشمري',        major:'البرمجة وعلوم الحاسب', teacher:'مها عياد حمد العنزي' },
+    ],
+    'المركز الصحي بالمركز': [
+      { id:'202602288', name:'عبدالرحمن مدالله بن مفضي العنزي', major:'تقنية المعلومات', teacher:'بدر سعد الشمري' },
+      { id:'202602537', name:'بدر رجاء عاذر الشمري',            major:'الموارد البشرية', teacher:'سهل رغيلان الشمري' },
+    ],
+    'بلدية العويقيلة': [
+      { id:'202604958', name:'عبدالعزيز سعد احمد الشمري', major:'إدارة الأعمال', teacher:'بدر سعد الشمري' },
+    ],
+  };
+
+  buildEntitySelect();
+});
+</script>
+</body>
+</html>
