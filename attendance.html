@@ -316,6 +316,7 @@ function refreshWeekTabs() {
 // تحميل البيانات من Apps Script
 // ══════════════════════════════════════
 function loadData() {
+  console.log('password:', currentUser.password);
   document.getElementById('tableWrap').innerHTML =
     '<div class="loading"><div class="spinner"></div>جارٍ تحميل البيانات...</div>';
 
