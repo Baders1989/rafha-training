@@ -469,7 +469,7 @@ function openAttendance(mode){
     password: currentAcadPassword
   }));
   window.location.href = '/attendance.html';
-}));window.location.href='?mode=attendance';}
+}
 
 function loadDashboard(){var grid=document.getElementById('acadStatsGrid');grid.innerHTML='<div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div>';document.getElementById('acadEntityList').innerHTML='';document.getElementById('acadMajorsList').innerHTML='';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){grid.innerHTML='<div class="msg-error" style="grid-column:1/-1">خطأ في تحميل البيانات.</div>';return}dashData=data;var s=data.summary;grid.innerHTML=sc('إجمالي الحجوزات',s.totalBookings,'من '+s.totalEntities+' جهة')+sc('الجهات الممتلئة',s.fullEntities,'من '+s.totalEntities)+sc('طلاب',s.male,'ف1: '+s.maleP1+' | ف2: '+s.maleP2)+sc('طالبات',s.female,'ف1: '+s.femaleP1+' | ف2: '+s.femaleP2);renderDashEntities();renderDashMajors();document.getElementById('acadLastUpdate').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-SA')})}
 function sc(label,num,sub){return'<div class="stat-card"><div class="stat-num">'+num+'</div><div class="stat-label">'+label+'</div><div class="stat-sub">'+sub+'</div></div>'}
