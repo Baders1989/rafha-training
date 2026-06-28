@@ -24,7 +24,6 @@ body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--gra
 
 .container { max-width: 1400px; margin: 0 auto; padding: 16px; }
 
-/* Controls */
 .controls { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .ctrl-label { font-size: .8rem; font-weight: 700; color: var(--g2); white-space: nowrap; }
 .ctrl-select { border: 2px solid var(--gray-200); border-radius: 8px; padding: 8px 12px; font-size: .88rem; font-family: inherit; color: var(--gray-800); background: var(--white); cursor: pointer; min-width: 260px; }
@@ -33,18 +32,15 @@ body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--gra
 .btn-save-all:hover { background: var(--g3); }
 .btn-save-all:disabled { background: var(--gray-400); cursor: not-allowed; }
 
-/* Legend */
 .legend { display: flex; gap: 12px; align-items: center; font-size: .75rem; color: var(--gray-600); }
 .leg-item { display: flex; align-items: center; gap: 4px; }
 .leg-dot { width: 14px; height: 14px; border-radius: 4px; }
 
-/* Stats */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
 .stat-card { background: var(--white); border-radius: 10px; box-shadow: var(--shadow); padding: 12px; text-align: center; }
 .stat-num { font-size: 1.6rem; font-weight: 800; color: var(--g2); }
 .stat-label { font-size: .7rem; color: var(--gray-400); margin-top: 2px; }
 
-/* Table wrapper */
 .table-wrap { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); overflow: auto; }
 .table-head-bar { background: var(--g2); color: var(--white); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-radius: var(--radius) var(--radius) 0 0; }
 .table-head-bar h3 { font-size: .9rem; font-weight: 700; }
@@ -68,7 +64,6 @@ tbody td:first-child { text-align: right; }
 .major-badge { display: inline-block; background: var(--green-light); color: var(--g2); border-radius: 8px; padding: 2px 6px; font-size: .65rem; font-weight: 600; }
 .entity-badge { display: inline-block; background: #eff6ff; color: #1d4ed8; border-radius: 8px; padding: 2px 6px; font-size: .65rem; max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Attendance cell */
 .att-cell { display: flex; justify-content: center; align-items: center; }
 .att-btn {
   width: 36px; height: 36px; border-radius: 8px; border: 2px solid var(--gray-200);
@@ -82,22 +77,24 @@ tbody td:first-child { text-align: right; }
 .att-btn:disabled { background: var(--gray-100); border-color: var(--gray-200); cursor: not-allowed; opacity: .5; }
 .att-btn.locked { background: var(--gray-100); border-color: var(--gray-200); cursor: not-allowed; }
 
-/* Period badge */
+/* saving indicator */
+.att-btn.saving { animation: savePulse .6s infinite; }
+.att-btn.save-ok { box-shadow: 0 0 0 2px var(--green-accent); }
+.att-btn.save-err { box-shadow: 0 0 0 2px var(--red); }
+@keyframes savePulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
 .period-p1 { background: #ecfdf5; color: #065f46; border-radius: 6px; padding: 1px 6px; font-size: .65rem; font-weight: 700; }
 .period-p2 { background: #eff6ff; color: #1e40af; border-radius: 6px; padding: 1px 6px; font-size: .65rem; font-weight: 700; }
 
-/* Empty / loading */
 .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); }
 .spinner { width: 32px; height: 32px; border: 3px solid var(--gray-200); border-top-color: var(--g2); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Toast */
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--gray-800); color: var(--white); padding: 10px 20px; border-radius: 20px; font-size: .84rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.25); transition: transform .3s; z-index: 999; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 .toast.success { background: var(--g2); }
 .toast.error { background: var(--red); }
 
-/* View-only banner */
 .ro-banner { background: #fffbeb; border: 1.5px solid var(--amber); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; font-size: .8rem; color: #92400e; display: none; }
 
 @media(max-width:768px) {
@@ -121,7 +118,6 @@ tbody td:first-child { text-align: right; }
 
   <div class="ro-banner" id="roBanner">⚠️ وضع المشاهدة فقط — يمكنك متابعة حضور طلابك دون تعديل</div>
 
-  <!-- Controls -->
   <div class="controls">
     <span class="ctrl-label">الجهة التدريبية:</span>
     <select class="ctrl-select" id="entitySelect" onchange="onEntityChange()">
@@ -132,10 +128,8 @@ tbody td:first-child { text-align: right; }
       <div class="leg-item"><div class="leg-dot" style="background:#fee2e2;border:2px solid #fca5a5"></div> غائب</div>
       <div class="leg-item"><div class="leg-dot" style="background:#f3f4f6;border:2px solid #e5e7eb"></div> مغلق</div>
     </div>
-    <button class="btn-save-all" id="btnSave" onclick="saveAttendance()" style="display:none">💾 حفظ التحضير</button>
   </div>
 
-  <!-- Stats -->
   <div class="stats" id="statsBar" style="display:none">
     <div class="stat-card"><div class="stat-num" id="stTotal">0</div><div class="stat-label">إجمالي الطلاب</div></div>
     <div class="stat-card"><div class="stat-num" id="stPresent" style="color:#16a34a">0</div><div class="stat-label">حضور هذا الأسبوع</div></div>
@@ -143,7 +137,6 @@ tbody td:first-child { text-align: right; }
     <div class="stat-card"><div class="stat-num" id="stPct" style="color:#2563eb">—</div><div class="stat-label">نسبة الحضور</div></div>
   </div>
 
-  <!-- Table -->
   <div id="tableWrap">
     <div class="empty-state">اختر الجهة لعرض كشف الحضور</div>
   </div>
@@ -166,18 +159,18 @@ const WEEKS = [
   { n:8, label:'أ8', from:'16 أغس', to:'20 أغس', start:'2026-08-16', end:'2026-08-20', p1:false, p2:true  },
 ];
 
-// الأسبوع الحالي
 const todayStr = new Date().toISOString().split('T')[0];
 let currentWeekN = 1;
-WEEKS.forEach(w => { if (todayStr >= w.start) currentWeekN = w.n; });
+WEEKS.forEach(function(w) { if (todayStr >= w.start) currentWeekN = w.n; });
 
-let currentUser  = null;
-let isViewOnly   = false;
-let myEntities   = [];
-let allStudents  = {};
+let currentUser   = null;
+let isViewOnly    = false;
+let myEntities    = [];
+let allStudents   = {};
 let currentEntity = '';
-let attendance   = {}; // { studentId: { w1:'present'|'absent'|null, w2:..., ... } }
-let savedData    = {}; // بيانات محفوظة من الشيت
+let attendance    = {};
+let savedData     = {};
+let saveTimers    = {};
 
 // ══════════════════════════════════════
 // INIT
@@ -187,10 +180,7 @@ function initAttendancePage(user) {
   isViewOnly  = (user.role === 'academic_view');
   document.getElementById('hUser').textContent = user.name;
   document.getElementById('hSub').textContent  = isViewOnly ? 'متابعة حضور الطلاب' : 'تسجيل الحضور الأسبوعي';
-  if (isViewOnly) {
-    document.getElementById('roBanner').style.display = 'block';
-    document.getElementById('btnSave').style.display  = 'none';
-  }
+  if (isViewOnly) document.getElementById('roBanner').style.display = 'block';
   loadData();
 }
 
@@ -199,31 +189,30 @@ function initAttendancePage(user) {
 // ══════════════════════════════════════
 function loadData() {
   document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><div class="spinner"></div>جارٍ تحميل البيانات...</div>';
-  fetch(`${SCRIPT_URL}?action=getAttendanceData&password=${encodeURIComponent(currentUser.password)}&role=${currentUser.role}`)
-    .then(r => r.json())
-    .then(d => {
+  fetch(SCRIPT_URL + '?action=getAttendanceData&password=' + encodeURIComponent(currentUser.password) + '&role=' + currentUser.role)
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
       if (d.status !== 'ok') throw new Error(d.message);
       myEntities  = d.entities  || [];
       allStudents = d.students  || {};
-      // تحميل البيانات المحفوظة
-      savedData = {};
-      (d.savedWeeks || []).forEach(rec => {
+      savedData   = {};
+      (d.savedWeeks || []).forEach(function(rec) {
         if (!savedData[rec.entity]) savedData[rec.entity] = {};
         if (!savedData[rec.entity][rec.studentId]) savedData[rec.entity][rec.studentId] = {};
-        savedData[rec.entity][rec.studentId][`w${rec.week}`] = rec.status;
+        savedData[rec.entity][rec.studentId]['w' + rec.week] = rec.status;
       });
       buildEntitySelect();
     })
-    .catch(err => {
-      document.getElementById('tableWrap').innerHTML = `<div class="empty-state">⚠️ ${err.message}</div>`;
+    .catch(function(err) {
+      document.getElementById('tableWrap').innerHTML = '<div class="empty-state">⚠️ ' + err.message + '</div>';
     });
 }
 
 function buildEntitySelect() {
-  const sel = document.getElementById('entitySelect');
+  var sel = document.getElementById('entitySelect');
   sel.innerHTML = '<option value="">— اختر الجهة —</option>';
-  myEntities.forEach(e => {
-    const opt = document.createElement('option');
+  myEntities.forEach(function(e) {
+    var opt = document.createElement('option');
     opt.value = e; opt.textContent = e;
     sel.appendChild(opt);
   });
@@ -236,18 +225,16 @@ function onEntityChange() {
   if (!currentEntity) {
     document.getElementById('tableWrap').innerHTML = '<div class="empty-state">اختر الجهة لعرض كشف الحضور</div>';
     document.getElementById('statsBar').style.display = 'none';
-    document.getElementById('btnSave').style.display  = 'none';
     return;
   }
-  // استرجاع البيانات المحفوظة لهذه الجهة
-  const students = allStudents[currentEntity] || [];
+  var students = allStudents[currentEntity] || [];
   attendance = {};
-  students.forEach(s => {
+  students.forEach(function(s) {
     attendance[s.id] = {};
-    WEEKS.forEach(w => {
-      const saved = (savedData[currentEntity] || {})[s.id] || {};
-      const isActive = (s.period === 'الفترة الأولى' && w.p1) || (s.period === 'الفترة الثانية' && w.p2);
-attendance[s.id][`w${w.n}`] = saved[`w${w.n}`] || (isActive ? 'present' : null);
+    WEEKS.forEach(function(w) {
+      var saved    = ((savedData[currentEntity] || {})[s.id]) || {};
+      var isActive = (s.period === 'الفترة الأولى' && w.p1) || (s.period === 'الفترة الثانية' && w.p2);
+      attendance[s.id]['w' + w.n] = saved['w' + w.n] || (isActive ? 'present' : null);
     });
   });
   renderTable();
@@ -257,180 +244,183 @@ attendance[s.id][`w${w.n}`] = saved[`w${w.n}`] || (isActive ? 'present' : null);
 // رسم الجدول
 // ══════════════════════════════════════
 function renderTable() {
-  const students = allStudents[currentEntity] || [];
+  var students = allStudents[currentEntity] || [];
   if (!students.length) {
     document.getElementById('tableWrap').innerHTML = '<div class="empty-state">لا يوجد طلاب في هذه الجهة</div>';
     return;
   }
 
-  // رأس الجدول
-  let weeksHeader = WEEKS.map(w => `
-    <th class="week-th">
-      <div class="week-label">${w.label}</div>
-      <div class="week-dates">${w.from}–${w.to}</div>
-    </th>`).join('');
-
-  let rows = students.map((s, i) => {
-    const isP1 = s.period === 'الفترة الأولى';
-    const isP2 = s.period === 'الفترة الثانية';
-
-    let weekCells = WEEKS.map(w => {
-      // تحديد إذا كانت الخلية مفعّلة
-      const active = (isP1 && w.p1) || (isP2 && w.p2);
-      const isCurrent = w.n === currentWeekN;
-      const status = attendance[s.id] ? attendance[s.id][`w${w.n}`] : null;
-
-      if (!active || isViewOnly) {
-        // مقفل أو قراءة فقط
-        const icon = status === 'present' ? '✅' : status === 'absent' ? '❌' : '—';
-        const cls  = status === 'present' ? 'present' : status === 'absent' ? 'absent' : '';
-        return `<td><div class="att-cell"><button class="att-btn ${cls} locked" disabled>${icon}</button></div></td>`;
-      }
-
-      const icon = status === 'present' ? '✅' : status === 'absent' ? '❌' : isCurrent ? '⬜' : '—';
-      const cls  = status === 'present' ? 'present' : status === 'absent' ? 'absent' : '';
-      const highlight = isCurrent && !status ? 'style="border-color:#15803d;background:#f0fdf4"' : '';
-      return `<td><div class="att-cell"><button class="att-btn ${cls}" ${highlight} onclick="toggleStatus('${s.id}',${w.n})">${icon}</button></div></td>`;
-    }).join('');
-
-    const periodBadge = isP1
-      ? '<span class="period-p1">ف1</span>'
-      : '<span class="period-p2">ف2</span>';
-
-    return `<tr>
-      <td><div class="s-name">${s.name} ${periodBadge}</div><div class="s-id">${s.id}</div></td>
-      <td><span class="major-badge">${s.major||'—'}</span></td>
-      <td><span class="entity-badge" title="${s.entity}">${s.entity}</span></td>
-      ${weekCells}
-    </tr>`;
+  var weeksHeader = WEEKS.map(function(w) {
+    return '<th class="week-th"><div class="week-label">' + w.label + '</div><div class="week-dates">' + w.from + '–' + w.to + '</div></th>';
   }).join('');
 
-  document.getElementById('tableWrap').innerHTML = `
-    <div class="table-head-bar">
-      <h3>${currentEntity}</h3>
-      <small style="opacity:.75">${students.length} طالب/طالبة</small>
-    </div>
-    <div style="overflow-x:auto">
-    <table>
-      <thead><tr>
-        <th style="text-align:right">الطالب</th>
-        <th>التخصص</th>
-        <th>الجهة</th>
-        ${weeksHeader}
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    </div>`;
+  var rows = students.map(function(s, i) {
+    var isP1 = s.period === 'الفترة الأولى';
+    var isP2 = s.period === 'الفترة الثانية';
+
+    var weekCells = WEEKS.map(function(w) {
+      var active    = (isP1 && w.p1) || (isP2 && w.p2);
+      var isCurrent = w.n === currentWeekN;
+      var status    = attendance[s.id] ? attendance[s.id]['w' + w.n] : null;
+      var icon      = status === 'present' ? '✅' : status === 'absent' ? '❌' : (active && isCurrent ? '⬜' : '—');
+      var cls       = status === 'present' ? 'present' : status === 'absent' ? 'absent' : '';
+
+      if (!active || isViewOnly) {
+        return '<td><div class="att-cell"><button class="att-btn ' + cls + ' locked" disabled>' + icon + '</button></div></td>';
+      }
+
+      var highlight = (isCurrent && !status) ? 'style="border-color:#15803d;background:#f0fdf4"' : '';
+      return '<td><div class="att-cell">'
+        + '<button class="att-btn ' + cls + '" id="btn-' + s.id + '-' + w.n + '" ' + highlight
+        + ' onclick="toggleStatus(\'' + s.id + '\',' + w.n + ')">' + icon + '</button>'
+        + '</div></td>';
+    }).join('');
+
+    var periodBadge = isP1 ? '<span class="period-p1">ف1</span>' : '<span class="period-p2">ف2</span>';
+
+    return '<tr>'
+      + '<td><div class="s-name">' + s.name + ' ' + periodBadge + '</div><div class="s-id">' + s.id + '</div></td>'
+      + '<td><span class="major-badge">' + (s.major||'—') + '</span></td>'
+      + '<td><span class="entity-badge" title="' + s.entity + '">' + s.entity + '</span></td>'
+      + weekCells
+      + '</tr>';
+  }).join('');
+
+  document.getElementById('tableWrap').innerHTML =
+    '<div class="table-head-bar"><h3>' + currentEntity + '</h3><small style="opacity:.75">' + students.length + ' طالب/طالبة</small></div>'
+    + '<div style="overflow-x:auto"><table>'
+    + '<thead><tr><th style="text-align:right">الطالب</th><th>التخصص</th><th>الجهة</th>' + weeksHeader + '</tr></thead>'
+    + '<tbody>' + rows + '</tbody></table></div>';
 
   document.getElementById('statsBar').style.display = 'grid';
-  if (!isViewOnly) document.getElementById('btnSave').style.display = 'flex';
   updateStats(students);
 }
 
 // ══════════════════════════════════════
-// تبديل الحالة
+// تبديل الحالة + حفظ فوري
 // ══════════════════════════════════════
 function toggleStatus(studentId, weekN) {
   if (!attendance[studentId]) attendance[studentId] = {};
-  const cur = attendance[studentId][`w${weekN}`];
-  // دورة: null → present → absent → null
-  attendance[studentId][`w${weekN}`] = cur === null ? 'present' : cur === 'present' ? 'absent' : null;
-  renderTable();
+  var cur = attendance[studentId]['w' + weekN];
+  // دورة: present → absent → present
+  attendance[studentId]['w' + weekN] = (cur === 'absent') ? 'present' : 'absent';
+
+  // تحديث الزر مباشرة بدون إعادة رسم كامل
+  var btn = document.getElementById('btn-' + studentId + '-' + weekN);
+  if (btn) {
+    var newStatus = attendance[studentId]['w' + weekN];
+    btn.className = 'att-btn ' + newStatus;
+    btn.textContent = newStatus === 'present' ? '✅' : '❌';
+  }
+
+  updateStats(allStudents[currentEntity] || []);
+
+  // حفظ فوري مع debounce
+  var key = studentId + '_' + weekN;
+  if (saveTimers[key]) clearTimeout(saveTimers[key]);
+  saveTimers[key] = setTimeout(function() { autoSave(studentId, weekN); }, 600);
+}
+
+// ══════════════════════════════════════
+// حفظ فوري
+// ══════════════════════════════════════
+function autoSave(studentId, weekN) {
+  var btn = document.getElementById('btn-' + studentId + '-' + weekN);
+  if (btn) btn.classList.add('saving');
+
+  var students = allStudents[currentEntity] || [];
+  var st = null;
+  students.forEach(function(s) { if (s.id === studentId) st = s; });
+  var w      = WEEKS[weekN - 1];
+  var status = attendance[studentId] ? attendance[studentId]['w' + weekN] : 'present';
+
+  fetch(SCRIPT_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action:   'saveAttendance',
+      password: currentUser.password,
+      role:     currentUser.role,
+      entity:   currentEntity,
+      week:     weekN,
+      records:  [{
+        studentId:   studentId,
+        studentName: st ? st.name   : '',
+        entity:      currentEntity,
+        teacher:     st ? st.teacher : '',
+        major:       st ? st.major   : '',
+        week:        weekN,
+        weekLabel:   w.label,
+        weekFrom:    w.from,
+        weekTo:      w.to,
+        status:      status,
+        days:        0,
+        notes:       '',
+      }]
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (btn) {
+      btn.classList.remove('saving');
+      btn.classList.add(d.status === 'ok' ? 'save-ok' : 'save-err');
+      setTimeout(function() { if (btn) btn.classList.remove('save-ok','save-err'); }, 2000);
+    }
+    if (d.status !== 'ok') showToast('تعذّر الحفظ', 'error');
+  })
+  .catch(function() {
+    if (btn) { btn.classList.remove('saving'); btn.classList.add('save-err'); }
+    showToast('تعذّر الحفظ — تحقق من الاتصال', 'error');
+  });
 }
 
 // ══════════════════════════════════════
 // إحصائيات
 // ══════════════════════════════════════
 function updateStats(students) {
-  const total = students.length;
-  let present = 0, absent = 0;
-  students.forEach(s => {
-    const st = attendance[s.id] ? attendance[s.id][`w${currentWeekN}`] : null;
+  var total = students.length, present = 0, absent = 0;
+  students.forEach(function(s) {
+    var st = attendance[s.id] ? attendance[s.id]['w' + currentWeekN] : null;
     if (st === 'present') present++;
     if (st === 'absent')  absent++;
   });
-  const pct = total > 0 ? Math.round(present / total * 100) : 0;
+  var pct = total > 0 ? Math.round(present / total * 100) : 0;
   document.getElementById('stTotal').textContent   = total;
   document.getElementById('stPresent').textContent = present;
   document.getElementById('stAbsent').textContent  = absent;
   document.getElementById('stPct').textContent     = pct + '%';
 }
 
-// ══════════════════════════════════════
-// حفظ
-// ══════════════════════════════════════
-function saveAttendance() {
-  const btn = document.getElementById('btnSave');
-  btn.disabled = true; btn.textContent = '⏳ جارٍ الحفظ...';
-  const students = allStudents[currentEntity] || [];
-  const records = [];
-
-  students.forEach(s => {
-    WEEKS.forEach(w => {
-      const status = attendance[s.id] ? attendance[s.id][`w${w.n}`] : null;
-      if (status) {
-        records.push({
-          studentId:   s.id,
-          studentName: s.name,
-          entity:      currentEntity,
-          week:        w.n,
-          weekLabel:   w.label,
-          weekFrom:    w.from,
-          weekTo:      w.to,
-          status,
-        });
-      }
-    });
-  });
-
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      action:   'saveAttendance',
-      password: currentUser.password,
-      role:     currentUser.role,
-      entity:   currentEntity,
-      records,
-    })
-  })
-  .then(r => r.json())
-  .then(d => {
-    if (d.status !== 'ok') throw new Error(d.message || 'خطأ في الحفظ');
-    showToast('تم حفظ التحضير بنجاح ✓', 'success');
-    // تحديث savedData
-    if (!savedData[currentEntity]) savedData[currentEntity] = {};
-    students.forEach(s => {
-      if (!savedData[currentEntity][s.id]) savedData[currentEntity][s.id] = {};
-      WEEKS.forEach(w => {
-        const st = attendance[s.id] ? attendance[s.id][`w${w.n}`] : null;
-        if (st) savedData[currentEntity][s.id][`w${w.n}`] = st;
-      });
-    });
-  })
-  .catch(err => showToast('⚠️ ' + err.message, 'error'))
-  .finally(() => { btn.disabled = false; btn.innerHTML = '💾 حفظ التحضير'; });
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + (type||'');
+  setTimeout(function() { t.className = 'toast'; }, 3000);
 }
 
 // ══════════════════════════════════════
-// Toast
+// تهيئة من URL params (بدل sessionStorage)
 // ══════════════════════════════════════
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast show ' + type;
-  setTimeout(() => t.className = 'toast', 3000);
-}
+window.addEventListener('DOMContentLoaded', function() {
+  var params   = new URLSearchParams(window.location.search);
+  var role     = params.get('role');
+  var password = params.get('password');
+  var name     = params.get('name');
 
-// ══════════════════════════════════════
-// Init
-// ══════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
-  const userData = sessionStorage.getItem('attendanceUser');
-  if (!userData) {
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial;direction:rtl;background:#f0f5f1"><div style="text-align:center;padding:40px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1)"><div style="font-size:48px;margin-bottom:16px">&#x1F512;</div><div style="font-size:18px;font-weight:700;color:#14532d;margin-bottom:8px">يرجى الدخول من المنصة الرئيسية</div><a href="https://ac-rafha-nbu.com" style="display:inline-block;padding:12px 24px;background:#14532d;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">العودة للمنصة</a></div></div>';
+  if (!role || !password) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Arial;direction:rtl;background:#f0f5f1">'
+      + '<div style="text-align:center;padding:40px;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.1)">'
+      + '<div style="font-size:48px;margin-bottom:16px">&#x1F512;</div>'
+      + '<div style="font-size:18px;font-weight:700;color:#14532d;margin-bottom:8px">يرجى الدخول من المنصة الرئيسية</div>'
+      + '<a href="https://ac-rafha-nbu.com" style="display:inline-block;padding:12px 24px;background:#14532d;color:#fff;border-radius:12px;text-decoration:none;font-weight:700">العودة للمنصة</a>'
+      + '</div></div>';
     return;
   }
-  initAttendancePage(JSON.parse(userData));
+
+  initAttendancePage({
+    role:     role,
+    password: decodeURIComponent(password),
+    name:     decodeURIComponent(name || 'مشرف أكاديمي')
+  });
 });
 </script>
 </body>
