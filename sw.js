@@ -1,4 +1,5 @@
-const CACHE_NAME = 'rafha-v4';
+const CACHE_NAME = 'rafha-v5'; // ← v5
+
 const ASSETS = [
   './',
   './index.html',
@@ -28,7 +29,9 @@ self.addEventListener('activate', function(e) {
 self.addEventListener('fetch', function(e) {
   e.respondWith(
     fetch(e.request).catch(function() {
-      return caches.match(e.request);
+      return caches.match(e.request).then(function(r) {
+        return r || Response.error(); // ← هذا التغيير فقط
+      });
     })
   );
 });
