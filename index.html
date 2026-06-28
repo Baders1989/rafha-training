@@ -45,10 +45,6 @@
     .roles-grid{display:flex;flex-direction:column;gap:12px;margin-top:8px}
     .role-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;cursor:pointer;transition:.15s ease;box-shadow:0 3px 10px rgba(0,0,0,.05)}
     .role-card:active{transform:scale(.97)}
-    .role-icon{width:50px;height:50px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-    .role-icon.student{background:#ecfdf5}
-    .role-icon.field{background:#fff7ed}
-    .role-icon.academic{background:#eff6ff}
     .role-info{flex:1}
     .role-title{font-size:15px;font-weight:700;color:#111827}
     .role-desc{font-size:12px;color:var(--muted);margin-top:3px}
@@ -172,14 +168,12 @@
     .approval-btn{min-height:48px;border:1.5px solid #d1d5db;background:#fff;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:.15s}
     .approval-btn.selected-yes{background:#ecfdf5;border-color:var(--g3);color:var(--g3)}
     .approval-btn.selected-no{background:#fef2f2;border-color:#dc2626;color:#dc2626}
-    .ticket-emoji{font-size:38px;margin-bottom:6px}
     .ticket-header h3{font-size:17px;font-weight:800;color:var(--g1);margin-bottom:4px}
     .ticket-header p{font-size:12px;color:var(--muted)}
     .ticket-body{background:linear-gradient(135deg,var(--g1),var(--g3));border-radius:20px;padding:18px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden}
     .ticket-body::before{content:"";position:absolute;top:-40px;left:-40px;width:120px;height:120px;background:rgba(255,255,255,.06);border-radius:50%}
     .ticket-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;position:relative;z-index:1}
     .ticket-row:last-child{margin-bottom:0}
-    .ticket-icon{font-size:18px;flex-shrink:0;margin-top:1px}
     .ticket-label{font-size:10px;opacity:.7;font-weight:600;margin-bottom:2px}
     .ticket-value{font-size:14px;font-weight:700;line-height:1.5}
     .ticket-divider{border:none;border-top:1px dashed rgba(255,255,255,.25);margin:12px 0}
@@ -189,6 +183,56 @@
     .ticket-period-dates{font-size:10px;opacity:.75;line-height:1.8}
     .ticket-no-booking{text-align:center;padding:20px;color:rgba(255,255,255,.8);font-size:13px;line-height:2}
     .ticket-close-btn{width:100%;min-height:48px;border:1.5px solid var(--line);background:#f9fafb;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text)}
+
+    /* ══ شاشة الحضور ══ */
+    .att-screen-main{flex:1;padding:0;overflow:auto}
+    .att-controls{background:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+    .att-ctrl-label{font-size:.8rem;font-weight:700;color:var(--g2);white-space:nowrap}
+    .att-select{border:2px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.86rem;font-family:inherit;background:#fff;flex:1;min-width:200px;-webkit-appearance:none}
+    .att-legend{display:flex;gap:10px;align-items:center;font-size:.75rem;color:var(--muted)}
+    .att-leg{display:flex;align-items:center;gap:4px}
+    .att-leg-dot{width:13px;height:13px;border-radius:3px}
+    .att-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 14px}
+    .att-stat{background:#fff;border-radius:10px;padding:10px;text-align:center;border:1px solid var(--line)}
+    .att-stat-num{font-size:1.4rem;font-weight:800;color:var(--g2)}
+    .att-stat-lbl{font-size:.65rem;color:var(--muted);margin-top:2px}
+    .att-table-wrap{padding:0 0 20px}
+    .att-table-head{background:var(--g2);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+    .att-table-head h3{font-size:.88rem;font-weight:700}
+    .att-table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .att-table{width:100%;border-collapse:collapse;min-width:900px}
+    .att-table thead th{background:#f3f4f6;padding:8px 8px;font-size:.7rem;font-weight:700;color:var(--muted);text-align:center;border-bottom:2px solid var(--line);white-space:nowrap}
+    .att-table thead th:first-child{text-align:right;min-width:160px}
+    .att-table thead th:nth-child(2){min-width:90px}
+    .att-table thead th:nth-child(3){min-width:110px}
+    .att-wk-lbl{font-size:.68rem;font-weight:800;color:var(--g2)}
+    .att-wk-dt{font-size:.58rem;color:var(--muted);margin-top:1px}
+    .att-table tbody tr{border-bottom:1px solid #f0f0f0;transition:background .1s}
+    .att-table tbody tr:hover{background:#f0fdf4}
+    .att-table tbody td{padding:7px 8px;font-size:.78rem;vertical-align:middle;text-align:center}
+    .att-table tbody td:first-child{text-align:right}
+    .att-sname{font-weight:600}
+    .att-sid{font-size:.66rem;color:var(--muted)}
+    .att-major{display:inline-block;background:#dcfce7;color:var(--g2);border-radius:6px;padding:1px 5px;font-size:.62rem;font-weight:600}
+    .att-p1{background:#ecfdf5;color:#065f46;border-radius:5px;padding:1px 5px;font-size:.62rem;font-weight:700}
+    .att-p2{background:#eff6ff;color:#1e40af;border-radius:5px;padding:1px 5px;font-size:.62rem;font-weight:700}
+    .att-btn{width:32px;height:32px;border-radius:7px;border:2px solid var(--line);background:#fff;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin:auto}
+    .att-btn:hover:not(:disabled){transform:scale(1.12)}
+    .att-btn.present{background:#dcfce7;border-color:#86efac}
+    .att-btn.absent{background:#fee2e2;border-color:#fca5a5}
+    .att-btn:disabled{background:#f3f4f6;border-color:var(--line);opacity:.5;cursor:not-allowed}
+    .att-btn.saving{animation:attPulse .6s infinite}
+    .att-btn.save-ok{box-shadow:0 0 0 2px #22c55e}
+    .att-btn.save-err{box-shadow:0 0 0 2px #ef4444}
+    @keyframes attPulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .att-empty{text-align:center;padding:50px 20px;color:var(--muted);font-size:.9rem}
+    .att-spinner{width:30px;height:30px;border:3px solid #d1fae5;border-top-color:var(--g3);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 12px}
+    .att-ro-banner{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:9px 13px;margin:10px 14px;font-size:.8rem;color:#92400e}
+    .att-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:10px 20px;border-radius:20px;font-size:.82rem;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.25);transition:transform .3s;z-index:9999}
+    .att-toast.show{transform:translateX(-50%) translateY(0)}
+    .att-toast.success{background:var(--g2)}
+    .att-toast.error{background:#ef4444}
+    @media(max-width:480px){.att-stats{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
@@ -373,21 +417,14 @@
 <div id="screenAcadDashboard" class="screen">
   <div class="header"><button class="back-btn" onclick="logoutAcad()">خروج</button><h1>لوحة متابعة الحجوزات</h1><p>المشرف الأكاديمي — رفحاء</p></div>
   <div class="main">
-    <!-- زر سجل الحضور -->
     <div class="service-card" style="margin-bottom:12px;cursor:pointer" onclick="openAttendance('view')">
       <div class="svc-icon" style="background:#eff6ff">👁️</div>
-      <div style="flex:1">
-        <div class="svc-title">متابعة تحضير طلابي</div>
-        <div class="svc-desc">عرض سجلات حضور طلابك المسجّلة من المشرفين</div>
-      </div>
+      <div style="flex:1"><div class="svc-title">متابعة تحضير طلابي</div><div class="svc-desc">عرض سجلات حضور طلابك المسجّلة من المشرفين</div></div>
       <span style="font-size:20px;color:var(--g4)">‹</span>
     </div>
     <div class="service-card" style="margin-bottom:16px;cursor:pointer" onclick="openAttendance('record')">
       <div class="svc-icon" style="background:#ecfdf5">📋</div>
-      <div style="flex:1">
-        <div class="svc-title">تسجيل حضور جهاتي</div>
-        <div class="svc-desc">تسجيل حضور طلاب الجهات التي تشرف عليها</div>
-      </div>
+      <div style="flex:1"><div class="svc-title">تسجيل حضور جهاتي</div><div class="svc-desc">تسجيل حضور طلاب الجهات التي تشرف عليها</div></div>
       <span style="font-size:20px;color:var(--g4)">‹</span>
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -404,6 +441,39 @@
     <div class="section-title-dash" style="margin-top:20px">توزيع التخصصات</div>
     <div id="acadMajorsList" style="background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:20px"></div>
   </div>
+</div>
+
+<!-- ══ شاشة الحضور ══ -->
+<div id="screenAttendance" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="showScreen('screenAcadDashboard')">‹ رجوع</button>
+    <h1 id="attHeaderTitle">سجل الحضور</h1>
+    <p>التدريب الصيفي 1447هـ</p>
+  </div>
+  <div class="att-screen-main">
+    <div id="attRoBanner" class="att-ro-banner" style="display:none">⚠️ وضع المشاهدة فقط — يمكنك متابعة حضور طلابك دون تعديل</div>
+    <div class="att-controls">
+      <span class="att-ctrl-label">الجهة:</span>
+      <select class="att-select" id="attEntitySelect" onchange="attOnEntityChange()">
+        <option value="">— اختر الجهة —</option>
+      </select>
+      <div class="att-legend">
+        <div class="att-leg"><div class="att-leg-dot" style="background:#dcfce7;border:2px solid #86efac"></div> حاضر</div>
+        <div class="att-leg"><div class="att-leg-dot" style="background:#fee2e2;border:2px solid #fca5a5"></div> غائب</div>
+        <div class="att-leg"><div class="att-leg-dot" style="background:#f3f4f6;border:2px solid var(--line)"></div> مغلق</div>
+      </div>
+    </div>
+    <div class="att-stats" id="attStats" style="display:none">
+      <div class="att-stat"><div class="att-stat-num" id="attTotal">0</div><div class="att-stat-lbl">إجمالي الطلاب</div></div>
+      <div class="att-stat"><div class="att-stat-num" id="attPresent" style="color:#16a34a">0</div><div class="att-stat-lbl">حضور هذا الأسبوع</div></div>
+      <div class="att-stat"><div class="att-stat-num" id="attAbsent" style="color:#dc2626">0</div><div class="att-stat-lbl">غياب هذا الأسبوع</div></div>
+      <div class="att-stat"><div class="att-stat-num" id="attPct" style="color:#2563eb">—</div><div class="att-stat-lbl">نسبة الحضور</div></div>
+    </div>
+    <div class="att-table-wrap" id="attTableWrap">
+      <div class="att-empty">اختر الجهة لعرض كشف الحضور</div>
+    </div>
+  </div>
+  <div class="att-toast" id="attToast"></div>
 </div>
 
 <!-- شاشة إفادة التدريب -->
@@ -426,37 +496,64 @@ const APP_URL='https://script.google.com/macros/s/AKfycbxFwibeIoBOcIdxJul1L7l8fV
 const FIELD_PWD=['FM-Rafha-2847','FM-Rafha-5913','FM-Rafha-3726','FM-Rafha-8451','FM-Rafha-6392','FM-Rafha-1574','FM-Rafha-9283','FM-Rafha-4617','FM-Rafha-7158','FM-Rafha-2439','FM-Rafha-5861','FM-Rafha-3094','FM-Rafha-8725','FM-Rafha-1463','FM-Rafha-6937','FM-Rafha-4281','FM-Rafha-9546','FM-Rafha-2178','FM-Rafha-7304','FM-Rafha-5692','FM-Rafha-8013','FM-Rafha-3457','FM-Rafha-6829','FM-Rafha-1745','FM-Rafha-4368','FM-Rafha-9071','FM-Rafha-2593','FM-Rafha-7846','FM-Rafha-5127','FM-Rafha-3984','FM-Rafha-6215','FM-Rafha-8763','FM-Rafha-1492','FM-Rafha-4058','FM-Rafha-7631','FM-Rafha-2947','FM-Rafha-9384','FM-Rafha-5716','FM-Rafha-3261','FM-Rafha-8549'];
 const ACAD_PWD=['AC-Rafha-7341','AC-Rafha-2895','AC-Rafha-5463','AC-Rafha-8127','AC-Rafha-3759','AC-Rafha-6084','AC-Rafha-1936'];
 const MAJORS=['نظم المعلومات الإدارية','الموارد البشرية','اللغة الإنجليزية','إدارة سلاسل الإمداد','تقنية الهندسة الكيميائية','التجارة الإلكترونية','المحاسبة والضرائب','تقنية المعلومات','البرمجة وعلوم الحاسب','تكنولوجيا حماية البيئة','الطاقة المتجددة'];
-let currentStudent=null,selectedRafhaOption=null,dashData=null;
 
-// ✅ متغيرات المشرف الأكاديمي
+const ATT_WEEKS=[
+  {n:1,label:'أ1',from:'28 يون',to:'4 يول',start:'2026-06-28',p1:true,p2:false},
+  {n:2,label:'أ2',from:'5 يول',to:'11 يول',start:'2026-07-05',p1:true,p2:false},
+  {n:3,label:'أ3',from:'12 يول',to:'18 يول',start:'2026-07-12',p1:true,p2:false},
+  {n:4,label:'أ4',from:'19 يول',to:'25 يول',start:'2026-07-19',p1:true,p2:false},
+  {n:5,label:'أ5',from:'26 يول',to:'1 أغس',start:'2026-07-26',p1:false,p2:true},
+  {n:6,label:'أ6',from:'2 أغس',to:'8 أغس',start:'2026-08-02',p1:false,p2:true},
+  {n:7,label:'أ7',from:'9 أغس',to:'15 أغس',start:'2026-08-09',p1:false,p2:true},
+  {n:8,label:'أ8',from:'16 أغس',to:'20 أغس',start:'2026-08-16',p1:false,p2:true},
+];
+var attTodayStr=new Date().toISOString().split('T')[0];
+var attCurrentWeekN=1;
+ATT_WEEKS.forEach(function(w){if(attTodayStr>=w.start)attCurrentWeekN=w.n;});
+
+let currentStudent=null,selectedRafhaOption=null,dashData=null;
 var currentAcadPassword='';
 var currentAcadName='';
+var attIsViewOnly=false;
+var attEntities=[];
+var attAllStudents={};
+var attCurrentEntity='';
+var attAttendance={};
+var attSavedData={};
+var attSaveTimers={};
 
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='screenHome'){currentStudent=null;selectedRafhaOption=null;document.getElementById('studentVerifySection').classList.remove('hidden');document.getElementById('studentServicesSection').classList.add('hidden');document.getElementById('stn').value='';document.getElementById('snin').value='';document.getElementById('studentVerifyMsg').innerHTML='';document.getElementById('stn_box').classList.remove('invalid');document.getElementById('snin_box').classList.remove('invalid')}if(id==='screenRafhaSelection')loadRafhaOptions();if(id==='screenPreferences')fillPrefInfo();if(id==='screenCertificate')fillCertInfo();if(id==='screenRafhaSelection')fillRafhaInfo();if(id==='screenAcadDashboard')loadDashboard();if(id==='screenFieldDashboard')renderMajorsInputs()}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='screenHome'){currentStudent=null;selectedRafhaOption=null;document.getElementById('studentVerifySection').classList.remove('hidden');document.getElementById('studentServicesSection').classList.add('hidden');document.getElementById('stn').value='';document.getElementById('snin').value='';document.getElementById('studentVerifyMsg').innerHTML='';document.getElementById('stn_box').classList.remove('invalid');document.getElementById('snin_box').classList.remove('invalid')}
+  if(id==='screenRafhaSelection')loadRafhaOptions();
+  if(id==='screenPreferences')fillPrefInfo();
+  if(id==='screenCertificate')fillCertInfo();
+  if(id==='screenRafhaSelection')fillRafhaInfo();
+  if(id==='screenAcadDashboard')loadDashboard();
+  if(id==='screenFieldDashboard')renderMajorsInputs();
+}
 
 function callAPI(func,args,cb){fetch(APP_URL+'?func='+func+'&args='+encodeURIComponent(JSON.stringify(args))).then(function(r){return r.json()}).then(function(d){cb(d)}).catch(function(e){cb({ok:false,message:'خطأ في الاتصال: '+e.message})})}
 
 function verifyStudent(){var s=document.getElementById('stn').value.trim(),n=document.getElementById('snin').value.trim(),btn=document.getElementById('studentVerifyBtn'),msg=document.getElementById('studentVerifyMsg');msg.innerHTML='';if(!s){document.getElementById('stn_box').classList.add('invalid');return}if(!n){document.getElementById('snin_box').classList.add('invalid');return}btn.disabled=true;btn.textContent='جاري التحقق...';callAPI('verifyStudentData',[s,n],function(res){btn.disabled=false;btn.textContent='تحقق من البيانات';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}currentStudent=res;document.getElementById('studentInfoBox').innerHTML='<strong>الاسم:</strong> '+res.name+'<br><strong>التخصص:</strong> '+res.major+'<br><strong>المقرر:</strong> '+(res.course||'')+'<br><strong>الفرع:</strong> '+res.branch;document.getElementById('studentVerifySection').classList.add('hidden');document.getElementById('studentServicesSection').classList.remove('hidden')})}
 
 function fillCertInfo(){if(!currentStudent)return;document.getElementById('certStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major+'<br><strong>المقرر:</strong> '+(currentStudent.course||'')+'<br><strong>الفرع:</strong> '+currentStudent.branch;}
-function requestCertificate(){if(!currentStudent)return;var btn=document.getElementById('certBtn'),msg=document.getElementById('certMsg');btn.disabled=true;btn.textContent='جاري إصدار الإفادة...';msg.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">يرجى الانتظار...</p></div>';callAPI('searchStudent',[currentStudent.student_number,currentStudent.national_number],function(res){btn.disabled=false;btn.textContent='إصدار الإفادة وتحميلها';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}try{var bytes=atob(res.pdf_base64);var arr=new Uint8Array(bytes.length);for(var i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);var blob=new Blob([arr],{type:'application/pdf'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=res.filename||'ifada.pdf';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);msg.innerHTML='<div class="msg-success">تم إصدار الإفادة بنجاح! تحقق من ملفات التنزيل.</div>';}catch(e){msg.innerHTML='<div class="msg-error">خطأ: '+e.message+'</div>';}})}
+function requestCertificate(){if(!currentStudent)return;var btn=document.getElementById('certBtn'),msg=document.getElementById('certMsg');btn.disabled=true;btn.textContent='جاري إصدار الإفادة...';msg.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">يرجى الانتظار...</p></div>';callAPI('searchStudent',[currentStudent.student_number,currentStudent.national_number],function(res){btn.disabled=false;btn.textContent='إصدار الإفادة وتحميلها';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}try{var bytes=atob(res.pdf_base64);var arr=new Uint8Array(bytes.length);for(var i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);var blob=new Blob([arr],{type:'application/pdf'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=res.filename||'ifada.pdf';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);msg.innerHTML='<div class="msg-success">تم إصدار الإفادة بنجاح!</div>';}catch(e){msg.innerHTML='<div class="msg-error">خطأ: '+e.message+'</div>';}})}
 
 function fillPrefInfo(){if(!currentStudent)return;document.getElementById('prefStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major}
 function fillRafhaInfo(){if(!currentStudent)return;document.getElementById('rafhaStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major+'<br><strong>الفئة:</strong> '+(currentStudent.gender==='male'?'طلاب':'طالبات')}
-
 function selectSummerChoice(v){document.getElementById('summerChoice').value=v;document.getElementById('choiceYes').classList.toggle('active',v==='YES');document.getElementById('choiceNo').classList.toggle('active',v==='NO');document.getElementById('locationSection').classList.toggle('hidden',v!=='YES')}
 function selectLocation(t){document.getElementById('locationType').value=t;document.getElementById('locInside').classList.toggle('active',t==='inside');document.getElementById('locOutside').classList.toggle('active',t==='outside');document.getElementById('insideFields').classList.toggle('hidden',t!=='inside');document.getElementById('outsideFields').classList.toggle('hidden',t!=='outside')}
 function toggleOtherCity(){var v=document.getElementById('insideCity').value;document.getElementById('insideOtherBox').classList.toggle('hidden',v!=='OTHER')}
-
 function submitPreferences(){if(!currentStudent)return;var nameEn=document.getElementById('nameEn').value.trim(),mobile=document.getElementById('prefMobile').value.trim(),choice=document.getElementById('summerChoice').value,locType=document.getElementById('locationType').value,msg=document.getElementById('prefMsg'),btn=document.getElementById('prefSubmitBtn'),city='',region='';if(choice==='YES'){if(locType==='inside'){region='الحدود الشمالية';var c=document.getElementById('insideCity').value;city=c==='OTHER'?document.getElementById('insideOtherCity').value.trim():c}else if(locType==='outside'){city=document.getElementById('outsideCity').value.trim();region='خارج الحدود الشمالية'}}if(!nameEn||!mobile||!choice){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع البيانات.</div>';return}btn.disabled=true;btn.textContent='جاري الإرسال...';callAPI('submitTrainingPreferences',[{student_number:currentStudent.student_number,national_number:currentStudent.national_number,name_en:nameEn,mobile:mobile,summer_choice:choice,training_location_type:locType,region:region,city:city}],function(res){btn.disabled=false;btn.textContent='إرسال';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>';if(res.ok&&res.certificate_url)msg.innerHTML+='<a href="'+res.certificate_url+'" target="_blank" style="display:block;margin-top:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:white;text-decoration:none;font-weight:700;text-align:center;font-size:15px">طباعة الإفادة</a>'})}
-
-function loadRafhaOptions(){if(!currentStudent)return;var tickets=document.getElementById('rafhaTickets'),bar=document.getElementById('rafhaStatsBar');selectedRafhaOption=null;bar.style.display='none';document.getElementById('rafhaSelectedBox').style.display='none';var now=new Date(),start=new Date('2026-06-15T21:00:00+03:00'),end=new Date('2026-06-17T23:59:00+03:00');if(now<start){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div><div style="font-size:14px;color:#374151">يفتح اليوم الموافق: <strong>15/06/2026</strong> الساعة <strong>21:00 م</strong></div></div>';return}if(now>end){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#fef2f2;border:2px solid #fecaca;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🔒</div><div style="font-size:15px;font-weight:800;color:#b91c1c;margin-bottom:8px">تم إغلاق الحجز</div><div style="font-size:14px;color:#374151">انتهت فترة الحجز</div></div>';return}if(currentStudent.has_outside_approval){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#fff7ed;border:1px solid #fcd34d;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🎉</div><div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px">تم قبولك في جهة التدريب</div><div style="font-size:14px;color:#374151"><strong>الجهة:</strong> '+currentStudent.entity+'</div><div style="font-size:14px;color:#374151"><strong>تاريخ البداية:</strong> '+currentStudent.start_date+'</div><div style="font-size:14px;color:#374151"><strong>تاريخ الانتهاء:</strong> '+currentStudent.end_date+'</div><div style="margin-top:12px;font-size:12px;color:#6b7280">تدريبك خارج المنطقة — لا تحتاج لاختيار جهة داخل رفحاء</div></div>';return}document.getElementById('rafhaSubmitBtn').style.display='block';tickets.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري البحث...</p></div>';callAPI('getRafhaOptions',[currentStudent.student_number,currentStudent.national_number],function(data){if(!data||data.length===0){tickets.innerHTML='<div class="msg-error">لا توجد جهات متاحة لتخصصك حالياً.</div>';return}tickets.innerHTML='';var grouped={};data.forEach(function(o){if(!grouped[o.entity])grouped[o.entity]={};grouped[o.entity][o.period_code]=o});var entities=Object.keys(grouped);bar.style.display='block';bar.textContent='الجهات المتاحة: '+entities.length+' جهة';entities.forEach(function(entity){var p1=grouped[entity]['FIELD_FIRST'],p2=grouped[entity]['PLATFORM_FIRST'],sec=document.createElement('div');sec.className='entity-section';sec.innerHTML='<div class="entity-label">'+entity+'</div><div class="periods-row">'+mkPeriodCard(p1,'الفترة الأولى')+mkPeriodCard(p2,'الفترة الثانية')+'</div>';var cols=sec.querySelectorAll('.period-option');if(p1&&Number(p1.seats)>0)cols[0].onclick=function(){selectRafha(cols[0],p1)};if(p2&&Number(p2.seats)>0)cols[1].onclick=function(){selectRafha(cols[1],p2)};tickets.appendChild(sec)})})}
+function loadRafhaOptions(){if(!currentStudent)return;var tickets=document.getElementById('rafhaTickets'),bar=document.getElementById('rafhaStatsBar');selectedRafhaOption=null;bar.style.display='none';document.getElementById('rafhaSelectedBox').style.display='none';var now=new Date(),start=new Date('2026-06-15T21:00:00+03:00'),end=new Date('2026-06-17T23:59:00+03:00');if(now<start){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div></div>';return}if(now>end){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#fef2f2;border:2px solid #fecaca;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🔒</div><div style="font-size:15px;font-weight:800;color:#b91c1c;margin-bottom:8px">تم إغلاق الحجز</div></div>';return}if(currentStudent.has_outside_approval){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#fff7ed;border:1px solid #fcd34d;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🎉</div><div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px">تم قبولك في جهة التدريب</div><div style="font-size:14px;color:#374151"><strong>الجهة:</strong> '+currentStudent.entity+'</div></div>';return}document.getElementById('rafhaSubmitBtn').style.display='block';tickets.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري البحث...</p></div>';callAPI('getRafhaOptions',[currentStudent.student_number,currentStudent.national_number],function(data){if(!data||data.length===0){tickets.innerHTML='<div class="msg-error">لا توجد جهات متاحة لتخصصك حالياً.</div>';return}tickets.innerHTML='';var grouped={};data.forEach(function(o){if(!grouped[o.entity])grouped[o.entity]={};grouped[o.entity][o.period_code]=o});var entities=Object.keys(grouped);bar.style.display='block';bar.textContent='الجهات المتاحة: '+entities.length+' جهة';entities.forEach(function(entity){var p1=grouped[entity]['FIELD_FIRST'],p2=grouped[entity]['PLATFORM_FIRST'],sec=document.createElement('div');sec.className='entity-section';sec.innerHTML='<div class="entity-label">'+entity+'</div><div class="periods-row">'+mkPeriodCard(p1,'الفترة الأولى')+mkPeriodCard(p2,'الفترة الثانية')+'</div>';var cols=sec.querySelectorAll('.period-option');if(p1&&Number(p1.seats)>0)cols[0].onclick=function(){selectRafha(cols[0],p1)};if(p2&&Number(p2.seats)>0)cols[1].onclick=function(){selectRafha(cols[1],p2)};tickets.appendChild(sec)})})}
 function mkPeriodCard(p,label){var d=!p||Number(p.seats)<=0,t=!p?'غير متاح':(Number(p.seats)<=0?'اكتملت المقاعد':'متاح: '+p.seats+' مقعد');return'<div class="period-option'+(d?' disabled':'')+'"><div class="period-mini-title">'+label+'</div><div style="font-size:12px;font-weight:700;color:#111827;margin-bottom:6px">'+(p?p.entity:'')+'</div><span class="seat-badge'+(d?' full':'')+'">'+t+'</span></div>'}
 function selectRafha(el,option){document.querySelectorAll('.period-option').forEach(function(t){t.classList.remove('active')});el.classList.add('active');selectedRafhaOption=option;var box=document.getElementById('rafhaSelectedBox');box.style.display='block';box.innerHTML='تم الاختيار: '+option.entity+'<br>'+option.period;box.scrollIntoView({behavior:'smooth',block:'center'})}
 function submitRafha(){var msg=document.getElementById('rafhaMsg'),btn=document.getElementById('rafhaSubmitBtn');msg.innerHTML='';if(!selectedRafhaOption){msg.innerHTML='<div class="msg-error">يرجى اختيار جهة والفترة أولاً.</div>';return}btn.disabled=true;btn.textContent='جاري معالجة طلبك...';var attempts=0;function trySubmit(){attempts++;callAPI('submitRafhaSelection',[{student_number:currentStudent.student_number,national_number:currentStudent.national_number,entity:selectedRafhaOption.entity,period_code:selectedRafhaOption.period_code}],function(res){if(res.ok){btn.disabled=true;btn.textContent='تم الحجز';btn.style.background='#166634';var pc=selectedRafhaOption.period_code;msg.innerHTML='<div class="booking-card"><div class="booking-success">تم تأكيد الحجز بنجاح</div><div class="booking-row"><strong>الاسم:</strong> '+currentStudent.name+'</div><div class="booking-row"><strong>جهة التدريب:</strong> '+selectedRafhaOption.entity+'</div><div class="booking-row"><strong>الفترة:</strong> '+(pc==='FIELD_FIRST'?'الأولى':'الثانية')+'</div><div class="booking-period"><div class="booking-row"><strong>الميداني:</strong> '+(pc==='FIELD_FIRST'?'28/06/2026 → 23/07/2026':'26/07/2026 → 20/08/2026')+'</div><div class="booking-row"><strong>المنصات:</strong> '+(pc==='FIELD_FIRST'?'26/07/2026 → 20/08/2026':'28/06/2026 → 23/07/2026')+'</div></div></div>'}else if(res.message&&res.message.includes('يعالج طلبات')&&attempts<5){btn.textContent='جاري المحاولة... ('+attempts+')';setTimeout(trySubmit,1000*attempts)}else{btn.disabled=false;btn.textContent='حجز المقعد';msg.innerHTML='<div class="msg-error">'+res.message+'</div>';loadRafhaOptions()}})}trySubmit()}
-
 function loginField(){var pwd=document.getElementById('fieldPassword').value.trim(),msg=document.getElementById('fieldLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(FIELD_PWD.includes(pwd)){document.getElementById('fieldPassword').value='';msg.innerHTML='';showScreen('screenFieldDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
 function logoutField(){showScreen('screenHome')}
 function switchFieldTab(tab){document.querySelectorAll('#screenFieldDashboard .tab').forEach(function(t,i){t.classList.toggle('active',(i===0&&tab==='capacity')||(i===1&&tab==='bookings'))});document.getElementById('fieldCapacityTab').classList.toggle('hidden',tab!=='capacity');document.getElementById('fieldBookingsTab').classList.toggle('hidden',tab!=='bookings')}
@@ -464,38 +561,156 @@ function renderMajorsInputs(){var c=document.getElementById('majorsContainer');c
 function submitCapacity(){var entity=document.getElementById('fcEntity').value.trim(),contact=document.getElementById('fcContact').value.trim(),mobile=document.getElementById('fcMobile').value.trim(),email=document.getElementById('fcEmail').value.trim(),msg=document.getElementById('fcMsg'),btn=document.getElementById('fcSubmitBtn');if(!entity||!contact||!mobile||!email){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع بيانات الجهة.</div>';return}var rows=[],mi=document.querySelectorAll('.male-input'),fi=document.querySelectorAll('.female-input');MAJORS.forEach(function(m,i){var male=mi[i].value.trim(),female=fi[i].value.trim();if(male||female)rows.push({major:m,male_seats:male,female_seats:female})});if(rows.length===0){msg.innerHTML='<div class="msg-error">يرجى إدخال الأعداد للتخصصات المتاحة.</div>';return}btn.disabled=true;btn.textContent='جاري الإرسال...';callAPI('submitEntityCapacity',[{entity_name:entity,contact_name:contact,mobile:mobile,email:email,rows:rows}],function(res){btn.disabled=false;btn.textContent='إرسال';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>';if(res.ok){document.getElementById('fcEntity').value='';document.getElementById('fcContact').value='';document.getElementById('fcMobile').value='';document.getElementById('fcEmail').value='';renderMajorsInputs()}})}
 function loadFieldBookings(){var entity=document.getElementById('fieldEntitySearch').value.trim(),msg=document.getElementById('fieldBookingsMsg'),list=document.getElementById('fieldBookingsList');if(!entity){msg.innerHTML='<div class="msg-error">يرجى إدخال اسم الجهة.</div>';return}msg.innerHTML='';list.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){list.innerHTML='<div class="msg-error">حدث خطأ.</div>';return}var e=data.entities.find(function(x){return x.entity.includes(entity)||entity.includes(x.entity)});if(!e){list.innerHTML='<div class="msg-error">لم يتم العثور على الجهة.</div>';return}list.innerHTML='<div style="background:#f9fafb;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:2"><strong style="color:var(--g3)">الجهة:</strong> '+e.entity+'<br><strong style="color:#1d4ed8">طلاب:</strong> ف1: '+e.male.p1.booked+'/'+e.male.p1.total+' | ف2: '+e.male.p2.booked+'/'+e.male.p2.total+'<br><strong style="color:#9d174d">طالبات:</strong> ف1: '+e.female.p1.booked+'/'+e.female.p1.total+' | ف2: '+e.female.p2.booked+'/'+e.female.p2.total+'</div>'})}
 
-// ✅ دوال المشرف الأكاديمي
+// ══ المشرف الأكاديمي ══
 function loginAcad(){
   var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');
   if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال رقم الهوية.</div>';return}
   msg.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';
   callAPI('verifyAcadSupervisor',[pwd],function(res){
-    if(res.ok){
-      currentAcadPassword=res.password;
-      currentAcadName=res.name;
-      document.getElementById('acadPassword').value='';
-      msg.innerHTML='';
-      showScreen('screenAcadDashboard');
-    }else{
-      msg.innerHTML='<div class="msg-error">رقم الهوية غير صحيح.</div>';
-    }
+    if(res.ok){currentAcadPassword=res.password;currentAcadName=res.name;document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard');}
+    else{msg.innerHTML='<div class="msg-error">رقم الهوية غير صحيح.</div>';}
+  });
+}
+function logoutAcad(){currentAcadPassword='';currentAcadName='';showScreen('screenHome');}
+
+function openAttendance(mode){
+  attIsViewOnly=(mode==='view');
+  document.getElementById('attHeaderTitle').textContent=attIsViewOnly?'متابعة تحضير طلابي':'تسجيل حضور جهاتي';
+  document.getElementById('attRoBanner').style.display=attIsViewOnly?'block':'none';
+  attEntities=[];attAllStudents={};attCurrentEntity='';attAttendance={};attSavedData={};
+  document.getElementById('attEntitySelect').innerHTML='<option value="">— اختر الجهة —</option>';
+  document.getElementById('attStats').style.display='none';
+  document.getElementById('attTableWrap').innerHTML='<div class="att-empty"><div class="att-spinner"></div>جارٍ تحميل البيانات...</div>';
+  showScreen('screenAttendance');
+  attLoadData();
+}
+
+function attLoadData(){
+  var role=attIsViewOnly?'academic_view':'academic';
+  fetch(APP_URL+'?action=getAttendanceData&password='+encodeURIComponent(currentAcadPassword)+'&role='+role)
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.status!=='ok')throw new Error(d.message);
+      attEntities=d.entities||[];
+      attAllStudents=d.students||{};
+      attSavedData={};
+      (d.savedWeeks||[]).forEach(function(rec){
+        if(!attSavedData[rec.entity])attSavedData[rec.entity]={};
+        if(!attSavedData[rec.entity][rec.studentId])attSavedData[rec.entity][rec.studentId]={};
+        attSavedData[rec.entity][rec.studentId]['w'+rec.week]=rec.status;
+      });
+      attBuildEntitySelect();
+    })
+    .catch(function(err){
+      document.getElementById('attTableWrap').innerHTML='<div class="att-empty">⚠️ '+err.message+'</div>';
+    });
+}
+
+function attBuildEntitySelect(){
+  var sel=document.getElementById('attEntitySelect');
+  sel.innerHTML='<option value="">— اختر الجهة —</option>';
+  attEntities.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;sel.appendChild(o);});
+  if(attEntities.length===1){sel.value=attEntities[0];attOnEntityChange();}
+  else{document.getElementById('attTableWrap').innerHTML='<div class="att-empty">اختر الجهة لعرض كشف الحضور</div>';}
+}
+
+function attOnEntityChange(){
+  attCurrentEntity=document.getElementById('attEntitySelect').value;
+  if(!attCurrentEntity){document.getElementById('attTableWrap').innerHTML='<div class="att-empty">اختر الجهة لعرض كشف الحضور</div>';document.getElementById('attStats').style.display='none';return;}
+  var students=attAllStudents[attCurrentEntity]||[];
+  attAttendance={};
+  students.forEach(function(s){
+    attAttendance[s.id]={};
+    ATT_WEEKS.forEach(function(w){
+      var saved=((attSavedData[attCurrentEntity]||{})[s.id])||{};
+      var isActive=(s.period==='الفترة الأولى'&&w.p1)||(s.period==='الفترة الثانية'&&w.p2);
+      attAttendance[s.id]['w'+w.n]=saved['w'+w.n]||(isActive?'present':null);
+    });
+  });
+  attRenderTable();
+}
+
+function attRenderTable(){
+  var students=attAllStudents[attCurrentEntity]||[];
+  if(!students.length){document.getElementById('attTableWrap').innerHTML='<div class="att-empty">لا يوجد طلاب في هذه الجهة</div>';return;}
+  var wHdr=ATT_WEEKS.map(function(w){return'<th class="att-wk"><div class="att-wk-lbl">'+w.label+'</div><div class="att-wk-dt">'+w.from+'–'+w.to+'</div></th>';}).join('');
+  var rows=students.map(function(s){
+    var isP1=s.period==='الفترة الأولى';
+    var cells=ATT_WEEKS.map(function(w){
+      var active=(isP1&&w.p1)||(!isP1&&w.p2);
+      var status=attAttendance[s.id]?attAttendance[s.id]['w'+w.n]:null;
+      var icon=status==='present'?'✅':status==='absent'?'❌':(active&&w.n===attCurrentWeekN?'⬜':'—');
+      var cls=status==='present'?'present':status==='absent'?'absent':'';
+      if(!active||attIsViewOnly)return'<td><button class="att-btn '+cls+'" disabled>'+icon+'</button></td>';
+      var hl=(w.n===attCurrentWeekN&&!status)?'style="border-color:#15803d;background:#f0fdf4"':'';
+      return'<td><button class="att-btn '+cls+'" id="attbtn-'+s.id+'-'+w.n+'" '+hl+' onclick="attToggle(\''+s.id+'\','+w.n+')">'+icon+'</button></td>';
+    }).join('');
+    var badge=isP1?'<span class="att-p1">ف1</span>':'<span class="att-p2">ف2</span>';
+    return'<tr><td><div class="att-sname">'+s.name+' '+badge+'</div><div class="att-sid">'+s.id+'</div></td><td><span class="att-major">'+(s.major||'—')+'</span></td><td style="font-size:.7rem;color:var(--muted)">'+(s.entity||'—')+'</td>'+cells+'</tr>';
+  }).join('');
+  document.getElementById('attTableWrap').innerHTML=
+    '<div class="att-table-head"><h3>'+attCurrentEntity+'</h3><small>'+students.length+' طالب/طالبة</small></div>'
+    +'<div class="att-table-scroll"><table class="att-table"><thead><tr><th style="text-align:right">الطالب</th><th>التخصص</th><th>الجهة</th>'+wHdr+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  document.getElementById('attStats').style.display='grid';
+  attUpdateStats(students);
+}
+
+function attToggle(sid,wn){
+  if(!attAttendance[sid])attAttendance[sid]={};
+  var cur=attAttendance[sid]['w'+wn];
+  attAttendance[sid]['w'+wn]=(cur==='absent')?'present':'absent';
+  var btn=document.getElementById('attbtn-'+sid+'-'+wn);
+  if(btn){var ns=attAttendance[sid]['w'+wn];btn.className='att-btn '+ns;btn.textContent=ns==='present'?'✅':'❌';}
+  attUpdateStats(attAllStudents[attCurrentEntity]||[]);
+  var key=sid+'_'+wn;
+  if(attSaveTimers[key])clearTimeout(attSaveTimers[key]);
+  attSaveTimers[key]=setTimeout(function(){attAutoSave(sid,wn);},600);
+}
+
+function attAutoSave(sid,wn){
+  var btn=document.getElementById('attbtn-'+sid+'-'+wn);
+  if(btn)btn.classList.add('saving');
+  var students=attAllStudents[attCurrentEntity]||[];
+  var st=null;students.forEach(function(s){if(s.id===sid)st=s;});
+  var w=ATT_WEEKS[wn-1];
+  var status=attAttendance[sid]?attAttendance[sid]['w'+wn]:'present';
+  fetch(APP_URL,{
+    method:'POST',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({
+      action:'saveAttendance',password:currentAcadPassword,
+      role:attIsViewOnly?'academic_view':'academic',
+      entity:attCurrentEntity,week:wn,
+      records:[{studentId:sid,studentName:st?st.name:'',entity:attCurrentEntity,
+        teacher:st?st.teacher:'',major:st?st.major:'',
+        week:wn,weekLabel:w.label,weekFrom:w.from,weekTo:w.to,
+        status:status,days:0,notes:''}]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(btn){btn.classList.remove('saving');btn.classList.add(d.status==='ok'?'save-ok':'save-err');setTimeout(function(){if(btn)btn.classList.remove('save-ok','save-err');},2000);}
+    if(d.status!=='ok')attShowToast('تعذّر الحفظ','error');
+  })
+  .catch(function(){
+    if(btn){btn.classList.remove('saving');btn.classList.add('save-err');}
+    attShowToast('تعذّر الحفظ — تحقق من الاتصال','error');
   });
 }
 
-function logoutAcad(){
-  currentAcadPassword='';
-  currentAcadName='';
-  showScreen('screenHome');
+function attUpdateStats(students){
+  var total=students.length,present=0,absent=0;
+  students.forEach(function(s){var st=attAttendance[s.id]?attAttendance[s.id]['w'+attCurrentWeekN]:null;if(st==='present')present++;if(st==='absent')absent++;});
+  var pct=total>0?Math.round(present/total*100):0;
+  document.getElementById('attTotal').textContent=total;
+  document.getElementById('attPresent').textContent=present;
+  document.getElementById('attAbsent').textContent=absent;
+  document.getElementById('attPct').textContent=pct+'%';
 }
 
-// ✅ فتح صفحة التحضير مع تمرير البيانات عبر URL (بدون backtick وبدون sessionStorage)
-function openAttendance(mode){
-  var role=mode==='view'?'academic_view':'academic';
-  var url='https://ac-rafha-nbu.com/attendance.html'
-         +'?role='+encodeURIComponent(role)
-         +'&password='+encodeURIComponent(currentAcadPassword)
-         +'&name='+encodeURIComponent(currentAcadName);
-  window.open(url,'_blank');
+function attShowToast(msg,type){
+  var t=document.getElementById('attToast');
+  t.textContent=msg;t.className='att-toast show '+(type||'');
+  setTimeout(function(){t.className='att-toast';},3000);
 }
 
 function loadDashboard(){var grid=document.getElementById('acadStatsGrid');grid.innerHTML='<div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div>';document.getElementById('acadEntityList').innerHTML='';document.getElementById('acadMajorsList').innerHTML='';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){grid.innerHTML='<div class="msg-error" style="grid-column:1/-1">خطأ في تحميل البيانات.</div>';return}dashData=data;var s=data.summary;grid.innerHTML=sc('إجمالي الحجوزات',s.totalBookings,'من '+s.totalEntities+' جهة')+sc('الجهات الممتلئة',s.fullEntities,'من '+s.totalEntities)+sc('طلاب',s.male,'ف1: '+s.maleP1+' | ف2: '+s.maleP2)+sc('طالبات',s.female,'ف1: '+s.femaleP1+' | ف2: '+s.femaleP2);renderDashEntities();renderDashMajors();document.getElementById('acadLastUpdate').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-SA')})}
@@ -516,7 +731,7 @@ function showGuardianView(){document.getElementById('pledgeView').style.display=
 function selectApproval(val){guardianApprovalSelected=val;document.getElementById('approvalYes').className='approval-btn'+(val==='yes'?' selected-yes':'');document.getElementById('approvalNo').className='approval-btn'+(val==='no'?' selected-no':'');validateGuardianForm()}
 function validateGuardianForm(){var name=document.getElementById('guardianName').value.trim(),mobile=document.getElementById('guardianMobile').value.trim(),nameWords=name.split(/\s+/).filter(function(w){return w.length>0}),ok=nameWords.length>=3&&mobile.match(/^05\d{8}$/)&&guardianApprovalSelected;document.getElementById('guardianConfirmBtn').disabled=!ok}
 function confirmGuardian(){var btn=document.getElementById('guardianConfirmBtn'),name=document.getElementById('guardianName').value.trim(),mobile=document.getElementById('guardianMobile').value.trim(),nameWords=name.split(/\s+/).filter(function(w){return w.length>0});if(nameWords.length<3){document.getElementById('guardianNameError').style.display='block';return}document.getElementById('guardianNameError').style.display='none';var approval=guardianApprovalSelected==='yes'?'موافق':'غير موافق';btn.disabled=true;btn.textContent='جاري الحفظ...';callAPI('submitStudentPledge',[currentStudent.student_number,currentStudent.national_number,name,mobile,approval],function(res){if(res&&res.ok){showCardView()}else{btn.disabled=false;btn.textContent='حفظ وعرض البطاقة'}})}
-function showCardView(){document.getElementById('pledgeView').style.display='none';document.getElementById('guardianView').style.display='none';document.getElementById('cardView').style.display='block';document.getElementById('ticketContent').innerHTML='<div class="loader-wrap" style="padding:20px 0"><div class="loader" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div></div>';callAPI('getStudentBooking',[currentStudent.student_number,currentStudent.national_number],function(res){var content=document.getElementById('ticketContent');if(!res||!res.ok){ticketData=null;content.innerHTML='<div class="ticket-no-booking"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-weight:800;font-size:15px;margin-bottom:6px">لا يوجد حجز مسجل</div><div>يمكنك الحجز من خدمة "اختيار جهة التدريب"</div></div>';return}ticketData=res;var isFirst=res.period==='الفترة الأولى',fieldDates=res.field_dates||(isFirst?'28/06/2026 → 23/07/2026':'26/07/2026 → 20/08/2026'),platDates=res.platform_dates||(isFirst?'26/07/2026 → 20/08/2026':'28/06/2026 → 23/07/2026');content.innerHTML='<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">اسم الطالب</div><div class="ticket-value">'+res.name+'</div></div></div><div class="ticket-row"><div class="ticket-info"><div class="ticket-label">التخصص</div><div class="ticket-value">'+res.major+'</div></div></div><div class="ticket-row"><div class="ticket-info"><div class="ticket-label">المقرر</div><div class="ticket-value">'+(res.course||'—')+'</div></div></div><hr class="ticket-divider"><div class="ticket-row"><div class="ticket-info"><div class="ticket-label">جهة التدريب</div><div class="ticket-value">'+res.entity+'</div></div></div>'+(res.contact_name?'<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">مسؤول الجهة</div><div class="ticket-value">'+res.contact_name+'</div></div></div>':'')+'<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">الفترة</div><div class="ticket-value">'+res.period+'</div></div></div><div class="ticket-periods"><div class="ticket-period-box"><div class="ticket-period-title">الميداني</div><div class="ticket-period-dates">'+fieldDates.replace(' → ','<br>→ ')+'</div></div><div class="ticket-period-box"><div class="ticket-period-title">المنصات</div><div class="ticket-period-dates">'+platDates.replace(' → ','<br>→ ')+'</div></div></div>'})}
+function showCardView(){document.getElementById('pledgeView').style.display='none';document.getElementById('guardianView').style.display='none';document.getElementById('cardView').style.display='block';document.getElementById('ticketContent').innerHTML='<div class="loader-wrap" style="padding:20px 0"><div class="loader" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div></div>';callAPI('getStudentBooking',[currentStudent.student_number,currentStudent.national_number],function(res){var content=document.getElementById('ticketContent');if(!res||!res.ok){ticketData=null;content.innerHTML='<div class="ticket-no-booking"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-weight:800;font-size:15px;margin-bottom:6px">لا يوجد حجز مسجل</div></div>';return}ticketData=res;var isFirst=res.period==='الفترة الأولى',fieldDates=res.field_dates||(isFirst?'28/06/2026 → 23/07/2026':'26/07/2026 → 20/08/2026'),platDates=res.platform_dates||(isFirst?'26/07/2026 → 20/08/2026':'28/06/2026 → 23/07/2026');content.innerHTML='<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">اسم الطالب</div><div class="ticket-value">'+res.name+'</div></div></div><div class="ticket-row"><div class="ticket-info"><div class="ticket-label">التخصص</div><div class="ticket-value">'+res.major+'</div></div></div><div class="ticket-row"><div class="ticket-info"><div class="ticket-label">المقرر</div><div class="ticket-value">'+(res.course||'—')+'</div></div></div><hr class="ticket-divider"><div class="ticket-row"><div class="ticket-info"><div class="ticket-label">جهة التدريب</div><div class="ticket-value">'+res.entity+'</div></div></div>'+(res.contact_name?'<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">مسؤول الجهة</div><div class="ticket-value">'+res.contact_name+'</div></div></div>':'')+'<div class="ticket-row"><div class="ticket-info"><div class="ticket-label">الفترة</div><div class="ticket-value">'+res.period+'</div></div></div><div class="ticket-periods"><div class="ticket-period-box"><div class="ticket-period-title">الميداني</div><div class="ticket-period-dates">'+fieldDates.replace(' → ','<br>→ ')+'</div></div><div class="ticket-period-box"><div class="ticket-period-title">المنصات</div><div class="ticket-period-dates">'+platDates.replace(' → ','<br>→ ')+'</div></div></div>'})}
 function closeTicket(e){if(!e||e.target===document.getElementById('ticketOverlay')){document.getElementById('ticketOverlay').classList.remove('show')}}
 </script>
 
