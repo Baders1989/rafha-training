@@ -246,7 +246,8 @@ function onEntityChange() {
     attendance[s.id] = {};
     WEEKS.forEach(w => {
       const saved = (savedData[currentEntity] || {})[s.id] || {};
-      attendance[s.id][`w${w.n}`] = saved[`w${w.n}`] || null;
+      const isActive = (s.period === 'الفترة الأولى' && w.p1) || (s.period === 'الفترة الثانية' && w.p2);
+attendance[s.id][`w${w.n}`] = saved[`w${w.n}`] || (isActive ? 'present' : null);
     });
   });
   renderTable();
