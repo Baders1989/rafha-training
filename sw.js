@@ -1,5 +1,4 @@
-const CACHE_NAME = 'rafha-v5'; // ← v5
-
+const CACHE_NAME = 'rafha-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -27,10 +26,14 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
+  // تجاهل طلبات غير GET وطلبات خارج الموقع
+  if (e.request.method !== 'GET') return;
+  if (!e.request.url.startsWith(self.location.origin)) return;
+
   e.respondWith(
     fetch(e.request).catch(function() {
       return caches.match(e.request).then(function(r) {
-        return r || Response.error(); // ← هذا التغيير فقط
+        return r || caches.match('./index.html');
       });
     })
   );
