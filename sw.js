@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rafha-v2';
+const CACHE_NAME = 'rafha-v4';
 const ASSETS = [
   './',
   './index.html',
