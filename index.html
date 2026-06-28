@@ -373,23 +373,23 @@
 <div id="screenAcadDashboard" class="screen">
   <div class="header"><button class="back-btn" onclick="logoutAcad()">خروج</button><h1>لوحة متابعة الحجوزات</h1><p>المشرف الأكاديمي — رفحاء</p></div>
   <div class="main">
-    <!-- ✅ زر سجل الحضور -->
-    <div class="service-card" style="margin-bottom:12px;cursor:pointer" onclick="openAttendance(&apos;view&apos;)">
-  <div class="svc-icon" style="background:#eff6ff">👁️</div>
-  <div style="flex:1">
-    <div class="svc-title">متابعة تحضير طلابي</div>
-    <div class="svc-desc">عرض سجلات حضور طلابك المسجّلة من المشرفين</div>
-  </div>
-  <span style="font-size:20px;color:var(--g4)">‹</span>
-</div>
-    <div class="service-card" style="margin-bottom:16px;cursor:pointer" onclick="openAttendance(&apos;record&apos;)">
-  <div class="svc-icon" style="background:#ecfdf5">📋</div>
-  <div style="flex:1">
-    <div class="svc-title">تسجيل حضور جهاتي</div>
-    <div class="svc-desc">تسجيل حضور طلاب الجهات التي تشرف عليها</div>
-  </div>
-  <span style="font-size:20px;color:var(--g4)">‹</span>
-</div>
+    <!-- زر سجل الحضور -->
+    <div class="service-card" style="margin-bottom:12px;cursor:pointer" onclick="openAttendance('view')">
+      <div class="svc-icon" style="background:#eff6ff">👁️</div>
+      <div style="flex:1">
+        <div class="svc-title">متابعة تحضير طلابي</div>
+        <div class="svc-desc">عرض سجلات حضور طلابك المسجّلة من المشرفين</div>
+      </div>
+      <span style="font-size:20px;color:var(--g4)">‹</span>
+    </div>
+    <div class="service-card" style="margin-bottom:16px;cursor:pointer" onclick="openAttendance('record')">
+      <div class="svc-icon" style="background:#ecfdf5">📋</div>
+      <div style="flex:1">
+        <div class="svc-title">تسجيل حضور جهاتي</div>
+        <div class="svc-desc">تسجيل حضور طلاب الجهات التي تشرف عليها</div>
+      </div>
+      <span style="font-size:20px;color:var(--g4)">‹</span>
+    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
       <div style="font-size:11px;color:var(--muted)" id="acadLastUpdate">جاري التحميل...</div>
       <button class="btn-primary" style="width:auto;min-height:auto;padding:8px 16px;font-size:13px" onclick="loadDashboard()">⟳ تحديث</button>
@@ -428,8 +428,9 @@ const ACAD_PWD=['AC-Rafha-7341','AC-Rafha-2895','AC-Rafha-5463','AC-Rafha-8127',
 const MAJORS=['نظم المعلومات الإدارية','الموارد البشرية','اللغة الإنجليزية','إدارة سلاسل الإمداد','تقنية الهندسة الكيميائية','التجارة الإلكترونية','المحاسبة والضرائب','تقنية المعلومات','البرمجة وعلوم الحاسب','تكنولوجيا حماية البيئة','الطاقة المتجددة'];
 let currentStudent=null,selectedRafhaOption=null,dashData=null;
 
-// ✅ متغير كلمة مرور المشرف الأكاديمي
+// ✅ متغيرات المشرف الأكاديمي
 var currentAcadPassword='';
+var currentAcadName='';
 
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
@@ -440,7 +441,7 @@ function callAPI(func,args,cb){fetch(APP_URL+'?func='+func+'&args='+encodeURICom
 function verifyStudent(){var s=document.getElementById('stn').value.trim(),n=document.getElementById('snin').value.trim(),btn=document.getElementById('studentVerifyBtn'),msg=document.getElementById('studentVerifyMsg');msg.innerHTML='';if(!s){document.getElementById('stn_box').classList.add('invalid');return}if(!n){document.getElementById('snin_box').classList.add('invalid');return}btn.disabled=true;btn.textContent='جاري التحقق...';callAPI('verifyStudentData',[s,n],function(res){btn.disabled=false;btn.textContent='تحقق من البيانات';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}currentStudent=res;document.getElementById('studentInfoBox').innerHTML='<strong>الاسم:</strong> '+res.name+'<br><strong>التخصص:</strong> '+res.major+'<br><strong>المقرر:</strong> '+(res.course||'')+'<br><strong>الفرع:</strong> '+res.branch;document.getElementById('studentVerifySection').classList.add('hidden');document.getElementById('studentServicesSection').classList.remove('hidden')})}
 
 function fillCertInfo(){if(!currentStudent)return;document.getElementById('certStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major+'<br><strong>المقرر:</strong> '+(currentStudent.course||'')+'<br><strong>الفرع:</strong> '+currentStudent.branch;}
-function requestCertificate(){if(!currentStudent)return;var btn=document.getElementById('certBtn'),msg=document.getElementById('certMsg');btn.disabled=true;btn.textContent='جاري إصدار الإفادة...';msg.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">يرجى الانتظار...</p></div>';callAPI('searchStudent',[currentStudent.student_number,currentStudent.national_number],function(res){btn.disabled=false;btn.textContent='إصدار الإفادة وتحميلها';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}try{var bytes=atob(res.pdf_base64);var arr=new Uint8Array(bytes.length);for(var i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);var blob=new Blob([arr],{type:'application/pdf'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=res.filename||'ifada.pdf';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);msg.innerHTML='<div class="msg-success">✅ تم إصدار الإفادة بنجاح! تحقق من ملفات التنزيل.</div>';}catch(e){msg.innerHTML='<div class="msg-error">خطأ: '+e.message+'</div>';}})}
+function requestCertificate(){if(!currentStudent)return;var btn=document.getElementById('certBtn'),msg=document.getElementById('certMsg');btn.disabled=true;btn.textContent='جاري إصدار الإفادة...';msg.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">يرجى الانتظار...</p></div>';callAPI('searchStudent',[currentStudent.student_number,currentStudent.national_number],function(res){btn.disabled=false;btn.textContent='إصدار الإفادة وتحميلها';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}try{var bytes=atob(res.pdf_base64);var arr=new Uint8Array(bytes.length);for(var i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);var blob=new Blob([arr],{type:'application/pdf'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=res.filename||'ifada.pdf';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);msg.innerHTML='<div class="msg-success">تم إصدار الإفادة بنجاح! تحقق من ملفات التنزيل.</div>';}catch(e){msg.innerHTML='<div class="msg-error">خطأ: '+e.message+'</div>';}})}
 
 function fillPrefInfo(){if(!currentStudent)return;document.getElementById('prefStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major}
 function fillRafhaInfo(){if(!currentStudent)return;document.getElementById('rafhaStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major+'<br><strong>الفئة:</strong> '+(currentStudent.gender==='male'?'طلاب':'طالبات')}
@@ -453,8 +454,8 @@ function submitPreferences(){if(!currentStudent)return;var nameEn=document.getEl
 
 function loadRafhaOptions(){if(!currentStudent)return;var tickets=document.getElementById('rafhaTickets'),bar=document.getElementById('rafhaStatsBar');selectedRafhaOption=null;bar.style.display='none';document.getElementById('rafhaSelectedBox').style.display='none';var now=new Date(),start=new Date('2026-06-15T21:00:00+03:00'),end=new Date('2026-06-17T23:59:00+03:00');if(now<start){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🕐</div><div style="font-size:15px;font-weight:800;color:#1d4ed8;margin-bottom:8px">الحجز لم يفتح بعد</div><div style="font-size:14px;color:#374151">يفتح اليوم الموافق: <strong>15/06/2026</strong> الساعة <strong>21:00 م</strong></div></div>';return}if(now>end){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#fef2f2;border:2px solid #fecaca;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🔒</div><div style="font-size:15px;font-weight:800;color:#b91c1c;margin-bottom:8px">تم إغلاق الحجز</div><div style="font-size:14px;color:#374151">انتهت فترة الحجز</div></div>';return}if(currentStudent.has_outside_approval){document.getElementById('rafhaSubmitBtn').style.display='none';tickets.innerHTML='<div style="background:#fff7ed;border:1px solid #fcd34d;border-radius:16px;padding:20px;text-align:center;line-height:2.2"><div style="font-size:22px;margin-bottom:8px">🎉</div><div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px">تم قبولك في جهة التدريب</div><div style="font-size:14px;color:#374151"><strong>الجهة:</strong> '+currentStudent.entity+'</div><div style="font-size:14px;color:#374151"><strong>تاريخ البداية:</strong> '+currentStudent.start_date+'</div><div style="font-size:14px;color:#374151"><strong>تاريخ الانتهاء:</strong> '+currentStudent.end_date+'</div><div style="margin-top:12px;font-size:12px;color:#6b7280">تدريبك خارج المنطقة — لا تحتاج لاختيار جهة داخل رفحاء</div></div>';return}document.getElementById('rafhaSubmitBtn').style.display='block';tickets.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري البحث...</p></div>';callAPI('getRafhaOptions',[currentStudent.student_number,currentStudent.national_number],function(data){if(!data||data.length===0){tickets.innerHTML='<div class="msg-error">لا توجد جهات متاحة لتخصصك حالياً.</div>';return}tickets.innerHTML='';var grouped={};data.forEach(function(o){if(!grouped[o.entity])grouped[o.entity]={};grouped[o.entity][o.period_code]=o});var entities=Object.keys(grouped);bar.style.display='block';bar.textContent='الجهات المتاحة: '+entities.length+' جهة';entities.forEach(function(entity){var p1=grouped[entity]['FIELD_FIRST'],p2=grouped[entity]['PLATFORM_FIRST'],sec=document.createElement('div');sec.className='entity-section';sec.innerHTML='<div class="entity-label">'+entity+'</div><div class="periods-row">'+mkPeriodCard(p1,'الفترة الأولى')+mkPeriodCard(p2,'الفترة الثانية')+'</div>';var cols=sec.querySelectorAll('.period-option');if(p1&&Number(p1.seats)>0)cols[0].onclick=function(){selectRafha(cols[0],p1)};if(p2&&Number(p2.seats)>0)cols[1].onclick=function(){selectRafha(cols[1],p2)};tickets.appendChild(sec)})})}
 function mkPeriodCard(p,label){var d=!p||Number(p.seats)<=0,t=!p?'غير متاح':(Number(p.seats)<=0?'اكتملت المقاعد':'متاح: '+p.seats+' مقعد');return'<div class="period-option'+(d?' disabled':'')+'"><div class="period-mini-title">'+label+'</div><div style="font-size:12px;font-weight:700;color:#111827;margin-bottom:6px">'+(p?p.entity:'')+'</div><span class="seat-badge'+(d?' full':'')+'">'+t+'</span></div>'}
-function selectRafha(el,option){document.querySelectorAll('.period-option').forEach(function(t){t.classList.remove('active')});el.classList.add('active');selectedRafhaOption=option;var box=document.getElementById('rafhaSelectedBox');box.style.display='block';box.innerHTML='✅ تم الاختيار: '+option.entity+'<br>'+option.period;box.scrollIntoView({behavior:'smooth',block:'center'})}
-function submitRafha(){var msg=document.getElementById('rafhaMsg'),btn=document.getElementById('rafhaSubmitBtn');msg.innerHTML='';if(!selectedRafhaOption){msg.innerHTML='<div class="msg-error">يرجى اختيار جهة والفترة أولاً.</div>';return}btn.disabled=true;btn.textContent='جاري معالجة طلبك...';var attempts=0;function trySubmit(){attempts++;callAPI('submitRafhaSelection',[{student_number:currentStudent.student_number,national_number:currentStudent.national_number,entity:selectedRafhaOption.entity,period_code:selectedRafhaOption.period_code}],function(res){if(res.ok){btn.disabled=true;btn.textContent='تم الحجز ✓';btn.style.background='#166634';var pc=selectedRafhaOption.period_code;msg.innerHTML='<div class="booking-card"><div class="booking-success">✅ تم تأكيد الحجز بنجاح</div><div class="booking-row"><strong>الاسم:</strong> '+currentStudent.name+'</div><div class="booking-row"><strong>جهة التدريب:</strong> '+selectedRafhaOption.entity+'</div><div class="booking-row"><strong>الفترة:</strong> '+(pc==='FIELD_FIRST'?'الأولى':'الثانية')+'</div><div class="booking-period"><div class="booking-row"><strong>الميداني:</strong> '+(pc==='FIELD_FIRST'?'28/06/2026 → 23/07/2026':'26/07/2026 → 20/08/2026')+'</div><div class="booking-row"><strong>المنصات:</strong> '+(pc==='FIELD_FIRST'?'26/07/2026 → 20/08/2026':'28/06/2026 → 23/07/2026')+'</div></div></div>'}else if(res.message&&res.message.includes('يعالج طلبات')&&attempts<5){btn.textContent='جاري المحاولة... ('+attempts+')';setTimeout(trySubmit,1000*attempts)}else{btn.disabled=false;btn.textContent='حجز المقعد';msg.innerHTML='<div class="msg-error">'+res.message+'</div>';loadRafhaOptions()}})}trySubmit()}
+function selectRafha(el,option){document.querySelectorAll('.period-option').forEach(function(t){t.classList.remove('active')});el.classList.add('active');selectedRafhaOption=option;var box=document.getElementById('rafhaSelectedBox');box.style.display='block';box.innerHTML='تم الاختيار: '+option.entity+'<br>'+option.period;box.scrollIntoView({behavior:'smooth',block:'center'})}
+function submitRafha(){var msg=document.getElementById('rafhaMsg'),btn=document.getElementById('rafhaSubmitBtn');msg.innerHTML='';if(!selectedRafhaOption){msg.innerHTML='<div class="msg-error">يرجى اختيار جهة والفترة أولاً.</div>';return}btn.disabled=true;btn.textContent='جاري معالجة طلبك...';var attempts=0;function trySubmit(){attempts++;callAPI('submitRafhaSelection',[{student_number:currentStudent.student_number,national_number:currentStudent.national_number,entity:selectedRafhaOption.entity,period_code:selectedRafhaOption.period_code}],function(res){if(res.ok){btn.disabled=true;btn.textContent='تم الحجز';btn.style.background='#166634';var pc=selectedRafhaOption.period_code;msg.innerHTML='<div class="booking-card"><div class="booking-success">تم تأكيد الحجز بنجاح</div><div class="booking-row"><strong>الاسم:</strong> '+currentStudent.name+'</div><div class="booking-row"><strong>جهة التدريب:</strong> '+selectedRafhaOption.entity+'</div><div class="booking-row"><strong>الفترة:</strong> '+(pc==='FIELD_FIRST'?'الأولى':'الثانية')+'</div><div class="booking-period"><div class="booking-row"><strong>الميداني:</strong> '+(pc==='FIELD_FIRST'?'28/06/2026 → 23/07/2026':'26/07/2026 → 20/08/2026')+'</div><div class="booking-row"><strong>المنصات:</strong> '+(pc==='FIELD_FIRST'?'26/07/2026 → 20/08/2026':'28/06/2026 → 23/07/2026')+'</div></div></div>'}else if(res.message&&res.message.includes('يعالج طلبات')&&attempts<5){btn.textContent='جاري المحاولة... ('+attempts+')';setTimeout(trySubmit,1000*attempts)}else{btn.disabled=false;btn.textContent='حجز المقعد';msg.innerHTML='<div class="msg-error">'+res.message+'</div>';loadRafhaOptions()}})}trySubmit()}
 
 function loginField(){var pwd=document.getElementById('fieldPassword').value.trim(),msg=document.getElementById('fieldLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(FIELD_PWD.includes(pwd)){document.getElementById('fieldPassword').value='';msg.innerHTML='';showScreen('screenFieldDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
 function logoutField(){showScreen('screenHome')}
@@ -463,16 +464,38 @@ function renderMajorsInputs(){var c=document.getElementById('majorsContainer');c
 function submitCapacity(){var entity=document.getElementById('fcEntity').value.trim(),contact=document.getElementById('fcContact').value.trim(),mobile=document.getElementById('fcMobile').value.trim(),email=document.getElementById('fcEmail').value.trim(),msg=document.getElementById('fcMsg'),btn=document.getElementById('fcSubmitBtn');if(!entity||!contact||!mobile||!email){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع بيانات الجهة.</div>';return}var rows=[],mi=document.querySelectorAll('.male-input'),fi=document.querySelectorAll('.female-input');MAJORS.forEach(function(m,i){var male=mi[i].value.trim(),female=fi[i].value.trim();if(male||female)rows.push({major:m,male_seats:male,female_seats:female})});if(rows.length===0){msg.innerHTML='<div class="msg-error">يرجى إدخال الأعداد للتخصصات المتاحة.</div>';return}btn.disabled=true;btn.textContent='جاري الإرسال...';callAPI('submitEntityCapacity',[{entity_name:entity,contact_name:contact,mobile:mobile,email:email,rows:rows}],function(res){btn.disabled=false;btn.textContent='إرسال';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>';if(res.ok){document.getElementById('fcEntity').value='';document.getElementById('fcContact').value='';document.getElementById('fcMobile').value='';document.getElementById('fcEmail').value='';renderMajorsInputs()}})}
 function loadFieldBookings(){var entity=document.getElementById('fieldEntitySearch').value.trim(),msg=document.getElementById('fieldBookingsMsg'),list=document.getElementById('fieldBookingsList');if(!entity){msg.innerHTML='<div class="msg-error">يرجى إدخال اسم الجهة.</div>';return}msg.innerHTML='';list.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){list.innerHTML='<div class="msg-error">حدث خطأ.</div>';return}var e=data.entities.find(function(x){return x.entity.includes(entity)||entity.includes(x.entity)});if(!e){list.innerHTML='<div class="msg-error">لم يتم العثور على الجهة.</div>';return}list.innerHTML='<div style="background:#f9fafb;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:2"><strong style="color:var(--g3)">الجهة:</strong> '+e.entity+'<br><strong style="color:#1d4ed8">طلاب:</strong> ف1: '+e.male.p1.booked+'/'+e.male.p1.total+' | ف2: '+e.male.p2.booked+'/'+e.male.p2.total+'<br><strong style="color:#9d174d">طالبات:</strong> ف1: '+e.female.p1.booked+'/'+e.female.p1.total+' | ف2: '+e.female.p2.booked+'/'+e.female.p2.total+'</div>'})}
 
-// ✅ دوال المشرف الأكاديمي مع التحضير
-function loginAcad(){var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال رقم الهوية.</div>';return}msg.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';callAPI('verifyAcadSupervisor',[pwd],function(res){if(res.ok){currentAcadPassword=res.password;document.getElementById('acadPassword').value='';msg.innerHTML='';showScreen('screenAcadDashboard')}else{msg.innerHTML='<div class="msg-error">رقم الهوية غير صحيح.</div>'}})}
-function logoutAcad(){currentAcadPassword='';showScreen('screenHome')}
+// ✅ دوال المشرف الأكاديمي
+function loginAcad(){
+  var pwd=document.getElementById('acadPassword').value.trim(),msg=document.getElementById('acadLoginMsg');
+  if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال رقم الهوية.</div>';return}
+  msg.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';
+  callAPI('verifyAcadSupervisor',[pwd],function(res){
+    if(res.ok){
+      currentAcadPassword=res.password;
+      currentAcadName=res.name;
+      document.getElementById('acadPassword').value='';
+      msg.innerHTML='';
+      showScreen('screenAcadDashboard');
+    }else{
+      msg.innerHTML='<div class="msg-error">رقم الهوية غير صحيح.</div>';
+    }
+  });
+}
+
+function logoutAcad(){
+  currentAcadPassword='';
+  currentAcadName='';
+  showScreen('screenHome');
+}
+
+// ✅ فتح صفحة التحضير مع تمرير البيانات عبر URL (بدون backtick وبدون sessionStorage)
 function openAttendance(mode){
-  sessionStorage.setItem('attendanceUser', JSON.stringify({
-    name: 'مشرف أكاديمي',
-    role: mode === 'view' ? 'academic_view' : 'academic',
-    password: currentAcadPassword
-  }));
-  window.location.href = '/attendance.html';
+  var role=mode==='view'?'academic_view':'academic';
+  var url='https://ac-rafha-nbu.com/attendance.html'
+         +'?role='+encodeURIComponent(role)
+         +'&password='+encodeURIComponent(currentAcadPassword)
+         +'&name='+encodeURIComponent(currentAcadName);
+  window.open(url,'_blank');
 }
 
 function loadDashboard(){var grid=document.getElementById('acadStatsGrid');grid.innerHTML='<div class="loader-wrap" style="grid-column:1/-1"><div class="loader"></div></div>';document.getElementById('acadEntityList').innerHTML='';document.getElementById('acadMajorsList').innerHTML='';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){grid.innerHTML='<div class="msg-error" style="grid-column:1/-1">خطأ في تحميل البيانات.</div>';return}dashData=data;var s=data.summary;grid.innerHTML=sc('إجمالي الحجوزات',s.totalBookings,'من '+s.totalEntities+' جهة')+sc('الجهات الممتلئة',s.fullEntities,'من '+s.totalEntities)+sc('طلاب',s.male,'ف1: '+s.maleP1+' | ف2: '+s.maleP2)+sc('طالبات',s.female,'ف1: '+s.femaleP1+' | ف2: '+s.femaleP2);renderDashEntities();renderDashMajors();document.getElementById('acadLastUpdate').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-SA')})}
@@ -527,9 +550,9 @@ function closeTicket(e){if(!e||e.target===document.getElementById('ticketOverlay
       <div class="ticket-handle"></div>
       <div class="guardian-form-title">موافقة ولي الأمر على التدريب الميداني</div>
       <div class="guardian-form-sub">نموذج رقم (2) — خاص بالطالبات</div>
-      <div class="guardian-field"><label>اسم ولي الأمر (ثلاثي) *</label><input type="text" id="guardianName" placeholder="الاسم الأول والثاني والثالث" oninput="validateGuardianForm()"><div id="guardianNameError" style="display:none;color:#dc2626;font-size:12px;margin-top:5px;font-weight:600">⚠️ يرجى إدخال الاسم الثلاثي كاملاً (3 كلمات على الأقل)</div></div>
+      <div class="guardian-field"><label>اسم ولي الأمر (ثلاثي) *</label><input type="text" id="guardianName" placeholder="الاسم الأول والثاني والثالث" oninput="validateGuardianForm()"><div id="guardianNameError" style="display:none;color:#dc2626;font-size:12px;margin-top:5px;font-weight:600">يرجى إدخال الاسم الثلاثي كاملاً (3 كلمات على الأقل)</div></div>
       <div class="guardian-field"><label>رقم الجوال *</label><input type="text" id="guardianMobile" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" oninput="validateGuardianForm()"></div>
-      <div class="guardian-field"><label>موافقة ولي الأمر *</label><div class="guardian-approval-row"><button class="approval-btn" id="approvalYes" onclick="selectApproval('yes')">✅ أوافق على التدريب</button><button class="approval-btn" id="approvalNo" onclick="selectApproval('no')">❌ لا أوافق</button></div></div>
+      <div class="guardian-field"><label>موافقة ولي الأمر *</label><div class="guardian-approval-row"><button class="approval-btn" id="approvalYes" onclick="selectApproval('yes')">أوافق على التدريب</button><button class="approval-btn" id="approvalNo" onclick="selectApproval('no')">لا أوافق</button></div></div>
       <button class="pledge-confirm-btn" id="guardianConfirmBtn" disabled onclick="confirmGuardian()">حفظ وعرض البطاقة</button>
       <button class="ticket-close-btn" onclick="closeTicket()">إغلاق</button>
     </div>
