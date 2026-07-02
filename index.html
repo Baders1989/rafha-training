@@ -451,22 +451,23 @@
   <div class="att-screen-main">
     <div id="attRoBanner" class="att-ro-banner" style="display:none">⚠️ وضع المشاهدة فقط — يمكنك متابعة حضور طلابك دون تعديل</div>
     <div class="att-controls">
-      <span class="att-ctrl-label">الجهة:</span>
-      <select class="att-select" id="attEntitySelect" onchange="attOnEntityChange()">
-        <option value="">— اختر الجهة —</option>
-      </select>
-      <div class="att-legend">
-        <div class="att-leg"><div class="att-leg-dot" style="background:#dcfce7;border:2px solid #86efac"></div> حاضر</div>
-        <div class="att-leg"><div class="att-leg-dot" style="background:#fee2e2;border:2px solid #fca5a5"></div> غائب</div>
-        <div class="att-leg"><div class="att-leg-dot" style="background:#f3f4f6;border:2px solid var(--line)"></div> مغلق</div>
-      </div>
-    </div>
-    <div class="att-stats" id="attStats" style="display:none">
-      <div class="att-stat"><div class="att-stat-num" id="attTotal">0</div><div class="att-stat-lbl">إجمالي الطلاب</div></div>
-      <div class="att-stat"><div class="att-stat-num" id="attPresent" style="color:#16a34a">0</div><div class="att-stat-lbl">حضور هذا الأسبوع</div></div>
-      <div class="att-stat"><div class="att-stat-num" id="attAbsent" style="color:#dc2626">0</div><div class="att-stat-lbl">غياب هذا الأسبوع</div></div>
-      <div class="att-stat"><div class="att-stat-num" id="attPct" style="color:#2563eb">—</div><div class="att-stat-lbl">نسبة الحضور</div></div>
-    </div>
+  <span class="att-ctrl-label">الجهة:</span>
+  <select class="att-select" id="attEntitySelect" onchange="attOnEntityChange()">
+    <option value="">— اختر الجهة —</option>
+  </select>
+  <div class="att-legend">
+    <div class="att-leg"><div class="att-leg-dot" style="background:#dcfce7;border:2px solid #86efac"></div> حاضر</div>
+    <div class="att-leg"><div class="att-leg-dot" style="background:#fee2e2;border:2px solid #fca5a5"></div> غائب</div>
+    <div class="att-leg"><div class="att-leg-dot" style="background:#f3f4f6;border:2px solid var(--line)"></div> مغلق</div>
+  </div>
+</div>
+<div id="attEntityInfo" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px;margin:8px 14px 0;font-size:13px;line-height:2;color:#1f2937"></div>
+<div class="att-stats" id="attStats" style="display:none">
+  <div class="att-stat"><div class="att-stat-num" id="attTotal">0</div><div class="att-stat-lbl">إجمالي الطلاب</div></div>
+  <div class="att-stat"><div class="att-stat-num" id="attPresent" style="color:#16a34a">0</div><div class="att-stat-lbl">حضور هذا الأسبوع</div></div>
+  <div class="att-stat"><div class="att-stat-num" id="attAbsent" style="color:#dc2626">0</div><div class="att-stat-lbl">غياب هذا الأسبوع</div></div>
+  <div class="att-stat"><div class="att-stat-num" id="attPct" style="color:#2563eb">—</div><div class="att-stat-lbl">نسبة الحضور</div></div>
+</div>
     <div class="att-table-wrap" id="attTableWrap">
       <div class="att-empty">اختر الجهة لعرض كشف الحضور</div>
     </div>
@@ -519,7 +520,8 @@ var attCurrentEntity='';
 var attAttendance={};
 var attSavedData={};
 var attSaveTimers={};
-
+var attEntityInfo = {};
+  
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
 function showScreen(id){
@@ -591,6 +593,7 @@ function attLoadData(){
       if(d.status!=='ok')throw new Error(d.message);
       attEntities=d.entities||[];
       attAllStudents=d.students||{};
+      attEntityInfo=d.entityInfo||{};
       attSavedData={};
       (d.savedWeeks||[]).forEach(function(rec){
         if(!attSavedData[rec.entity])attSavedData[rec.entity]={};
@@ -608,12 +611,23 @@ function attBuildEntitySelect(){
   var sel=document.getElementById('attEntitySelect');
   sel.innerHTML='<option value="">— اختر الجهة —</option>';
   attEntities.forEach(function(e){var o=document.createElement('option');o.value=e;o.textContent=e;sel.appendChild(o);});
+  document.getElementById('attEntityInfo').style.display='none';
   if(attEntities.length===1){sel.value=attEntities[0];attOnEntityChange();}
   else{document.getElementById('attTableWrap').innerHTML='<div class="att-empty">اختر الجهة لعرض كشف الحضور</div>';}
 }
 
 function attOnEntityChange(){
   attCurrentEntity=document.getElementById('attEntitySelect').value;
+  // بطاقة معلومات الجهة
+var _info = attEntityInfo[attCurrentEntity]||{};
+var _box = document.getElementById('attEntityInfo');
+if(attCurrentEntity && _info.contact){
+  _box.innerHTML = '<strong style="color:var(--g3)">'+attCurrentEntity+'</strong><br>المسؤول: <strong>'+_info.contact+'</strong>'
+    +(_info.mobile?'&nbsp;&nbsp;<a href="tel:'+_info.mobile+'" style="color:var(--g4);font-weight:700">📞 '+_info.mobile+'</a>':'');
+  _box.style.display='block';
+} else {
+  _box.style.display='none';
+}
   if(!attCurrentEntity){document.getElementById('attTableWrap').innerHTML='<div class="att-empty">اختر الجهة لعرض كشف الحضور</div>';document.getElementById('attStats').style.display='none';return;}
   var students=attAllStudents[attCurrentEntity]||[];
   attAttendance={};
