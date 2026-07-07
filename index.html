@@ -924,7 +924,7 @@ function submitVisitReport(){
   var actions=document.getElementById('visitActions').value.trim();
   var recs=document.getElementById('visitRecs').value.trim();
   var msg=document.getElementById('visitMsg');
-  if(!week||!visitDate||!entity||!visitType||!notes||!challenges){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع الحقول الإلزامية.</div>';return}
+  if(!week||!visitDate||!entity||!visitType||!notes||!challenges||!actions||!recs){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع الحقول الإلزامية.</div>';return}
   if(!visitPhotosData[0]||!visitPhotosData[1]){msg.innerHTML='<div class="msg-error">يرجى رفع الصورة الأولى والثانية على الأقل.</div>';return}
   var btn=document.getElementById('visitSubmitBtn');
   btn.disabled=true;btn.textContent='جاري الرفع والمعالجة...';
