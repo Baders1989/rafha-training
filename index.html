@@ -931,8 +931,29 @@ function submitVisitReport(){
   msg.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري رفع الصور وإنشاء التقرير، قد يستغرق دقيقة...</p></div>';
   fetch(VISIT_REPORT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'submitVisitReport',supervisor:currentAcadName,week:week,visitDate:visitDate,entity:entity,visitType:visitType,notes:notes,challenges:challenges,actions:actions,recommendations:recs,photos:visitPhotosData})})
   .then(function(r){return r.json()})
-  .then(function(res){btn.disabled=false;btn.textContent='إرسال التقرير';if(res.ok){msg.innerHTML='<div class="msg-success">✅ تم إرسال التقرير بنجاح!</div>';if(res.pdfUrl){document.getElementById('visitPdfLink').href=res.pdfUrl;document.getElementById('visitPdfBox').style.display='block'}}else{msg.innerHTML='<div class="msg-error">'+(res.message||'حدث خطأ')+'</div>'}})
-  .catch(function(err){btn.disabled=false;btn.textContent='إرسال التقرير';msg.innerHTML='<div class="msg-error">خطأ في الاتصال: '+err.message+'</div>'});
+  .then(function(res){
+    btn.disabled=false;btn.textContent='إرسال التقرير';
+    if(res.ok){
+      if(res.pdfBase64){
+        var bytes=atob(res.pdfBase64);
+        var arr=new Uint8Array(bytes.length);
+        for(var i=0;i<bytes.length;i++)arr[i]=bytes.charCodeAt(i);
+        var blob=new Blob([arr],{type:'application/pdf'});
+        var url=URL.createObjectURL(blob);
+        var a=document.createElement('a');
+        a.href=url;a.download=res.pdfFilename||'تقرير-الزيارة.pdf';
+        document.body.appendChild(a);a.click();
+        document.body.removeChild(a);URL.revokeObjectURL(url);
+        msg.innerHTML='<div class="msg-success">✅ تم إرسال التقرير وتحميله بنجاح!</div>';
+      } else {
+        msg.innerHTML='<div class="msg-success">✅ تم إرسال التقرير بنجاح!</div>';
+        if(res.pdfUrl){document.getElementById('visitPdfLink').href=res.pdfUrl;document.getElementById('visitPdfBox').style.display='block';}
+      }
+    } else {
+      msg.innerHTML='<div class="msg-error">'+(res.message||'حدث خطأ')+'</div>';
+    }
+  })
+  .catch(function(err){btn.disabled=false;btn.textContent='إرسال التقرير';msg.innerHTML='<div class="msg-error">خطأ في الاتصال: '+err.message+'</div>';});
 }
 </script>
 </body>
