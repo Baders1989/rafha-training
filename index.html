@@ -233,6 +233,14 @@
     .att-toast.success{background:var(--g2)}
     .att-toast.error{background:#ef4444}
     @media(max-width:480px){.att-stats{grid-template-columns:repeat(2,1fr)}}
+    .visit-photo-preview{
+  width:100%;height:160px;border:2px dashed #d1d5db;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;background:#f9fafb;overflow:hidden;transition:.2s;
+}
+.visit-photo-preview:active{transform:scale(.98)}
+.visit-photo-placeholder{text-align:center;color:var(--muted);font-size:13px;line-height:2}
+.visit-photo-preview.has-photo{border-color:var(--g4);border-style:solid}
   </style>
 </head>
 <body>
@@ -474,7 +482,113 @@
   </div>
   <div class="att-toast" id="attToast"></div>
 </div>
-
+<div class="service-card" style="margin-bottom:16px;cursor:pointer" onclick="openVisitReport()">
+  <div class="svc-icon" style="background:#fdf4ff">📝</div>
+  <div style="flex:1">
+    <div class="svc-title">تقرير الزيارة الميدانية</div>
+    <div class="svc-desc">تقديم تقرير الزيارة الأسبوعية للجهات التدريبية</div>
+  </div>
+  <span style="font-size:20px;color:var(--g4)">‹</span>
+</div>
+  <!-- ══ شاشة تقرير الزيارة الميدانية ══ -->
+<div id="screenVisitReport" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="showScreen('screenAcadDashboard')">‹ رجوع</button>
+    <h1>تقرير الزيارة الميدانية</h1>
+    <p>التدريب الصيفي 1447هـ</p>
+  </div>
+  <div class="main">
+    <div class="card">
+      <div class="student-info" id="visitSupervisorBox" style="margin-bottom:16px"></div>
+      <div class="field-input required" id="visitWeekBox">
+        <label>الأسبوع</label>
+        <select id="visitWeek" style="width:100%;min-height:52px;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;background:#fff;-webkit-appearance:none">
+          <option value="">اختر الأسبوع</option>
+          <option value="الأول">الأسبوع الأول</option>
+          <option value="الثاني">الأسبوع الثاني</option>
+          <option value="الثالث">الأسبوع الثالث</option>
+          <option value="الرابع">الأسبوع الرابع</option>
+          <option value="الخامس">الأسبوع الخامس</option>
+          <option value="السادس">الأسبوع السادس</option>
+          <option value="السابع">الأسبوع السابع</option>
+          <option value="الثامن">الأسبوع الثامن</option>
+        </select>
+      </div>
+      <div class="field-input required" id="visitDateBox">
+        <label>تاريخ الزيارة</label>
+        <input id="visitDate" type="date" style="width:100%;min-height:52px;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;background:#fff;direction:ltr">
+      </div>
+      <div class="field-input required" id="visitEntityBox">
+        <label>اسم الجهة التدريبية</label>
+        <input id="visitEntity" type="text" placeholder="اكتب اسم الجهة">
+      </div>
+      <div class="field-input required" id="visitTypeBox">
+        <label>نوع الزيارة</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+          <button type="button" id="visitTypeField" class="choice-btn" onclick="selectVisitType('حضورية')">حضورية</button>
+          <button type="button" id="visitTypeVirtual" class="choice-btn" onclick="selectVisitType('افتراضية')">افتراضية</button>
+        </div>
+        <input type="hidden" id="visitType">
+      </div>
+      <div class="field-input required" id="visitNotesBox">
+        <label>أبرز الملاحظات خلال الزيارة</label>
+        <textarea id="visitNotes" placeholder="اكتب كل ملاحظة في سطر منفصل" rows="4" style="width:100%;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;font-family:inherit;resize:vertical;outline:none;background:#fff"></textarea>
+      </div>
+      <div class="field-input required" id="visitChallengesBox">
+        <label>التحديات والمعوقات</label>
+        <textarea id="visitChallenges" placeholder="اكتب كل تحدٍّ في سطر منفصل" rows="3" style="width:100%;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;font-family:inherit;resize:vertical;outline:none;background:#fff"></textarea>
+      </div>
+      <div class="field-input" id="visitActionsBox">
+        <label>الإجراءات المتخذة <span style="color:var(--muted);font-weight:400;font-size:12px">(اختياري)</span></label>
+        <textarea id="visitActions" placeholder="اكتب كل إجراء في سطر منفصل" rows="3" style="width:100%;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;font-family:inherit;resize:vertical;outline:none;background:#fff"></textarea>
+      </div>
+      <div class="field-input" id="visitRecsBox">
+        <label>التوصيات <span style="color:var(--muted);font-weight:400;font-size:12px">(اختياري)</span></label>
+        <textarea id="visitRecs" placeholder="اكتب كل توصية في سطر منفصل" rows="3" style="width:100%;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;font-family:inherit;resize:vertical;outline:none;background:#fff"></textarea>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:14px;font-weight:700;color:#374151;margin-bottom:10px">صور الزيارة</div>
+        <div class="visit-photo-box" id="visitPhoto1Box">
+          <label style="font-size:13px;font-weight:600;color:var(--g3);margin-bottom:6px;display:block">الصورة الأولى <span style="color:#dc2626">*</span></label>
+          <div class="visit-photo-preview" id="visitPhoto1Preview" onclick="document.getElementById('visitPhoto1Input').click()">
+            <div class="visit-photo-placeholder">📷<br><span>اضغط لاختيار صورة</span></div>
+            <img id="visitPhoto1Img" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px">
+          </div>
+          <input type="file" id="visitPhoto1Input" accept="image/*" style="display:none" onchange="previewPhoto(1,this)">
+        </div>
+        <div class="visit-photo-box" style="margin-top:12px">
+          <label style="font-size:13px;font-weight:600;color:var(--g3);margin-bottom:6px;display:block">الصورة الثانية <span style="color:#dc2626">*</span></label>
+          <div class="visit-photo-preview" id="visitPhoto2Preview" onclick="document.getElementById('visitPhoto2Input').click()">
+            <div class="visit-photo-placeholder">📷<br><span>اضغط لاختيار صورة</span></div>
+            <img id="visitPhoto2Img" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px">
+          </div>
+          <input type="file" id="visitPhoto2Input" accept="image/*" style="display:none" onchange="previewPhoto(2,this)">
+        </div>
+        <div class="visit-photo-box" style="margin-top:12px">
+          <label style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block">الصورة الثالثة <span style="color:var(--muted);font-weight:400;font-size:12px">(اختياري)</span></label>
+          <div class="visit-photo-preview" id="visitPhoto3Preview" onclick="document.getElementById('visitPhoto3Input').click()">
+            <div class="visit-photo-placeholder">📷<br><span>اضغط لاختيار صورة</span></div>
+            <img id="visitPhoto3Img" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px">
+          </div>
+          <input type="file" id="visitPhoto3Input" accept="image/*" style="display:none" onchange="previewPhoto(3,this)">
+        </div>
+        <div class="visit-photo-box" style="margin-top:12px">
+          <label style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block">الصورة الرابعة <span style="color:var(--muted);font-weight:400;font-size:12px">(اختياري)</span></label>
+          <div class="visit-photo-preview" id="visitPhoto4Preview" onclick="document.getElementById('visitPhoto4Input').click()">
+            <div class="visit-photo-placeholder">📷<br><span>اضغط لاختيار صورة</span></div>
+            <img id="visitPhoto4Img" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px">
+          </div>
+          <input type="file" id="visitPhoto4Input" accept="image/*" style="display:none" onchange="previewPhoto(4,this)">
+        </div>
+      </div>
+      <button class="btn-primary" id="visitSubmitBtn" onclick="submitVisitReport()">إرسال التقرير</button>
+      <div class="msg" id="visitMsg"></div>
+      <div id="visitPdfBox" style="display:none;margin-top:16px;text-align:center">
+        <a id="visitPdfLink" href="#" target="_blank" style="display:block;padding:16px;border-radius:14px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;text-decoration:none;font-weight:700;font-size:16px">📄 تحميل التقرير PDF</a>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- شاشة إفادة التدريب -->
 <div id="screenCertificate" class="screen">
   <div class="header"><button class="back-btn" onclick="showScreen('screenStudent')">‹ رجوع</button><h1>إفادة التدريب التطبيقي</h1><p>إصدار خطاب الإفادة</p></div>
@@ -495,7 +609,8 @@ const APP_URL='https://script.google.com/macros/s/AKfycbxFwibeIoBOcIdxJul1L7l8fV
 const FIELD_PWD=['FM-Rafha-2847','FM-Rafha-5913','FM-Rafha-3726','FM-Rafha-8451','FM-Rafha-6392','FM-Rafha-1574','FM-Rafha-9283','FM-Rafha-4617','FM-Rafha-7158','FM-Rafha-2439','FM-Rafha-5861','FM-Rafha-3094','FM-Rafha-8725','FM-Rafha-1463','FM-Rafha-6937','FM-Rafha-4281','FM-Rafha-9546','FM-Rafha-2178','FM-Rafha-7304','FM-Rafha-5692','FM-Rafha-8013','FM-Rafha-3457','FM-Rafha-6829','FM-Rafha-1745','FM-Rafha-4368','FM-Rafha-9071','FM-Rafha-2593','FM-Rafha-7846','FM-Rafha-5127','FM-Rafha-3984','FM-Rafha-6215','FM-Rafha-8763','FM-Rafha-1492','FM-Rafha-4058','FM-Rafha-7631','FM-Rafha-2947','FM-Rafha-9384','FM-Rafha-5716','FM-Rafha-3261','FM-Rafha-8549'];
 const ACAD_PWD=['AC-Rafha-7341','AC-Rafha-2895','AC-Rafha-5463','AC-Rafha-8127','AC-Rafha-3759','AC-Rafha-6084','AC-Rafha-1936'];
 const MAJORS=['نظم المعلومات الإدارية','الموارد البشرية','اللغة الإنجليزية','إدارة سلاسل الإمداد','تقنية الهندسة الكيميائية','التجارة الإلكترونية','المحاسبة والضرائب','تقنية المعلومات','البرمجة وعلوم الحاسب','تكنولوجيا حماية البيئة','الطاقة المتجددة'];
-
+const VISIT_REPORT_URL = 'https://script.google.com/macros/s/AKfycbwh-TkzS8fn-opWz8gRWPSprEuymU4SXWhJLOahEVa7YwQ1vZXwySk9anovMs3F5p9lLQ/exec';
+  
 const ATT_WEEKS=[
   {n:1,label:'أ1',from:'28 يون',to:'4 يول',start:'2026-06-28',p1:true,p2:false},
   {n:2,label:'أ2',from:'5 يول',to:'11 يول',start:'2026-07-05',p1:true,p2:false},
@@ -790,6 +905,45 @@ function closeTicket(e){if(!e||e.target===document.getElementById('ticketOverlay
     </div>
   </div>
 </div>
-
+<script>
+var visitPhotosData=[null,null,null,null];
+function selectVisitType(type){document.getElementById('visitType').value=type;document.getElementById('visitTypeField').classList.toggle('active',type==='حضورية');document.getElementById('visitTypeVirtual').classList.toggle('active',type==='افتراضية')}
+function previewPhoto(num,input){if(!input.files||!input.files[0])return;var reader=new FileReader();reader.onload=function(e){compressImage(e.target.result,1200,0.8,function(compressed){visitPhotosData[num-1]=compressed;var img=document.getElementById('visitPhoto'+num+'Img');var ph=document.querySelector('#visitPhoto'+num+'Preview .visit-photo-placeholder');img.src=compressed;img.style.display='block';if(ph)ph.style.display='none';document.getElementById('visitPhoto'+num+'Preview').classList.add('has-photo')})};reader.readAsDataURL(input.files[0])}
+function compressImage(dataUrl,maxWidth,quality,callback){var img=new Image();img.onload=function(){var canvas=document.createElement('canvas');var ratio=Math.min(maxWidth/img.width,1);canvas.width=img.width*ratio;canvas.height=img.height*ratio;canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);callback(canvas.toDataURL('image/jpeg',quality))};img.src=dataUrl}
+function openVisitReport(){
+  document.getElementById('visitSupervisorBox').innerHTML='<strong>المشرف الأكاديمي:</strong> '+currentAcadName;
+  ['visitWeek','visitDate','visitEntity','visitNotes','visitChallenges','visitActions','visitRecs'].forEach(function(id){document.getElementById(id).value=''});
+  document.getElementById('visitType').value='';
+  document.getElementById('visitTypeField').classList.remove('active');
+  document.getElementById('visitTypeVirtual').classList.remove('active');
+  document.getElementById('visitMsg').innerHTML='';
+  document.getElementById('visitPdfBox').style.display='none';
+  document.getElementById('visitSubmitBtn').disabled=false;
+  document.getElementById('visitSubmitBtn').textContent='إرسال التقرير';
+  visitPhotosData=[null,null,null,null];
+  [1,2,3,4].forEach(function(n){var img=document.getElementById('visitPhoto'+n+'Img');img.src='';img.style.display='none';var ph=document.querySelector('#visitPhoto'+n+'Preview .visit-photo-placeholder');if(ph)ph.style.display='block';document.getElementById('visitPhoto'+n+'Preview').classList.remove('has-photo');document.getElementById('visitPhoto'+n+'Input').value=''});
+  showScreen('screenVisitReport');
+}
+function submitVisitReport(){
+  var week=document.getElementById('visitWeek').value;
+  var visitDate=document.getElementById('visitDate').value;
+  var entity=document.getElementById('visitEntity').value.trim();
+  var visitType=document.getElementById('visitType').value;
+  var notes=document.getElementById('visitNotes').value.trim();
+  var challenges=document.getElementById('visitChallenges').value.trim();
+  var actions=document.getElementById('visitActions').value.trim();
+  var recs=document.getElementById('visitRecs').value.trim();
+  var msg=document.getElementById('visitMsg');
+  if(!week||!visitDate||!entity||!visitType||!notes||!challenges){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع الحقول الإلزامية.</div>';return}
+  if(!visitPhotosData[0]||!visitPhotosData[1]){msg.innerHTML='<div class="msg-error">يرجى رفع الصورة الأولى والثانية على الأقل.</div>';return}
+  var btn=document.getElementById('visitSubmitBtn');
+  btn.disabled=true;btn.textContent='جاري الرفع والمعالجة...';
+  msg.innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري رفع الصور وإنشاء التقرير، قد يستغرق دقيقة...</p></div>';
+  fetch(VISIT_REPORT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'submitVisitReport',supervisor:currentAcadName,week:week,visitDate:visitDate,entity:entity,visitType:visitType,notes:notes,challenges:challenges,actions:actions,recommendations:recs,photos:visitPhotosData})})
+  .then(function(r){return r.json()})
+  .then(function(res){btn.disabled=false;btn.textContent='إرسال التقرير';if(res.ok){msg.innerHTML='<div class="msg-success">✅ تم إرسال التقرير بنجاح!</div>';if(res.pdfUrl){document.getElementById('visitPdfLink').href=res.pdfUrl;document.getElementById('visitPdfBox').style.display='block'}}else{msg.innerHTML='<div class="msg-error">'+(res.message||'حدث خطأ')+'</div>'}})
+  .catch(function(err){btn.disabled=false;btn.textContent='إرسال التقرير';msg.innerHTML='<div class="msg-error">خطأ في الاتصال: '+err.message+'</div>'});
+}
+</script>
 </body>
 </html>
