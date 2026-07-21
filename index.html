@@ -381,6 +381,7 @@
     <div class="tabs">
       <button class="tab active" onclick="switchFieldTab('capacity')">تحديد المقاعد</button>
       <button class="tab" onclick="switchFieldTab('bookings')">الحجوزات</button>
+      <button class="tab" onclick="switchFieldTab('evaluation')">تقييم الطلاب</button>
     </div>
     <div id="fieldCapacityTab">
       <div class="card">
@@ -403,6 +404,33 @@
         <button class="btn-primary" onclick="loadFieldBookings()">عرض الحجوزات</button>
         <div class="msg" id="fieldBookingsMsg"></div>
         <div id="fieldBookingsList" style="margin-top:14px"></div>
+      </div>
+    </div>
+    <div id="fieldEvaluationTab" class="hidden">
+      <div class="card">
+        <h2>تقييم الطلاب</h2>
+        <p class="subtitle">نموذج ٦ — تقييم الطالب خلال فترة التدريب</p>
+        <div id="evalLoadingMsg"></div>
+        <div id="evalStudentSelect" class="hidden">
+          <div class="field-input required">
+            <label>اختر الطالب</label>
+            <select id="evalStudent" onchange="evalOnStudentChange()" style="width:100%;min-height:52px;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;background:#fff;-webkit-appearance:none">
+              <option value="">— اختر الطالب —</option>
+            </select>
+          </div>
+          <div id="evalStudentInfo" style="display:none" class="student-info"></div>
+          <div id="evalForm" style="display:none">
+            <div style="font-size:14px;font-weight:700;color:#374151;margin:14px 0 10px">معايير التقييم (من ١ إلى ٥)</div>
+            <div id="evalCriteria"></div>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:14px;margin:14px 0;text-align:center">
+              <div style="font-size:13px;color:var(--muted)">المجموع الكلي</div>
+              <div id="evalTotal" style="font-size:32px;font-weight:800;color:var(--g3)">0</div>
+              <div style="font-size:12px;color:var(--muted)">من 40 درجة</div>
+            </div>
+            <button class="btn-primary" id="evalSubmitBtn" onclick="submitEval()">حفظ التقييم</button>
+            <div class="msg" id="evalMsg"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -626,6 +654,7 @@ var attAttendance={};
 var attSavedData={};
 var attSaveTimers={};
 var attEntityInfo = {};
+  var currentFieldPassword = '';
   
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
@@ -659,9 +688,30 @@ function loadRafhaOptions(){if(!currentStudent)return;var tickets=document.getEl
 function mkPeriodCard(p,label){var d=!p||Number(p.seats)<=0,t=!p?'غير متاح':(Number(p.seats)<=0?'اكتملت المقاعد':'متاح: '+p.seats+' مقعد');return'<div class="period-option'+(d?' disabled':'')+'"><div class="period-mini-title">'+label+'</div><div style="font-size:12px;font-weight:700;color:#111827;margin-bottom:6px">'+(p?p.entity:'')+'</div><span class="seat-badge'+(d?' full':'')+'">'+t+'</span></div>'}
 function selectRafha(el,option){document.querySelectorAll('.period-option').forEach(function(t){t.classList.remove('active')});el.classList.add('active');selectedRafhaOption=option;var box=document.getElementById('rafhaSelectedBox');box.style.display='block';box.innerHTML='تم الاختيار: '+option.entity+'<br>'+option.period;box.scrollIntoView({behavior:'smooth',block:'center'})}
 function submitRafha(){var msg=document.getElementById('rafhaMsg'),btn=document.getElementById('rafhaSubmitBtn');msg.innerHTML='';if(!selectedRafhaOption){msg.innerHTML='<div class="msg-error">يرجى اختيار جهة والفترة أولاً.</div>';return}btn.disabled=true;btn.textContent='جاري معالجة طلبك...';var attempts=0;function trySubmit(){attempts++;callAPI('submitRafhaSelection',[{student_number:currentStudent.student_number,national_number:currentStudent.national_number,entity:selectedRafhaOption.entity,period_code:selectedRafhaOption.period_code}],function(res){if(res.ok){btn.disabled=true;btn.textContent='تم الحجز';btn.style.background='#166634';var pc=selectedRafhaOption.period_code;msg.innerHTML='<div class="booking-card"><div class="booking-success">تم تأكيد الحجز بنجاح</div><div class="booking-row"><strong>الاسم:</strong> '+currentStudent.name+'</div><div class="booking-row"><strong>جهة التدريب:</strong> '+selectedRafhaOption.entity+'</div><div class="booking-row"><strong>الفترة:</strong> '+(pc==='FIELD_FIRST'?'الأولى':'الثانية')+'</div><div class="booking-period"><div class="booking-row"><strong>الميداني:</strong> '+(pc==='FIELD_FIRST'?'28/06/2026 → 23/07/2026':'26/07/2026 → 20/08/2026')+'</div><div class="booking-row"><strong>المنصات:</strong> '+(pc==='FIELD_FIRST'?'26/07/2026 → 20/08/2026':'28/06/2026 → 23/07/2026')+'</div></div></div>'}else if(res.message&&res.message.includes('يعالج طلبات')&&attempts<5){btn.textContent='جاري المحاولة... ('+attempts+')';setTimeout(trySubmit,1000*attempts)}else{btn.disabled=false;btn.textContent='حجز المقعد';msg.innerHTML='<div class="msg-error">'+res.message+'</div>';loadRafhaOptions()}})}trySubmit()}
-function loginField(){var pwd=document.getElementById('fieldPassword').value.trim(),msg=document.getElementById('fieldLoginMsg');if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}if(FIELD_PWD.includes(pwd)){document.getElementById('fieldPassword').value='';msg.innerHTML='';showScreen('screenFieldDashboard')}else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}}
+function loginField(){
+  var pwd=document.getElementById('fieldPassword').value.trim(),msg=document.getElementById('fieldLoginMsg');
+  if(!pwd){msg.innerHTML='<div class="msg-error">يرجى إدخال كلمة المرور.</div>';return}
+  if(FIELD_PWD.includes(pwd)){
+    currentFieldPassword=pwd;  // ← أضف هذا
+    document.getElementById('fieldPassword').value='';
+    msg.innerHTML='';
+    showScreen('screenFieldDashboard');
+  }else{msg.innerHTML='<div class="msg-error">كلمة المرور غير صحيحة.</div>'}
+}
 function logoutField(){showScreen('screenHome')}
-function switchFieldTab(tab){document.querySelectorAll('#screenFieldDashboard .tab').forEach(function(t,i){t.classList.toggle('active',(i===0&&tab==='capacity')||(i===1&&tab==='bookings'))});document.getElementById('fieldCapacityTab').classList.toggle('hidden',tab!=='capacity');document.getElementById('fieldBookingsTab').classList.toggle('hidden',tab!=='bookings')}
+function switchFieldTab(tab){
+  document.querySelectorAll('#screenFieldDashboard .tab').forEach(function(t,i){
+    t.classList.toggle('active',
+      (i===0&&tab==='capacity')||
+      (i===1&&tab==='bookings')||
+      (i===2&&tab==='evaluation')
+    );
+  });
+  document.getElementById('fieldCapacityTab').classList.toggle('hidden',tab!=='capacity');
+  document.getElementById('fieldBookingsTab').classList.toggle('hidden',tab!=='bookings');
+  document.getElementById('fieldEvaluationTab').classList.toggle('hidden',tab!=='evaluation');
+  if(tab==='evaluation') loadEvalStudents();
+}
 function renderMajorsInputs(){var c=document.getElementById('majorsContainer');c.innerHTML='';MAJORS.forEach(function(m){var r=document.createElement('div');r.className='majors-row-input';r.innerHTML='<div class="major-name-label">'+m+'</div><input type="number" class="count-input male-input" placeholder="0" min="0"><input type="number" class="count-input female-input" placeholder="0" min="0">';c.appendChild(r)})}
 function submitCapacity(){var entity=document.getElementById('fcEntity').value.trim(),contact=document.getElementById('fcContact').value.trim(),mobile=document.getElementById('fcMobile').value.trim(),email=document.getElementById('fcEmail').value.trim(),msg=document.getElementById('fcMsg'),btn=document.getElementById('fcSubmitBtn');if(!entity||!contact||!mobile||!email){msg.innerHTML='<div class="msg-error">يرجى تعبئة جميع بيانات الجهة.</div>';return}var rows=[],mi=document.querySelectorAll('.male-input'),fi=document.querySelectorAll('.female-input');MAJORS.forEach(function(m,i){var male=mi[i].value.trim(),female=fi[i].value.trim();if(male||female)rows.push({major:m,male_seats:male,female_seats:female})});if(rows.length===0){msg.innerHTML='<div class="msg-error">يرجى إدخال الأعداد للتخصصات المتاحة.</div>';return}btn.disabled=true;btn.textContent='جاري الإرسال...';callAPI('submitEntityCapacity',[{entity_name:entity,contact_name:contact,mobile:mobile,email:email,rows:rows}],function(res){btn.disabled=false;btn.textContent='إرسال';msg.innerHTML='<div class="'+(res.ok?'msg-success':'msg-error')+'">'+res.message+'</div>';if(res.ok){document.getElementById('fcEntity').value='';document.getElementById('fcContact').value='';document.getElementById('fcMobile').value='';document.getElementById('fcEmail').value='';renderMajorsInputs()}})}
 function loadFieldBookings(){var entity=document.getElementById('fieldEntitySearch').value.trim(),msg=document.getElementById('fieldBookingsMsg'),list=document.getElementById('fieldBookingsList');if(!entity){msg.innerHTML='<div class="msg-error">يرجى إدخال اسم الجهة.</div>';return}msg.innerHTML='';list.innerHTML='<div class="loader-wrap"><div class="loader"></div></div>';callAPI('getBookingDashboardData',[],function(data){if(!data.ok){list.innerHTML='<div class="msg-error">حدث خطأ.</div>';return}var e=data.entities.find(function(x){return x.entity.includes(entity)||entity.includes(x.entity)});if(!e){list.innerHTML='<div class="msg-error">لم يتم العثور على الجهة.</div>';return}list.innerHTML='<div style="background:#f9fafb;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:14px;line-height:2"><strong style="color:var(--g3)">الجهة:</strong> '+e.entity+'<br><strong style="color:#1d4ed8">طلاب:</strong> ف1: '+e.male.p1.booked+'/'+e.male.p1.total+' | ف2: '+e.male.p2.booked+'/'+e.male.p2.total+'<br><strong style="color:#9d174d">طالبات:</strong> ف1: '+e.female.p1.booked+'/'+e.female.p1.total+' | ف2: '+e.female.p2.booked+'/'+e.female.p2.total+'</div>'})}
@@ -954,6 +1004,128 @@ function submitVisitReport(){
     }
   })
   .catch(function(err){btn.disabled=false;btn.textContent='إرسال التقرير';msg.innerHTML='<div class="msg-error">خطأ في الاتصال: '+err.message+'</div>';});
+}
+  var evalStudents=[];
+var evalCriteriaList=[
+  'التزام الطالب بأوقات الحضور والانصراف',
+  'اهتمام الطالب بالتدريب ومدى حماسه للعمل',
+  'تعاون الطالب مع الآخرين',
+  'الإنتاجية وجودة العمل',
+  'حرص الطالب على تدوين يوميات التدريب',
+  'استخدام الطالب للمعلومات النظرية',
+  'الحضور خلال فترة التدريب',
+  'التقويم العام لتدريب الطالب'
+];
+
+function loadEvalStudents(){
+  document.getElementById('evalLoadingMsg').innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري تحميل الطلاب...</p></div>';
+  document.getElementById('evalStudentSelect').classList.add('hidden');
+  callAPI('getFieldStudents',[currentFieldPassword],function(res){
+    document.getElementById('evalLoadingMsg').innerHTML='';
+    if(!res.ok){document.getElementById('evalLoadingMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';return;}
+    evalStudents=res.students||[];
+    var sel=document.getElementById('evalStudent');
+    sel.innerHTML='<option value="">— اختر الطالب —</option>';
+    evalStudents.forEach(function(s,i){
+      var o=document.createElement('option');
+      o.value=i;
+      o.textContent=s.name+' — '+s.entity;
+      sel.appendChild(o);
+    });
+    document.getElementById('evalStudentSelect').classList.remove('hidden');
+    buildEvalCriteria();
+  });
+}
+
+function buildEvalCriteria(){
+  var html='';
+  evalCriteriaList.forEach(function(c,i){
+    html+='<div style="margin-bottom:14px;padding:12px;background:#f9fafb;border-radius:12px;border:1px solid var(--line)">';
+    html+='<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">'+(i+1)+'. '+c+'</div>';
+    html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">';
+    for(var v=1;v<=5;v++){
+      html+='<button type="button" data-idx="'+i+'" data-val="'+v+'" onclick="selectScore('+i+','+v+')" style="min-height:42px;border:1.5px solid #d1d5db;background:#fff;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s">'+v+'</button>';
+    }
+    html+='</div></div>';
+  });
+  document.getElementById('evalCriteria').innerHTML=html;
+}
+
+function selectScore(idx,val){
+  document.querySelectorAll('[data-idx="'+idx+'"]').forEach(function(btn){
+    btn.style.background='#fff';
+    btn.style.borderColor='#d1d5db';
+    btn.style.color='#374151';
+  });
+  var sel=document.querySelector('[data-idx="'+idx+'"][data-val="'+val+'"]');
+  sel.style.background='linear-gradient(135deg,var(--g4),var(--g3))';
+  sel.style.borderColor='var(--g3)';
+  sel.style.color='#fff';
+  updateEvalTotal();
+}
+
+function updateEvalTotal(){
+  var total=0;
+  evalCriteriaList.forEach(function(c,i){
+    var sel=document.querySelector('[data-idx="'+i+'"][style*="linear-gradient"]');
+    if(sel) total+=parseInt(sel.getAttribute('data-val'));
+  });
+  document.getElementById('evalTotal').textContent=total;
+}
+
+function evalOnStudentChange(){
+  var idx=document.getElementById('evalStudent').value;
+  if(idx===''){
+    document.getElementById('evalStudentInfo').style.display='none';
+    document.getElementById('evalForm').style.display='none';
+    return;
+  }
+  var s=evalStudents[parseInt(idx)];
+  document.getElementById('evalStudentInfo').innerHTML=
+    '<strong>'+s.name+'</strong><br>'+
+    'الرقم: '+s.student_number+' | التخصص: '+s.major+'<br>'+
+    'الجهة: '+s.entity+' | الفترة: '+s.period+'<br>'+
+    'المشرف الأكاديمي: '+s.teacher;
+  document.getElementById('evalStudentInfo').style.display='block';
+  document.getElementById('evalForm').style.display='block';
+  document.getElementById('evalMsg').innerHTML='';
+  document.getElementById('evalTotal').textContent='0';
+  buildEvalCriteria();
+}
+
+function submitEval(){
+  var idx=document.getElementById('evalStudent').value;
+  if(idx==='') return;
+  var s=evalStudents[parseInt(idx)];
+  var scores=[];
+  var valid=true;
+  evalCriteriaList.forEach(function(c,i){
+    var sel=document.querySelector('[data-idx="'+i+'"][style*="linear-gradient"]');
+    if(!sel){valid=false;return;}
+    scores.push(parseInt(sel.getAttribute('data-val')));
+  });
+  if(!valid){document.getElementById('evalMsg').innerHTML='<div class="msg-error">يرجى تقييم جميع المعايير.</div>';return;}
+  var btn=document.getElementById('evalSubmitBtn');
+  btn.disabled=true;btn.textContent='جاري الحفظ...';
+  callAPI('submitFieldEvaluation',[{
+    password:currentFieldPassword,
+    student_number:s.student_number,
+    name:s.name,major:s.major,course:s.course,
+    gender:s.gender,entity:s.entity,section:s.section,
+    teacher:s.teacher,entSup:s.entSup,period:s.period,
+    scores:scores
+  }],function(res){
+    btn.disabled=false;btn.textContent='حفظ التقييم';
+    if(res.ok){
+      document.getElementById('evalMsg').innerHTML='<div class="msg-success">✅ تم حفظ التقييم — المجموع: '+res.total+'/40</div>';
+      document.getElementById('evalStudent').value='';
+      document.getElementById('evalStudentInfo').style.display='none';
+      document.getElementById('evalForm').style.display='none';
+      buildEvalCriteria();
+    } else {
+      document.getElementById('evalMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';
+    }
+  });
 }
 </script>
 </body>
