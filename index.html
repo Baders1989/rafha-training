@@ -1163,22 +1163,60 @@ function selectEvalPeriod(p){
   document.getElementById('evalPeriodLabel').textContent=label;
   document.getElementById('evalPeriodSelect').classList.add('hidden');
   document.getElementById('evalStudentSelect').classList.remove('hidden');
-  
-  var filtered=evalStudents.filter(function(s){
-    return s.period===(p===1?'الفترة الأولى':'الفترة الثانية');
-  });
-  var sel=document.getElementById('evalStudent');
-  sel.innerHTML='<option value="">— اختر الطالب —</option>';
-  filtered.forEach(function(s){
-    var idx=evalStudents.indexOf(s);
-    var o=document.createElement('option');
-    o.value=idx;
-    o.textContent=s.name+' — '+s.major;
-    sel.appendChild(o);
-  });
   document.getElementById('evalStudentInfo').style.display='none';
   document.getElementById('evalForm').style.display='none';
   document.getElementById('evalMsg').innerHTML='';
+  document.getElementById('evalStudent').value='';
+
+  var filtered=evalStudents.filter(function(s){
+    return s.period===(p===1?'الفترة الأولى':'الفترة الثانية');
+  });
+
+  // جلب التقييمات الموجودة
+  callAPI('getFieldEvaluations',[currentFieldPassword],function(res){
+    var evaluated=res.ok?res.evaluated:{};
+    var sel=document.getElementById('evalStudent');
+    sel.innerHTML='<option value="">— اختر الطالب —</option>';
+    
+    // بناء قائمة بطاقات
+    var listHtml='<div style="margin-bottom:14px">';
+    filtered.forEach(function(s){
+      var idx=evalStudents.indexOf(s);
+      var isDone=evaluated.hasOwnProperty(s.student_number);
+      var score=isDone?evaluated[s.student_number]:null;
+      listHtml+='<div onclick="'+(isDone?'':'selectStudentFromList('+idx+')')+'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid '+(isDone?'#bbf7d0':'#e5e7eb')+';background:'+(isDone?'#f0fdf4':'#fff')+';cursor:'+(isDone?'default':'pointer')+';transition:.15s">';
+      listHtml+='<div><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
+      listHtml+='<div style="font-size:11px;color:var(--muted)">'+s.major+'</div></div>';
+      if(isDone){
+        listHtml+='<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--g3)">'+score+'</div><div style="font-size:10px;color:var(--muted)">من 40</div></div>';
+      } else {
+        listHtml+='<div style="font-size:11px;color:#9ca3af;border:1px dashed #d1d5db;border-radius:8px;padding:4px 8px">لم يتم التقييم</div>';
+      }
+      listHtml+='</div>';
+      // أضف للقائمة المنسدلة أيضاً
+      var o=document.createElement('option');
+      o.value=idx;
+      o.textContent=s.name+' — '+s.major+(isDone?' ✅ ('+score+'/40)':' ⬜ لم يتم التقييم');
+      sel.appendChild(o);
+    });
+    listHtml+='</div>';
+    
+    // أضف البطاقات قبل القائمة المنسدلة
+    var existing=document.getElementById('evalStudentCards');
+    if(!existing){
+      var div=document.createElement('div');
+      div.id='evalStudentCards';
+      sel.parentNode.insertBefore(div,sel.parentNode.firstChild);
+    }
+    document.getElementById('evalStudentCards').innerHTML=listHtml;
+    sel.style.display='none'; // إخفاء القائمة المنسدلة واستخدام البطاقات
+  });
+}
+
+function selectStudentFromList(idx){
+  document.getElementById('evalStudent').value=idx;
+  evalOnStudentChange();
+  document.getElementById('evalForm').scrollIntoView({behavior:'smooth'});
 }
 
 function backToEvalPeriods(){
