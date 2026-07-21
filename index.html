@@ -380,7 +380,6 @@
   <div class="main">
     <div class="tabs">
       <button class="tab active" onclick="switchFieldTab('capacity')">تحديد المقاعد</button>
-      <button class="tab" onclick="switchFieldTab('bookings')">الحجوزات</button>
       <button class="tab" onclick="switchFieldTab('evaluation')">تقييم الطلاب</button>
     </div>
     <div id="fieldCapacityTab">
@@ -397,40 +396,49 @@
         <div class="msg" id="fcMsg"></div>
       </div>
     </div>
-    <div id="fieldBookingsTab" class="hidden">
-      <div class="card">
-        <h2>حجوزات جهتي</h2><p class="subtitle">الطلاب المحجوزين في جهة التدريب</p>
-        <div class="field-input"><label>اسم الجهة</label><input id="fieldEntitySearch" type="text" placeholder="أدخل اسم جهتك"></div>
-        <button class="btn-primary" onclick="loadFieldBookings()">عرض الحجوزات</button>
-        <div class="msg" id="fieldBookingsMsg"></div>
-        <div id="fieldBookingsList" style="margin-top:14px"></div>
+<div id="fieldEvaluationTab" class="hidden">
+  <div class="card">
+    <h2>تقييم الطلاب</h2>
+    <p class="subtitle">نموذج ٦ — تقييم الطالب خلال فترة التدريب</p>
+    <div id="evalLoadingMsg"></div>
+    <div id="evalPeriodSelect" class="hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div id="evalP1Card" onclick="selectEvalPeriod(1)" style="background:#ecfdf5;border:2px solid #bbf7d0;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s">
+          <div style="font-size:28px;margin-bottom:8px">📋</div>
+          <div style="font-size:14px;font-weight:800;color:var(--g3)">الفترة الأولى</div>
+          <div id="evalP1Count" style="font-size:22px;font-weight:800;color:var(--g2);margin-top:6px">0</div>
+          <div style="font-size:11px;color:var(--muted)">طالب/طالبة</div>
+        </div>
+        <div id="evalP2Card" onclick="selectEvalPeriod(2)" style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s">
+          <div style="font-size:28px;margin-bottom:8px">📋</div>
+          <div style="font-size:14px;font-weight:800;color:#1d4ed8">الفترة الثانية</div>
+          <div id="evalP2Count" style="font-size:22px;font-weight:800;color:#1d4ed8;margin-top:6px">0</div>
+          <div style="font-size:11px;color:var(--muted)">طالب/طالبة</div>
+        </div>
       </div>
     </div>
-    <div id="fieldEvaluationTab" class="hidden">
-      <div class="card">
-        <h2>تقييم الطلاب</h2>
-        <p class="subtitle">نموذج ٦ — تقييم الطالب خلال فترة التدريب</p>
-        <div id="evalLoadingMsg"></div>
-        <div id="evalStudentSelect" class="hidden">
-          <div class="field-input required">
-            <label>اختر الطالب</label>
-            <select id="evalStudent" onchange="evalOnStudentChange()" style="width:100%;min-height:52px;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;background:#fff;-webkit-appearance:none">
-              <option value="">— اختر الطالب —</option>
-            </select>
-          </div>
-          <div id="evalStudentInfo" style="display:none" class="student-info"></div>
-          <div id="evalForm" style="display:none">
-            <div style="font-size:14px;font-weight:700;color:#374151;margin:14px 0 10px">معايير التقييم (من ١ إلى ٥)</div>
-            <div id="evalCriteria"></div>
-            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:14px;margin:14px 0;text-align:center">
-              <div style="font-size:13px;color:var(--muted)">المجموع الكلي</div>
-              <div id="evalTotal" style="font-size:32px;font-weight:800;color:var(--g3)">0</div>
-              <div style="font-size:12px;color:var(--muted)">من 40 درجة</div>
-            </div>
-            <button class="btn-primary" id="evalSubmitBtn" onclick="submitEval()">حفظ التقييم</button>
-            <div class="msg" id="evalMsg"></div>
-          </div>
+    <div id="evalStudentSelect" class="hidden">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <button onclick="backToEvalPeriods()" style="background:#f3f4f6;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text)">‹ رجوع</button>
+        <div id="evalPeriodLabel" style="font-size:14px;font-weight:700;color:var(--g3)"></div>
+      </div>
+      <div class="field-input required">
+        <label>اختر الطالب</label>
+        <select id="evalStudent" onchange="evalOnStudentChange()" style="width:100%;min-height:52px;padding:14px;border:1.5px solid #d1d5db;border-radius:14px;font-size:15px;background:#fff;-webkit-appearance:none">
+          <option value="">— اختر الطالب —</option>
+        </select>
+      </div>
+      <div id="evalStudentInfo" style="display:none" class="student-info"></div>
+      <div id="evalForm" style="display:none">
+        <div style="font-size:14px;font-weight:700;color:#374151;margin:14px 0 10px">معايير التقييم (من ١ إلى ٥)</div>
+        <div id="evalCriteria"></div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:14px;padding:14px;margin:14px 0;text-align:center">
+          <div style="font-size:13px;color:var(--muted)">المجموع الكلي</div>
+          <div id="evalTotal" style="font-size:32px;font-weight:800;color:var(--g3)">0</div>
+          <div style="font-size:12px;color:var(--muted)">من 40 درجة</div>
         </div>
+        <button class="btn-primary" id="evalSubmitBtn" onclick="submitEval()">حفظ التقييم</button>
+        <div class="msg" id="evalMsg"></div>
       </div>
     </div>
   </div>
@@ -709,12 +717,10 @@ function switchFieldTab(tab){
   document.querySelectorAll('#screenFieldDashboard .tab').forEach(function(t,i){
     t.classList.toggle('active',
       (i===0&&tab==='capacity')||
-      (i===1&&tab==='bookings')||
-      (i===2&&tab==='evaluation')
+      (i===1&&tab==='evaluation')
     );
   });
   document.getElementById('fieldCapacityTab').classList.toggle('hidden',tab!=='capacity');
-  document.getElementById('fieldBookingsTab').classList.toggle('hidden',tab!=='bookings');
   document.getElementById('fieldEvaluationTab').classList.toggle('hidden',tab!=='evaluation');
   if(tab==='evaluation') loadEvalStudents();
 }
@@ -1132,6 +1138,55 @@ function submitEval(){
       document.getElementById('evalMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';
     }
   });
+}
+  var evalCurrentPeriod = 0;
+
+function loadEvalStudents(){
+  document.getElementById('evalLoadingMsg').innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري تحميل الطلاب...</p></div>';
+  document.getElementById('evalPeriodSelect').classList.add('hidden');
+  document.getElementById('evalStudentSelect').classList.add('hidden');
+  callAPI('getFieldStudents',[currentFieldPassword],function(res){
+    document.getElementById('evalLoadingMsg').innerHTML='';
+    if(!res.ok){document.getElementById('evalLoadingMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';return;}
+    evalStudents=res.students||[];
+    var p1=evalStudents.filter(function(s){return s.period==='الفترة الأولى';});
+    var p2=evalStudents.filter(function(s){return s.period==='الفترة الثانية';});
+    document.getElementById('evalP1Count').textContent=p1.length;
+    document.getElementById('evalP2Count').textContent=p2.length;
+    document.getElementById('evalPeriodSelect').classList.remove('hidden');
+  });
+}
+
+function selectEvalPeriod(p){
+  evalCurrentPeriod=p;
+  var label=p===1?'الفترة الأولى':'الفترة الثانية';
+  document.getElementById('evalPeriodLabel').textContent=label;
+  document.getElementById('evalPeriodSelect').classList.add('hidden');
+  document.getElementById('evalStudentSelect').classList.remove('hidden');
+  
+  var filtered=evalStudents.filter(function(s){
+    return s.period===(p===1?'الفترة الأولى':'الفترة الثانية');
+  });
+  var sel=document.getElementById('evalStudent');
+  sel.innerHTML='<option value="">— اختر الطالب —</option>';
+  filtered.forEach(function(s){
+    var idx=evalStudents.indexOf(s);
+    var o=document.createElement('option');
+    o.value=idx;
+    o.textContent=s.name+' — '+s.major;
+    sel.appendChild(o);
+  });
+  document.getElementById('evalStudentInfo').style.display='none';
+  document.getElementById('evalForm').style.display='none';
+  document.getElementById('evalMsg').innerHTML='';
+}
+
+function backToEvalPeriods(){
+  document.getElementById('evalStudentSelect').classList.add('hidden');
+  document.getElementById('evalPeriodSelect').classList.remove('hidden');
+  document.getElementById('evalStudent').value='';
+  document.getElementById('evalStudentInfo').style.display='none';
+  document.getElementById('evalForm').style.display='none';
 }
 </script>
 </body>
