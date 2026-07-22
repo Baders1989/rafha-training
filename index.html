@@ -378,25 +378,7 @@
 <div id="screenFieldDashboard" class="screen">
   <div class="header"><button class="back-btn" onclick="logoutField()">خروج</button><h1>المشرف الميداني</h1><p>لوحة الجهات التدريبية</p></div>
   <div class="main">
-    <div class="tabs">
-      <button class="tab active" onclick="switchFieldTab('capacity')">تحديد المقاعد</button>
-      <button class="tab" onclick="switchFieldTab('evaluation')">تقييم الطلاب</button>
-    </div>
-    <div id="fieldCapacityTab">
-      <div class="card">
-        <h2>نموذج تحديد المقاعد</h2><p class="subtitle">حدد التخصصات والأعداد المتاحة</p>
-        <div class="field-input required" id="fcEntityBox"><label>اسم الجهة</label><input id="fcEntity" type="text" placeholder="اسم جهة التدريب"></div>
-        <div class="field-input required" id="fcContactBox"><label>اسم المسؤول</label><input id="fcContact" type="text" placeholder="اسم المسؤول"></div>
-        <div class="field-input required" id="fcMobileBox"><label>رقم الجوال</label><input id="fcMobile" type="text" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX"></div>
-        <div class="field-input required" id="fcEmailBox"><label>البريد الإلكتروني</label><input id="fcEmail" type="email" placeholder="name@example.com"></div>
-        <div style="margin:14px 0 8px;font-size:14px;font-weight:700;color:var(--g1)">التخصصات والأعداد</div>
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px;padding:8px;background:#f9fafb;border-radius:10px;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--muted)"><span>التخصص</span><span style="text-align:center">طلاب</span><span style="text-align:center">طالبات</span></div>
-        <div id="majorsContainer"></div>
-        <button class="btn-primary" id="fcSubmitBtn" onclick="submitCapacity()">إرسال</button>
-        <div class="msg" id="fcMsg"></div>
-      </div>
-    </div>
-<div id="fieldEvaluationTab" class="hidden">
+<div id="fieldEvaluationTab">
   <div class="card">
     <h2>تقييم الطلاب</h2>
     <p class="subtitle">نموذج ٦ — تقييم الطالب خلال فترة التدريب</p>
@@ -437,14 +419,14 @@
           <div id="evalTotal" style="font-size:32px;font-weight:800;color:var(--g3)">0</div>
           <div style="font-size:12px;color:var(--muted)">من 40 درجة</div>
         </div>
-       <button class="btn-primary" id="evalSubmitBtn" onclick="submitEval()">حفظ التقييم</button>
+        <button class="btn-primary" id="evalSubmitBtn" onclick="submitEval()">حفظ التقييم</button>
         <div class="msg" id="evalMsg"></div>
       </div>
     </div>
   </div>
 </div>
-</div>   <!-- ✅ جديد: يقفل <div class="main"> -->
-</div>   <!-- ✅ جديد: يقفل <div id="screenFieldDashboard"> -->
+  </div>
+</div>
 
 
 <!-- دخول المشرف الأكاديمي -->
@@ -679,7 +661,7 @@ function showScreen(id){
   if(id==='screenCertificate')fillCertInfo();
   if(id==='screenRafhaSelection')fillRafhaInfo();
   if(id==='screenAcadDashboard')loadDashboard();
-  if(id==='screenFieldDashboard')renderMajorsInputs();
+  if(id==='screenFieldDashboard')loadEvalStudents();
 }
 
 function callAPI(func,args,cb){fetch(APP_URL+'?func='+func+'&args='+encodeURIComponent(JSON.stringify(args))).then(function(r){return r.json()}).then(function(d){cb(d)}).catch(function(e){cb({ok:false,message:'خطأ في الاتصال: '+e.message})})}
