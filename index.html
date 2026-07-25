@@ -1119,6 +1119,7 @@ function submitEval(){
       document.getElementById('evalStudentInfo').style.display='none';
       document.getElementById('evalForm').style.display='none';
       buildEvalCriteria();
+      selectEvalPeriod(evalCurrentPeriod); 
     } else {
       document.getElementById('evalMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';
     }
@@ -1152,19 +1153,44 @@ function selectEvalPeriod(p){
   document.getElementById('evalForm').style.display='none';
   document.getElementById('evalMsg').innerHTML='';
   document.getElementById('evalStudent').value='';
-
   var filtered=evalStudents.filter(function(s){
     return s.period===(p===1?'الفترة الأولى':'الفترة الثانية');
   });
-
   // جلب التقييمات الموجودة
   callAPI('getFieldEvaluations',[currentFieldPassword],function(res){
     var evaluated=res.ok?res.evaluated:{};
     var sel=document.getElementById('evalStudent');
     sel.innerHTML='<option value="">— اختر الطالب —</option>';
+
+    // ✅ حساب العداد
+    var total=filtered.length;
+    var doneCount=filtered.filter(function(s){return evaluated.hasOwnProperty(s.student_number);}).length;
+    var remaining=total-doneCount;
+    var pct=total>0?Math.round(doneCount/total*100):0;
+
+    var progressHtml='';
+    if(total===0){
+      progressHtml='';
+    } else if(remaining===0){
+      progressHtml='<div style="background:linear-gradient(135deg,#166534,#15803d);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;color:#fff">'
+        +'<div style="font-size:32px;margin-bottom:6px">🎉</div>'
+        +'<div style="font-size:16px;font-weight:800;margin-bottom:4px">اكتمل تقييم جميع الطلاب</div>'
+        +'<div style="font-size:13px;opacity:.9">شكراً لجهودكم في متابعة وتقييم طلابنا خلال فترة التدريب</div>'
+        +'</div>';
+    } else {
+      progressHtml='<div style="background:#f9fafb;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+        +'<span style="font-size:13px;font-weight:700;color:var(--text)">'+doneCount+' من '+total+' تم تقييمهم</span>'
+        +'<span style="font-size:12px;font-weight:700;color:#dc2626">متبقي '+remaining+'</span>'
+        +'</div>'
+        +'<div style="height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(135deg,var(--g4),var(--g3));border-radius:99px;transition:width .4s"></div>'
+        +'</div>'
+        +'</div>';
+    }
     
     // بناء قائمة بطاقات
-    var listHtml='<div style="margin-bottom:14px">';
+    var listHtml=progressHtml+'<div style="margin-bottom:14px">';
     filtered.forEach(function(s){
       var idx=evalStudents.indexOf(s);
       var isDone=evaluated.hasOwnProperty(s.student_number);
