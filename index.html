@@ -386,17 +386,19 @@
     <div id="evalPeriodSelect" class="hidden">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
         <div id="evalP1Card" onclick="selectEvalPeriod(1)" style="background:#ecfdf5;border:2px solid #bbf7d0;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s">
-          <div style="font-size:28px;margin-bottom:8px">📋</div>
-          <div style="font-size:14px;font-weight:800;color:var(--g3)">الفترة الأولى</div>
-          <div id="evalP1Count" style="font-size:22px;font-weight:800;color:var(--g2);margin-top:6px">0</div>
-          <div style="font-size:11px;color:var(--muted)">طالب/طالبة</div>
-        </div>
-        <div id="evalP2Card" onclick="selectEvalPeriod(2)" style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s">
-          <div style="font-size:28px;margin-bottom:8px">📋</div>
-          <div style="font-size:14px;font-weight:800;color:#1d4ed8">الفترة الثانية</div>
-          <div id="evalP2Count" style="font-size:22px;font-weight:800;color:#1d4ed8;margin-top:6px">0</div>
-          <div style="font-size:11px;color:var(--muted)">طالب/طالبة</div>
-        </div>
+  <div style="font-size:28px;margin-bottom:8px">📋</div>
+  <div style="font-size:14px;font-weight:800;color:var(--g3)">الفترة الأولى</div>
+  <div id="evalP1Count" style="font-size:22px;font-weight:800;color:var(--g2);margin-top:6px">0</div>
+  <div style="font-size:11px;color:var(--muted)">طالب/طالبة</div>
+  <div id="evalP1Progress" style="font-size:11px;font-weight:700;color:var(--g3);margin-top:6px"></div>
+</div>
+<div id="evalP2Card" onclick="selectEvalPeriod(2)" style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:.15s">
+  <div style="font-size:28px;margin-bottom:8px">📋</div>
+  <div style="font-size:14px;font-weight:800;color:#1d4ed8">الفترة الثانية</div>
+  <div id="evalP2Count" style="font-size:22px;font-weight:800;color:#1d4ed8;margin-top:6px">0</div>
+  <div style="font-size:11px;color:var(--muted)">طالب/طالبة</div>
+  <div id="evalP2Progress" style="font-size:11px;font-weight:700;color:#1d4ed8;margin-top:6px"></div>
+</div>
       </div>
     </div>
     <div id="evalStudentSelect" class="hidden">
@@ -1016,21 +1018,27 @@ var evalCriteriaList=[
 
 function loadEvalStudents(){
   document.getElementById('evalLoadingMsg').innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري تحميل الطلاب...</p></div>';
+  document.getElementById('evalPeriodSelect').classList.add('hidden');
   document.getElementById('evalStudentSelect').classList.add('hidden');
   callAPI('getFieldStudents',[currentFieldPassword],function(res){
     document.getElementById('evalLoadingMsg').innerHTML='';
     if(!res.ok){document.getElementById('evalLoadingMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';return;}
     evalStudents=res.students||[];
-    var sel=document.getElementById('evalStudent');
-    sel.innerHTML='<option value="">— اختر الطالب —</option>';
-    evalStudents.forEach(function(s,i){
-      var o=document.createElement('option');
-      o.value=i;
-      o.textContent=s.name+' — '+s.entity;
-      sel.appendChild(o);
+    var p1=evalStudents.filter(function(s){return s.period==='الفترة الأولى';});
+    var p2=evalStudents.filter(function(s){return s.period==='الفترة الثانية';});
+    document.getElementById('evalP1Count').textContent=p1.length;
+    document.getElementById('evalP2Count').textContent=p2.length;
+
+    // ✅ جلب التقييمات لحساب التقدم بكل فترة
+    callAPI('getFieldEvaluations',[currentFieldPassword],function(evRes){
+      var evaluated=evRes.ok?evRes.evaluated:{};
+      var p1Done=p1.filter(function(s){return evaluated.hasOwnProperty(s.student_number);}).length;
+      var p2Done=p2.filter(function(s){return evaluated.hasOwnProperty(s.student_number);}).length;
+      document.getElementById('evalP1Progress').textContent=p1.length>0?(p1Done+' من '+p1.length+' تم تقييمهم'):'';
+      document.getElementById('evalP2Progress').textContent=p2.length>0?(p2Done+' من '+p2.length+' تم تقييمهم'):'';
     });
-    document.getElementById('evalStudentSelect').classList.remove('hidden');
-    buildEvalCriteria();
+
+    document.getElementById('evalPeriodSelect').classList.remove('hidden');
   });
 }
 
@@ -1235,6 +1243,7 @@ function backToEvalPeriods(){
   document.getElementById('evalStudent').value='';
   document.getElementById('evalStudentInfo').style.display='none';
   document.getElementById('evalForm').style.display='none';
+  loadEvalStudents(); // ✅ تحديث الأرقام
 }
 </script>
 </body>
