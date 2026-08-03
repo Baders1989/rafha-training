@@ -666,8 +666,12 @@ function showScreen(id){
   if(id==='screenFieldDashboard')loadEvalStudents();
 }
 
-function callAPI(func,args,cb){fetch(APP_URL+'?func='+func+'&args='+encodeURIComponent(JSON.stringify(args))).then(function(r){return r.json()}).then(function(d){cb(d)}).catch(function(e){cb({ok:false,message:'خطأ في الاتصال: '+e.message})})}
-
+function callAPI(func,args,cb){
+  fetch(APP_URL+'?func='+func+'&args='+encodeURIComponent(JSON.stringify(args))+'&_ts='+Date.now())
+    .then(function(r){return r.json()})
+    .then(function(d){cb(d)})
+    .catch(function(e){cb({ok:false,message:'خطأ في الاتصال: '+e.message})})
+}
 function verifyStudent(){var s=document.getElementById('stn').value.trim(),n=document.getElementById('snin').value.trim(),btn=document.getElementById('studentVerifyBtn'),msg=document.getElementById('studentVerifyMsg');msg.innerHTML='';if(!s){document.getElementById('stn_box').classList.add('invalid');return}if(!n){document.getElementById('snin_box').classList.add('invalid');return}btn.disabled=true;btn.textContent='جاري التحقق...';callAPI('verifyStudentData',[s,n],function(res){btn.disabled=false;btn.textContent='تحقق من البيانات';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}currentStudent=res;document.getElementById('studentInfoBox').innerHTML='<strong>الاسم:</strong> '+res.name+'<br><strong>التخصص:</strong> '+res.major+'<br><strong>المقرر:</strong> '+(res.course||'')+'<br><strong>الفرع:</strong> '+res.branch;document.getElementById('studentVerifySection').classList.add('hidden');document.getElementById('studentServicesSection').classList.remove('hidden')})}
 
 function fillCertInfo(){if(!currentStudent)return;document.getElementById('certStudentInfo').innerHTML='<strong>الاسم:</strong> '+currentStudent.name+'<br><strong>التخصص:</strong> '+currentStudent.major+'<br><strong>المقرر:</strong> '+(currentStudent.course||'')+'<br><strong>الفرع:</strong> '+currentStudent.branch;}
