@@ -649,7 +649,8 @@ var attAttendance={};
 var attSavedData={};
 var attSaveTimers={};
 var attEntityInfo = {};
-  var currentFieldPassword = '';
+var currentFieldPassword = '';
+var currentScores = [null,null,null,null,null,null,null,null];
   
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
@@ -1047,38 +1048,45 @@ function loadEvalStudents(){
 }
 
 function buildEvalCriteria(){
+  currentScores = [null,null,null,null,null,null,null,null];
   var html='';
   evalCriteriaList.forEach(function(c,i){
     html+='<div style="margin-bottom:14px;padding:12px;background:#f9fafb;border-radius:12px;border:1px solid var(--line)">';
     html+='<div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px">'+(i+1)+'. '+c+'</div>';
-    html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">';
+    html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px" id="critRow'+i+'">';
     for(var v=1;v<=5;v++){
       html+='<button type="button" data-idx="'+i+'" data-val="'+v+'" onclick="selectScore('+i+','+v+')" style="min-height:42px;border:1.5px solid #d1d5db;background:#fff;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s">'+v+'</button>';
     }
     html+='</div></div>';
   });
   document.getElementById('evalCriteria').innerHTML=html;
+  document.getElementById('evalTotal').textContent='0';
 }
 
 function selectScore(idx,val){
-  document.querySelectorAll('[data-idx="'+idx+'"]').forEach(function(btn){
-    btn.style.background='#fff';
-    btn.style.borderColor='#d1d5db';
-    btn.style.color='#374151';
+  currentScores[idx]=val;
+
+  var row=document.getElementById('critRow'+idx);
+  var btns=row.querySelectorAll('button');
+  btns.forEach(function(btn){
+    var v=parseInt(btn.getAttribute('data-val'));
+    if(v===val){
+      btn.style.background='linear-gradient(135deg,var(--g4),var(--g3))';
+      btn.style.borderColor='var(--g3)';
+      btn.style.color='#fff';
+    } else {
+      btn.style.background='#fff';
+      btn.style.borderColor='#d1d5db';
+      btn.style.color='#374151';
+    }
   });
-  var sel=document.querySelector('[data-idx="'+idx+'"][data-val="'+val+'"]');
-  sel.style.background='linear-gradient(135deg,var(--g4),var(--g3))';
-  sel.style.borderColor='var(--g3)';
-  sel.style.color='#fff';
+
   updateEvalTotal();
 }
 
 function updateEvalTotal(){
   var total=0;
-  evalCriteriaList.forEach(function(c,i){
-    var sel=document.querySelector('[data-idx="'+i+'"][style*="linear-gradient"]');
-    if(sel) total+=parseInt(sel.getAttribute('data-val'));
-  });
+  currentScores.forEach(function(v){ if(v) total+=v; });
   document.getElementById('evalTotal').textContent=total;
 }
 
@@ -1106,14 +1114,13 @@ function submitEval(){
   var idx=document.getElementById('evalStudent').value;
   if(idx==='') return;
   var s=evalStudents[parseInt(idx)];
-  var scores=[];
-  var valid=true;
-  evalCriteriaList.forEach(function(c,i){
-    var sel=document.querySelector('[data-idx="'+i+'"][style*="linear-gradient"]');
-    if(!sel){valid=false;return;}
-    scores.push(parseInt(sel.getAttribute('data-val')));
-  });
-  if(!valid){document.getElementById('evalMsg').innerHTML='<div class="msg-error">يرجى تقييم جميع المعايير.</div>';return;}
+
+  if(currentScores.indexOf(null)!==-1){
+    document.getElementById('evalMsg').innerHTML='<div class="msg-error">يرجى تقييم جميع المعايير.</div>';
+    return;
+  }
+  var scores=currentScores.slice();
+
   var btn=document.getElementById('evalSubmitBtn');
   btn.disabled=true;btn.textContent='جاري الحفظ...';
   callAPI('submitFieldEvaluation',[{
@@ -1130,8 +1137,7 @@ function submitEval(){
       document.getElementById('evalStudent').value='';
       document.getElementById('evalStudentInfo').style.display='none';
       document.getElementById('evalForm').style.display='none';
-      buildEvalCriteria();
-      selectEvalPeriod(evalCurrentPeriod); 
+      selectEvalPeriod(evalCurrentPeriod);
     } else {
       document.getElementById('evalMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';
     }
