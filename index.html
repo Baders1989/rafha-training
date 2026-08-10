@@ -668,10 +668,20 @@ function showScreen(id){
 }
 
 function callAPI(func,args,cb){
-  fetch(APP_URL+'?func='+func+'&args='+encodeURIComponent(JSON.stringify(args))+'&_ts='+Date.now())
-    .then(function(r){return r.json()})
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function(){ controller.abort(); }, 20000);
+
+  fetch(APP_URL+'?func='+func+'&args='+encodeURIComponent(JSON.stringify(args))+'&_ts='+Date.now(), {signal: controller.signal})
+    .then(function(r){clearTimeout(timeoutId); return r.json()})
     .then(function(d){cb(d)})
-    .catch(function(e){cb({ok:false,message:'خطأ في الاتصال: '+e.message})})
+    .catch(function(e){
+      clearTimeout(timeoutId);
+      if(e.name==='AbortError'){
+        cb({ok:false,message:'انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى.'});
+      } else {
+        cb({ok:false,message:'خطأ في الاتصال: '+e.message});
+      }
+    });
 }
 function verifyStudent(){var s=document.getElementById('stn').value.trim(),n=document.getElementById('snin').value.trim(),btn=document.getElementById('studentVerifyBtn'),msg=document.getElementById('studentVerifyMsg');msg.innerHTML='';if(!s){document.getElementById('stn_box').classList.add('invalid');return}if(!n){document.getElementById('snin_box').classList.add('invalid');return}btn.disabled=true;btn.textContent='جاري التحقق...';callAPI('verifyStudentData',[s,n],function(res){btn.disabled=false;btn.textContent='تحقق من البيانات';if(!res.ok){msg.innerHTML='<div class="msg-error">'+res.message+'</div>';return}currentStudent=res;document.getElementById('studentInfoBox').innerHTML='<strong>الاسم:</strong> '+res.name+'<br><strong>التخصص:</strong> '+res.major+'<br><strong>المقرر:</strong> '+(res.course||'')+'<br><strong>الفرع:</strong> '+res.branch;document.getElementById('studentVerifySection').classList.add('hidden');document.getElementById('studentServicesSection').classList.remove('hidden')})}
 
@@ -1255,6 +1265,21 @@ function backToEvalPeriods(){
   document.getElementById('evalForm').style.display='none';
   loadEvalStudents(); // ✅ تحديث الأرقام
 }
+  setInterval(function(){
+  var btn=document.getElementById('evalSubmitBtn');
+  if(btn && btn.disabled && btn.textContent==='جاري الحفظ...'){
+    // لو الزر معطل لأكثر من 25 ثانية، أعده تلقائياً
+    if(!btn.dataset.disabledSince) btn.dataset.disabledSince=Date.now();
+    else if(Date.now()-btn.dataset.disabledSince>25000){
+      btn.disabled=false;
+      btn.textContent='حفظ التقييم';
+      delete btn.dataset.disabledSince;
+      document.getElementById('evalMsg').innerHTML='<div class="msg-error">⚠️ استغرق الحفظ وقتاً طويلاً، يرجى المحاولة مرة أخرى.</div>';
+    }
+  } else if(btn) {
+    delete btn.dataset.disabledSince;
+  }
+}, 3000);
 </script>
 </body>
 </html>
