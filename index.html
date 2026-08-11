@@ -1159,22 +1159,6 @@ function submitEval(){
 }
 var evalCurrentPeriod = 0;
 
-function loadEvalStudents(){
-  document.getElementById('evalLoadingMsg').innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري تحميل الطلاب...</p></div>';
-  document.getElementById('evalPeriodSelect').classList.add('hidden');
-  document.getElementById('evalStudentSelect').classList.add('hidden');
-  callAPI('getFieldStudents',[currentFieldPassword],function(res){
-    document.getElementById('evalLoadingMsg').innerHTML='';
-    if(!res.ok){document.getElementById('evalLoadingMsg').innerHTML='<div class="msg-error">'+res.message+'</div>';return;}
-    evalStudents=res.students||[];
-    var p1=evalStudents.filter(function(s){return s.period==='الفترة الأولى';});
-    var p2=evalStudents.filter(function(s){return s.period==='الفترة الثانية';});
-    document.getElementById('evalP1Count').textContent=p1.length;
-    document.getElementById('evalP2Count').textContent=p2.length;
-    document.getElementById('evalPeriodSelect').classList.remove('hidden');
-  });
-}
-
 function selectEvalPeriod(p){
   evalCurrentPeriod=p;
   var label=p===1?'الفترة الأولى':'الفترة الثانية';
