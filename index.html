@@ -651,6 +651,7 @@ var attSaveTimers={};
 var attEntityInfo = {};
 var currentFieldPassword = '';
 var currentScores = [null,null,null,null,null,null,null,null];
+var currentEvalStudentIdx = '';
   
 window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('splash');s.classList.add('hide');setTimeout(function(){s.remove()},600)},2000)});
 
@@ -1102,6 +1103,7 @@ function updateEvalTotal(){
 
 function evalOnStudentChange(){
   var idx=document.getElementById('evalStudent').value;
+  currentEvalStudentIdx = idx; // ✅ نسخة احتياطية
   if(idx===''){
     document.getElementById('evalStudentInfo').style.display='none';
     document.getElementById('evalForm').style.display='none';
@@ -1121,16 +1123,17 @@ function evalOnStudentChange(){
 }
 
 function submitEval(){
-  var idx=document.getElementById('evalStudent').value;
-  if(idx==='') return;
+  var idx = currentEvalStudentIdx !== '' ? currentEvalStudentIdx : document.getElementById('evalStudent').value;
+  if(idx===''){
+    document.getElementById('evalMsg').innerHTML='<div class="msg-error">⚠️ لم يتم تحديد الطالب، يرجى الرجوع واختيار الطالب من جديد.</div>';
+    return;
+  }
   var s=evalStudents[parseInt(idx)];
-
   if(currentScores.indexOf(null)!==-1){
     document.getElementById('evalMsg').innerHTML='<div class="msg-error">يرجى تقييم جميع المعايير.</div>';
     return;
   }
   var scores=currentScores.slice();
-
   var btn=document.getElementById('evalSubmitBtn');
   btn.disabled=true;btn.textContent='جاري الحفظ...';
   callAPI('submitFieldEvaluation',[{
@@ -1144,6 +1147,7 @@ function submitEval(){
     btn.disabled=false;btn.textContent='حفظ التقييم';
     if(res.ok){
       document.getElementById('evalMsg').innerHTML='<div class="msg-success">✅ تم حفظ التقييم — المجموع: '+res.total+'/40</div>';
+      currentEvalStudentIdx = '';
       document.getElementById('evalStudent').value='';
       document.getElementById('evalStudentInfo').style.display='none';
       document.getElementById('evalForm').style.display='none';
@@ -1153,7 +1157,7 @@ function submitEval(){
     }
   });
 }
-  var evalCurrentPeriod = 0;
+var evalCurrentPeriod = 0;
 
 function loadEvalStudents(){
   document.getElementById('evalLoadingMsg').innerHTML='<div class="loader-wrap"><div class="loader"></div><p style="color:var(--muted);font-size:13px">جاري تحميل الطلاب...</p></div>';
@@ -1252,7 +1256,9 @@ function selectEvalPeriod(p){
 }
 
 function selectStudentFromList(idx){
-  document.getElementById('evalStudent').value=idx;
+  currentEvalStudentIdx = idx;
+  var sel=document.getElementById('evalStudent');
+  sel.value=idx;
   evalOnStudentChange();
   document.getElementById('evalForm').scrollIntoView({behavior:'smooth'});
 }
