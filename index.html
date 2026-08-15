@@ -467,6 +467,14 @@
       </div>
       <span style="font-size:20px;color:var(--g4)">‹</span>
     </div>
+    <div class="service-card" style="margin-bottom:16px;cursor:pointer" onclick="openMyResults()">
+  <div class="svc-icon" style="background:#fff7ed">📊</div>
+  <div style="flex:1">
+    <div class="svc-title">نتائج طلابي</div>
+    <div class="svc-desc">الدرجات النهائية لطلابك حسب التخصص</div>
+  </div>
+  <span style="font-size:20px;color:var(--g4)">‹</span>
+</div>
   </div>
 </div>
 
@@ -600,6 +608,18 @@
         <a id="visitPdfLink" href="#" target="_blank" style="display:block;padding:16px;border-radius:14px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;text-decoration:none;font-weight:700;font-size:16px">📄 تحميل التقرير PDF</a>
       </div>
     </div>
+  </div>
+</div>
+  <!-- ══ شاشة نتائج طلابي ══ -->
+<div id="screenMyResults" class="screen">
+  <div class="header">
+    <button class="back-btn" onclick="showScreen('screenAcadDashboard')">‹ رجوع</button>
+    <h1>نتائج طلابي</h1>
+    <p>الدرجات النهائية حسب التخصص</p>
+  </div>
+  <div class="main">
+    <div id="myResultsLoading" class="loader-wrap"><div class="loader"></div></div>
+    <div id="myResultsContent"></div>
   </div>
 </div>
 <!-- شاشة إفادة التدريب -->
@@ -1270,6 +1290,44 @@ function backToEvalPeriods(){
     delete btn.dataset.disabledSince;
   }
 }, 3000);
+  function openMyResults(){
+  showScreen('screenMyResults');
+  document.getElementById('myResultsLoading').style.display='block';
+  document.getElementById('myResultsContent').innerHTML='';
+  callAPI('getMyStudentsResults',[currentAcadPassword],function(res){
+    document.getElementById('myResultsLoading').style.display='none';
+    if(!res.ok){
+      document.getElementById('myResultsContent').innerHTML='<div class="msg-error">'+res.message+'</div>';
+      return;
+    }
+    var majors=res.majors||{};
+    var majorNames=Object.keys(majors);
+    if(majorNames.length===0){
+      document.getElementById('myResultsContent').innerHTML='<div style="text-align:center;color:var(--muted);padding:30px 0">لا يوجد طلاب مرتبطين بك حالياً</div>';
+      return;
+    }
+    var html='';
+    majorNames.forEach(function(major){
+      var students=majors[major];
+      html+='<div style="margin-bottom:20px">';
+      html+='<div style="font-size:14px;font-weight:800;color:var(--g1);margin-bottom:10px;padding-right:10px;border-right:4px solid var(--g4)">'+major+' <span style="color:var(--muted);font-weight:600;font-size:12px">('+students.length+' طالب/طالبة)</span></div>';
+      students.forEach(function(s){
+        var isDone=s.score!==null;
+        html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid '+(isDone?'#bbf7d0':'#e5e7eb')+';background:'+(isDone?'#f0fdf4':'#fff')+'">';
+        html+='<div><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
+        html+='<div style="font-size:11px;color:var(--muted)">'+s.entity+' | '+s.period+'</div></div>';
+        if(isDone){
+          html+='<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--g3)">'+s.score+'</div><div style="font-size:10px;color:var(--muted)">من 40</div></div>';
+        } else {
+          html+='<div style="font-size:11px;color:#9ca3af;border:1px dashed #d1d5db;border-radius:8px;padding:4px 8px">لم يتم التقييم</div>';
+        }
+        html+='</div>';
+      });
+      html+='</div>';
+    });
+    document.getElementById('myResultsContent').innerHTML=html;
+  });
+}
 </script>
 </body>
 </html>
