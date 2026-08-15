@@ -1276,6 +1276,24 @@ function selectStudentFromList(idx){
   evalOnStudentChange();
   document.getElementById('evalForm').scrollIntoView({behavior:'smooth'});
 }
+  function markStudentAbsent(idx){
+  var s=evalStudents[idx];
+  if(!confirm('تأكيد: الطالب "'+s.name+'" لم يحضر لجهة التدريب؟\nسيتم تسجيل الدرجة كـ 0 من 40.')) return;
+  callAPI('submitFieldEvaluation',[{
+    password:currentFieldPassword,
+    student_number:s.student_number,
+    name:s.name,major:s.major,course:s.course,
+    gender:s.gender,entity:s.entity,section:s.section,
+    teacher:s.teacher,entSup:s.entSup,period:s.period,
+    scores:[0,0,0,0,0,0,0,0]
+  }],function(res){
+    if(res.ok){
+      selectEvalPeriod(evalCurrentPeriod);
+    } else {
+      alert(res.message);
+    }
+  });
+}
 
 function backToEvalPeriods(){
   document.getElementById('evalStudentSelect').classList.add('hidden');
