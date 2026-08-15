@@ -1226,25 +1226,35 @@ function selectEvalPeriod(p){
     
     // بناء قائمة بطاقات
     var listHtml=progressHtml+'<div style="margin-bottom:14px">';
-    filtered.forEach(function(s){
-      var idx=evalStudents.indexOf(s);
-      var isDone=evaluated.hasOwnProperty(s.student_number);
-      var score=isDone?evaluated[s.student_number]:null;
-      listHtml+='<div onclick="'+(isDone?'':'selectStudentFromList('+idx+')')+'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid '+(isDone?'#bbf7d0':'#e5e7eb')+';background:'+(isDone?'#f0fdf4':'#fff')+';cursor:'+(isDone?'default':'pointer')+';transition:.15s">';
-      listHtml+='<div><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
-      listHtml+='<div style="font-size:11px;color:var(--muted)">'+s.major+'</div></div>';
-      if(isDone){
-        listHtml+='<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--g3)">'+score+'</div><div style="font-size:10px;color:var(--muted)">من 40</div></div>';
-      } else {
-        listHtml+='<div style="font-size:11px;color:#9ca3af;border:1px dashed #d1d5db;border-radius:8px;padding:4px 8px">لم يتم التقييم</div>';
-      }
-      listHtml+='</div>';
-      // أضف للقائمة المنسدلة أيضاً
-      var o=document.createElement('option');
-      o.value=idx;
-      o.textContent=s.name+' — '+s.major+(isDone?' ✅ ('+score+'/40)':' ⬜ لم يتم التقييم');
-      sel.appendChild(o);
-    });
+   filtered.forEach(function(s){
+  var idx=evalStudents.indexOf(s);
+  var isDone=evaluated.hasOwnProperty(s.student_number);
+  var score=isDone?evaluated[s.student_number]:null;
+  if(isDone){
+    listHtml+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid #bbf7d0;background:#f0fdf4">';
+    listHtml+='<div><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
+    listHtml+='<div style="font-size:11px;color:var(--muted)">'+s.major+'</div></div>';
+    if(score===0){
+      listHtml+='<div style="font-size:11px;font-weight:700;color:#b91c1c;border:1px solid #fecaca;background:#fef2f2;border-radius:8px;padding:4px 8px">لم يحضر</div>';
+    } else {
+      listHtml+='<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--g3)">'+score+'</div><div style="font-size:10px;color:var(--muted)">من 40</div></div>';
+    }
+    listHtml+='</div>';
+  } else {
+    listHtml+='<div style="padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff">';
+    listHtml+='<div style="margin-bottom:8px"><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
+    listHtml+='<div style="font-size:11px;color:var(--muted)">'+s.major+'</div></div>';
+    listHtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    listHtml+='<button type="button" onclick="selectStudentFromList('+idx+')" style="min-height:38px;border:1.5px solid var(--g3);background:#fff;color:var(--g3);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">تقييم</button>';
+    listHtml+='<button type="button" onclick="markStudentAbsent('+idx+')" style="min-height:38px;border:1.5px solid #fecaca;background:#fff;color:#b91c1c;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">لم يحضر</button>';
+    listHtml+='</div>';
+    listHtml+='</div>';
+  }
+  var o=document.createElement('option');
+  o.value=idx;
+  o.textContent=s.name+' — '+s.major+(isDone?' ✅ ('+score+'/40)':' ⬜ لم يتم التقييم');
+  sel.appendChild(o);
+});
     listHtml+='</div>';
     
     // أضف البطاقات قبل القائمة المنسدلة
