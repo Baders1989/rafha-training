@@ -1290,7 +1290,9 @@ function backToEvalPeriods(){
     delete btn.dataset.disabledSince;
   }
 }, 3000);
-  function openMyResults(){
+var myResultsData = {};
+
+function openMyResults(){
   showScreen('screenMyResults');
   document.getElementById('myResultsLoading').style.display='block';
   document.getElementById('myResultsContent').innerHTML='';
@@ -1300,33 +1302,54 @@ function backToEvalPeriods(){
       document.getElementById('myResultsContent').innerHTML='<div class="msg-error">'+res.message+'</div>';
       return;
     }
-    var majors=res.majors||{};
-    var majorNames=Object.keys(majors);
-    if(majorNames.length===0){
-      document.getElementById('myResultsContent').innerHTML='<div style="text-align:center;color:var(--muted);padding:30px 0">لا يوجد طلاب مرتبطين بك حالياً</div>';
-      return;
-    }
-    var html='';
-    majorNames.forEach(function(major){
-      var students=majors[major];
-      html+='<div style="margin-bottom:20px">';
-      html+='<div style="font-size:14px;font-weight:800;color:var(--g1);margin-bottom:10px;padding-right:10px;border-right:4px solid var(--g4)">'+major+' <span style="color:var(--muted);font-weight:600;font-size:12px">('+students.length+' طالب/طالبة)</span></div>';
-      students.forEach(function(s){
-        var isDone=s.score!==null;
-        html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid '+(isDone?'#bbf7d0':'#e5e7eb')+';background:'+(isDone?'#f0fdf4':'#fff')+'">';
-        html+='<div><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
-        html+='<div style="font-size:11px;color:var(--muted)">'+s.entity+' | '+s.period+'</div></div>';
-        if(isDone){
-          html+='<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--g3)">'+s.score+'</div><div style="font-size:10px;color:var(--muted)">من 40</div></div>';
-        } else {
-          html+='<div style="font-size:11px;color:#9ca3af;border:1px dashed #d1d5db;border-radius:8px;padding:4px 8px">لم يتم التقييم</div>';
-        }
-        html+='</div>';
-      });
-      html+='</div>';
-    });
-    document.getElementById('myResultsContent').innerHTML=html;
+    myResultsData=res.majors||{};
+    renderMyResultsMajors();
   });
+}
+
+function renderMyResultsMajors(){
+  var majorNames=Object.keys(myResultsData);
+  if(majorNames.length===0){
+    document.getElementById('myResultsContent').innerHTML='<div style="text-align:center;color:var(--muted);padding:30px 0">لا يوجد طلاب مرتبطين بك حالياً</div>';
+    return;
+  }
+  var icons=['📊','📚','🧮','💼','🔬','🏢','⚙️','🌐','📈','🎓'];
+  var html='<div style="display:flex;flex-direction:column;gap:12px">';
+  majorNames.forEach(function(major,i){
+    var students=myResultsData[major];
+    var doneCount=students.filter(function(s){return s.score!==null;}).length;
+    html+='<div class="service-card" style="cursor:pointer" onclick="openMajorResults(\''+major.replace(/'/g,"\\'")+'\')">';
+    html+='<div class="svc-icon" style="background:#fff7ed">'+icons[i%icons.length]+'</div>';
+    html+='<div style="flex:1">';
+    html+='<div class="svc-title">'+major+'</div>';
+    html+='<div class="svc-desc">'+students.length+' طالب/طالبة — تم تقييم '+doneCount+' من '+students.length+'</div>';
+    html+='</div>';
+    html+='<span style="font-size:20px;color:var(--g4)">‹</span>';
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById('myResultsContent').innerHTML=html;
+}
+
+function openMajorResults(major){
+  var students=myResultsData[major]||[];
+  var html='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
+  html+='<button onclick="renderMyResultsMajors()" style="background:#f3f4f6;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text)">‹ رجوع للتخصصات</button>';
+  html+='<div style="font-size:14px;font-weight:800;color:var(--g3)">'+major+'</div>';
+  html+='</div>';
+  students.forEach(function(s){
+    var isDone=s.score!==null;
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1.5px solid '+(isDone?'#bbf7d0':'#e5e7eb')+';background:'+(isDone?'#f0fdf4':'#fff')+'">';
+    html+='<div><div style="font-size:13px;font-weight:700;color:#111827">'+s.name+'</div>';
+    html+='<div style="font-size:11px;color:var(--muted)">'+s.entity+' | '+s.period+'</div></div>';
+    if(isDone){
+      html+='<div style="text-align:center"><div style="font-size:18px;font-weight:800;color:var(--g3)">'+s.score+'</div><div style="font-size:10px;color:var(--muted)">من 40</div></div>';
+    } else {
+      html+='<div style="font-size:11px;color:#9ca3af;border:1px dashed #d1d5db;border-radius:8px;padding:4px 8px">لم يتم التقييم</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('myResultsContent').innerHTML=html;
 }
 </script>
 </body>
